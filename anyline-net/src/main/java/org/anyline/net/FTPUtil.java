@@ -16,29 +16,23 @@
 
 
 package org.anyline.net;
-import java.io.BufferedInputStream; 
-import java.io.File; 
-import java.io.FileInputStream; 
-import java.io.FileNotFoundException; 
-import java.io.FileOutputStream; 
-import java.io.IOException; 
-import java.io.InputStream; 
-import java.io.OutputStream; 
-import java.net.SocketException; 
-import java.util.ArrayList; 
-import java.util.HashMap; 
-import java.util.List; 
-import java.util.Map; 
- 
-import org.anyline.util.DateUtil; 
-import org.anyline.util.FileUtil; 
-import org.anyline.util.regular.RegularUtil; 
-import org.apache.commons.net.ftp.FTP; 
-import org.apache.commons.net.ftp.FTPClient; 
-import org.apache.commons.net.ftp.FTPFile; 
-import org.apache.commons.net.ftp.FTPReply; 
-import org.slf4j.Logger; 
-import org.slf4j.LoggerFactory; 
+
+import org.anyline.util.DateUtil;
+import org.anyline.util.FileUtil;
+import org.anyline.util.regular.RegularUtil;
+import org.apache.commons.net.ftp.FTP;
+import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPFile;
+import org.apache.commons.net.ftp.FTPReply;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.*;
+import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
    
 public class FTPUtil {
        
@@ -57,7 +51,7 @@ public class FTPUtil {
         client.setControlEncoding("UTF-8");  
     }   
     public FTPUtil(String host, String account, String password, int port){
-        client = new FTPClient();   
+        client = new FTPClient();
     	this.host = host; 
     	this.account = account; 
     	this.password = password; 
@@ -159,7 +153,7 @@ public class FTPUtil {
 	        if (!client.login(account, password)) {
 	            disconnect();   
 	        }   
-	        client.setFileType(FTP.BINARY_FILE_TYPE);   
+	        client.setFileType(FTP.BINARY_FILE_TYPE);
 	        // ftp.setFileType(FTP.ASCII_FILE_TYPE);   
 	        client.enterLocalPassiveMode();  
     	}catch(Exception e){
