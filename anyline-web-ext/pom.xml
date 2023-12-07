@@ -7,8 +7,8 @@
 	<parent>
 		<groupId>org.anyline</groupId>
 		<artifactId>anyline-extends-dependency-web</artifactId>
-		<version>8.7.1-SNAPSHOT</version>
-		<relativePath>../../anyline-extends-dependency-web/pom.xml</relativePath>
+		<version>8.7.1-20231207</version>
+		<relativePath>../anyline-extends-dependency-web/pom.xml</relativePath>
 	</parent>
 
 	<artifactId>anyline-web-ext</artifactId>

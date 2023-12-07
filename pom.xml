@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.anyline</groupId>
 	<artifactId>anyline-extends</artifactId>
-	<version>8.7.1-SNAPSHOT</version>
+	<version>8.7.1-20231207</version>
 	<packaging>pom</packaging>
 	<name>anyline-extends</name>
     <modules>
@@ -38,7 +38,6 @@
 		<module>anyline-mail</module>
 		<module>anyline-spider</module>
 		<module>anyline-web-ext</module>
-		<module>anyline-net</module>
 		<module>anyline-struts</module>
 		<module>anyline-extends-dependency-web</module>
 		<module>anyline-encrypt</module>
