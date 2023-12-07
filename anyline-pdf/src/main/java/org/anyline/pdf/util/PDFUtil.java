@@ -62,7 +62,8 @@ public class PDFUtil {
     }
 
     /**
-     * 读取pdf文件图片
+     * 读取pdf文件图片<br/>
+     * 可以通过 ImageIO.write(BufferedImage, "JPEG", File)写入文件
      * @param file 源文件
      * @return BufferedImage
      */
