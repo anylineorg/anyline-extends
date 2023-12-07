@@ -6,9 +6,9 @@
 
 	<parent>
 		<groupId>org.anyline</groupId>
-		<artifactId>anyline-dependency</artifactId>
-		<version>8.7.1-20231208</version>
-		 <relativePath>../anyline-dependency/pom.xml</relativePath>
+		<artifactId>anyline-extends-dependency</artifactId>
+		<version>8.7.1-SNAPSHOT</version>
+		 <relativePath>../anyline-extends-dependency/pom.xml</relativePath>
 	</parent>
 
 	<artifactId>anyline-net</artifactId>
@@ -31,6 +31,10 @@
 			<groupId>com.jcraft</groupId>
 			<artifactId>jsch</artifactId>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-net</groupId>
+			<artifactId>commons-net</artifactId>
 		</dependency>
 	</dependencies>
 </project>

@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.anyline</groupId>
 	<artifactId>anyline-extends</artifactId>
-	<version>8.7.1-20231208</version>
+	<version>8.7.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>anyline-extends</name>
     <modules>
@@ -40,13 +40,14 @@
 		<module>anyline-web-ext</module>
 		<module>anyline-net</module>
 		<module>anyline-struts</module>
-		<module>anyline-dependency-web</module>
+		<module>anyline-extends-dependency-web</module>
 		<module>anyline-encrypt</module>
 		<module>anyline-web</module>
 		<module>anyline-mvc</module>
 		<module>anyline-nacos</module>
 		<module>anyline-data-cache</module>
-    </modules>
+		<module>anyline-extends-dependency</module>
+	</modules>
 	<build>
 		<plugins>
 			<plugin>

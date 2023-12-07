@@ -4,9 +4,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <groupId>org.anyline</groupId>
-        <artifactId>anyline-dependency-web</artifactId>
-        <version>8.7.1-20231208</version>
-        <relativePath>../../anyline-dependency-web/pom.xml</relativePath>
+        <artifactId>anyline-extends-dependency-web</artifactId>
+        <version>8.7.1-SNAPSHOT</version>
+        <relativePath>../../anyline-extends-dependency-web/pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
