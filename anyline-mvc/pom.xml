@@ -7,9 +7,9 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 
 	<parent>
 		<groupId>org.anyline</groupId>
-		<artifactId>anyline-extends-dependency-web</artifactId>
-		<version>8.7.1-20231207</version>
-		<relativePath>../anyline-extends-dependency-web</relativePath>
+		<artifactId>anyline-dependency-web</artifactId>
+		<version>8.7.1-SNAPSHOT</version>
+		<relativePath>../anyline-dependency-web/pom.xml</relativePath>
 	</parent>
 
 	<artifactId>anyline-mvc</artifactId>
@@ -29,18 +29,6 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<scope>provided</scope>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>jsp-api</artifactId>
-			<scope>provided</scope>
-			<optional>true</optional>
 		</dependency>
 	</dependencies>
 </project>
