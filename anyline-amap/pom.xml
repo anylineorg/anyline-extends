@@ -8,6 +8,7 @@
 		<groupId>org.anyline</groupId>
 		<artifactId>anyline-dependency</artifactId>
 		<version>8.7.1-SNAPSHOT</version>
+		<relativePath/>
 	</parent>
 
 	<artifactId>anyline-amap</artifactId>

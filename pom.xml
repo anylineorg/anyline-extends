@@ -7,6 +7,7 @@
 	<packaging>pom</packaging>
 	<name>anyline-extends</name>
     <modules>
+		<module>anyline-dependency-web</module>
 		<module>anyline-office</module>
 		<module>anyline-poi</module>
 		<module>anyline-alipay</module>
@@ -35,14 +36,13 @@
 		<module>anyline-jpush</module>
 		<module>anyline-mail</module>
 		<module>anyline-spider</module>
-		<module>anyline-web-ext</module>
 		<module>anyline-struts</module>
 		<module>anyline-encrypt</module>
 		<module>anyline-nacos</module>
 		<module>anyline-data-cache</module>
 		<module>anyline-mvc</module>
 		<module>anyline-web</module>
-		<module>anyline-dependency-web</module>
+		<module>anyline-web-ext</module>
 	</modules>
 	<build>
 		<plugins>
