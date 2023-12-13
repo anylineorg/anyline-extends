@@ -208,6 +208,7 @@ public class WebUtil {
 			// body体json格式(ajax以raw提交)
 			String body = WebUtil.read(request, charset,true);
 			if(BasicUtil.isNotEmpty(body)){
+				body = body.trim();
 				if(body.startsWith("{") && body.endsWith("}")) {
 					map.putAll(DataRow.parseJson(KEY_CASE.SRC, body));
 				}else{
