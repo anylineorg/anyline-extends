@@ -18,14 +18,19 @@
 package org.anyline.util.encrypt;
 
 import org.anyline.util.NumberUtil;
+import org.bouncycastle.asn1.*;
 import org.bouncycastle.asn1.gm.GMNamedCurves;
 import org.bouncycastle.asn1.x9.X9ECParameters;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
+import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.crypto.generators.ECKeyPairGenerator;
 import org.bouncycastle.crypto.params.*;
+import org.bouncycastle.crypto.signers.SM2Signer;
 import org.bouncycastle.math.ec.ECPoint;
+import org.bouncycastle.util.Strings;
 import org.bouncycastle.util.encoders.Hex;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -68,14 +73,14 @@ public class SMUtil {
      */
     public static SM2 sm2(boolean compress) {
         //获取一条SM2曲线参数
-        X9ECParameters sm2ECParameters = GMNamedCurves.getByName(SM2.CRYPTO_NAME);
+        X9ECParameters params = GMNamedCurves.getByName(SM2.CRYPTO_NAME);
         //构造domain参数
-        ECDomainParameters domainParameters = new ECDomainParameters(sm2ECParameters.getCurve(), sm2ECParameters.getG(), sm2ECParameters.getN());
+        ECDomainParameters domainParameters = new ECDomainParameters(params.getCurve(), params.getG(), params.getN());
         //1.创建密钥生成器
         ECKeyPairGenerator keyPairGenerator = new ECKeyPairGenerator();
         //2.初始化生成器,带上随机数
         try {
-            keyPairGenerator.init(new ECKeyGenerationParameters(domainParameters, SecureRandom.getInstance("SHA1PRNG")));
+            keyPairGenerator.init(new ECKeyGenerationParameters(domainParameters, SecureRandom.getInstance(SM2.ALGORITHM)));
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
@@ -123,6 +128,8 @@ public class SMUtil {
          * sm2曲线参数名称
          */
         public static final String CRYPTO_NAME = "sm2p256v1";
+        public static final String ALGORITHM = "SHA1PRNG";
+        public static final String DEFAULT_ID = "1234567812345678";
 
         /**
          * 公钥
@@ -183,8 +190,8 @@ public class SMUtil {
 
 
         /**
-         * SM2加密算法
-         *
+         * 加密<br/>
+         * 务必注意返回的是16进制
          * @param publicKey 公钥 hex格式的String
          * @param data      待加密的数据 如果是hex格式要先转成byte[]
          * @return 密文,BC库产生的密文带由04标识符,与非BC库对接时需要去掉开头的04
@@ -213,8 +220,8 @@ public class SMUtil {
         }
 
         /**
-         * SM2加密
-         *
+         * 加密<br/>
+         * 务必注意返回的是16进制
          * @param publicKey 公钥
          * @param bytes     待加密的数据
          * @param mode      密文排列方式0-C1C2C3；1-C1C3C2；
@@ -222,11 +229,11 @@ public class SMUtil {
          */
         public static byte[] encrypt(byte[] publicKey, byte[] bytes, int mode) {
             // 获取一条SM2曲线参数
-            X9ECParameters sm2ECParameters = GMNamedCurves.getByName(CRYPTO_NAME);
+            X9ECParameters params = GMNamedCurves.getByName(CRYPTO_NAME);
             // 构造ECC算法参数,曲线方程、椭圆曲线G点、大整数N
-            ECDomainParameters domainParameters = new ECDomainParameters(sm2ECParameters.getCurve(), sm2ECParameters.getG(), sm2ECParameters.getN());
+            ECDomainParameters domainParameters = new ECDomainParameters(params.getCurve(), params.getG(), params.getN());
             //提取公钥点
-            ECPoint pukPoint = sm2ECParameters.getCurve().decodePoint(publicKey);
+            ECPoint pukPoint = params.getCurve().decodePoint(publicKey);
             // 公钥前面的02或者03表示是压缩公钥,04表示未压缩公钥, 04的时候,可以去掉前面的04
             ECPublicKeyParameters publicKeyParameters = new ECPublicKeyParameters(pukPoint, domainParameters);
 
@@ -281,8 +288,8 @@ public class SMUtil {
         }
 
         /**
-         * SM2解密算法
-         *
+         * 解密<br/>
+         * 务必注意返回的是16进制
          * @param privateKey 私钥
          * @param data       密文数据(16进制string 不区分大小写,可以空格分隔,没有也可)
          *    047c7876a0412479d9a59717b59624fbf43a39....
@@ -306,8 +313,8 @@ public class SMUtil {
         }
 
         /**
-         * SM2解密算法
-         *
+         * 解密<br/>
+         * 务必注意返回的是16进制
          * @param privateKey 私钥(16进制string 可以空格分隔,没有也可)
          * @param data 密文数据(16进制string 可以空格分隔,没有也可)
          * @param mode 密文排列方式0-C1C2C3；1-C1C3C2；
@@ -324,9 +331,9 @@ public class SMUtil {
             byte[] cipherDataByte = Hex.decode(data);
 
             //获取一条SM2曲线参数
-            X9ECParameters sm2ECParameters = GMNamedCurves.getByName(CRYPTO_NAME);
+            X9ECParameters params = GMNamedCurves.getByName(CRYPTO_NAME);
             //构造domain参数
-            ECDomainParameters domainParameters = new ECDomainParameters(sm2ECParameters.getCurve(), sm2ECParameters.getG(), sm2ECParameters.getN());
+            ECDomainParameters domainParameters = new ECDomainParameters(params.getCurve(), params.getG(), params.getN());
 
             BigInteger privateKeyD = new BigInteger(privateKey, 16);
             ECPrivateKeyParameters privateKeyParameters = new ECPrivateKeyParameters(privateKeyD, domainParameters);
@@ -359,5 +366,173 @@ public class SMUtil {
         public byte[] decrypt(byte[] data, int mode) {
             return decrypt(privateKey, data, mode);
         }
+
+
+        /**
+         * 私钥签名 1.64 模拟 1.57
+         * @param content       待签名内容
+         * @return hex
+         */
+        public String sign(String content)   {
+            //待签名内容转为字节数组
+            byte[] message = content.getBytes();
+            //获取一条SM2曲线参数
+            X9ECParameters params = GMNamedCurves.getByName(CRYPTO_NAME);
+            //构造domain参数
+            ECDomainParameters domainParameters = new ECDomainParameters(params.getCurve(), params.getG(), params.getN());
+            BigInteger privateKeyD = new BigInteger(privateKey, 16);
+            ECPrivateKeyParameters privateKeyParameters = new ECPrivateKeyParameters(privateKeyD, domainParameters);
+            //创建签名实例
+            SM2Signer signer = new SM2Signer();
+            //初始化签名实例,带上ID,国密的要求,ID默认值:1234567812345678
+            try {
+                signer.init(true, new ParametersWithID(new ParametersWithRandom(privateKeyParameters, SecureRandom.getInstance(ALGORITHM)), Strings.toByteArray(DEFAULT_ID)));
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            }
+            signer.update(message, 0, message.length);
+            //生成签名,签名分为两部分r和s,分别对应索引0和1的数组
+            byte[] signBytes = new byte[0];
+            try {
+                signBytes = signer.generateSignature();
+            } catch (CryptoException e) {
+                throw new RuntimeException(e);
+            }
+            //bc1.57版本中，signData是纯r+s字符串拼接，如果为了兼容低版本的bc包，则需要加这一句
+            byte[] bytes = decodeDERSM2Sign(domainParameters, signBytes);
+            return Hex.toHexString(bytes);
+        }
+
+        /**
+         * 私钥签名 DER
+         * @param content       待签名内容
+         * @return hex
+         */
+        public String sign4Der(String content) throws CryptoException {
+            byte[] message = content.getBytes();
+            //获取一条SM2曲线参数
+            X9ECParameters params = GMNamedCurves.getByName(CRYPTO_NAME);
+            //构造domain参数
+            ECDomainParameters domainParameters = new ECDomainParameters(params.getCurve(), params.getG(), params.getN());
+            BigInteger privateKeyD = new BigInteger(privateKey, 16);
+            ECPrivateKeyParameters privateKeyParameters = new ECPrivateKeyParameters(privateKeyD, domainParameters);
+            //创建签名实例
+            SM2Signer signer = new SM2Signer();
+            //初始化签名实例,带上ID,国密的要求,ID默认值:1234567812345678
+            try {
+                signer.init(true, new ParametersWithID(new ParametersWithRandom(privateKeyParameters, SecureRandom.getInstance(ALGORITHM)), Strings.toByteArray(DEFAULT_ID)));
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            }
+            signer.update(message, 0, message.length);
+            //生成签名,签名分为两部分r和s,分别对应索引0和1的数组
+            byte[] bytes = signer.generateSignature();
+            return Hex.toHexString(bytes);
+        }
+        /**
+         * 验证签名
+         * @param content       待签名内容
+         * @param sign          签名值
+         * @return
+         */
+        public boolean verify(String content, String sign)  {
+            byte[] message = Hex.decode(Hex.toHexString(content.getBytes()));
+            byte[] signData = Hex.decode(sign);
+            try {
+                signData = encodeSM2SignToDER(signData);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            // 获取一条SM2曲线参数
+            X9ECParameters params = GMNamedCurves.getByName(CRYPTO_NAME);
+            // 构造domain参数
+            ECDomainParameters domainParameters = new ECDomainParameters(params.getCurve(), params.getG(), params.getN());
+            //提取公钥点
+            ECPoint pukPoint = params.getCurve().decodePoint(Hex.decode(publicKey));
+            // 公钥前面的02或者03表示是压缩公钥，04表示未压缩公钥, 04的时候，可以去掉前面的04
+            ECPublicKeyParameters publicKeyParameters = new ECPublicKeyParameters(pukPoint, domainParameters);
+            SM2Signer signer = new SM2Signer();
+            ParametersWithID parametersWithID = new ParametersWithID(publicKeyParameters, Strings.toByteArray(DEFAULT_ID));
+            signer.init(false, parametersWithID);
+            signer.update(message, 0, message.length);
+            return signer.verifySignature(signData);
+        }
+        /**
+         * 验证签名
+         * @param content       待签名内容
+         * @param sign          签名值
+         * @return boolean
+         */
+        public boolean verify4Der(String content, String sign)  {
+            byte[] message = Hex.decode(content);
+            byte[] signData = Hex.decode(sign);
+            // 获取一条SM2曲线参数
+            X9ECParameters params = GMNamedCurves.getByName(CRYPTO_NAME);
+            // 构造domain参数
+            ECDomainParameters domainParameters = new ECDomainParameters(params.getCurve(), params.getG(), params.getN());
+            //提取公钥点
+            ECPoint pukPoint = params.getCurve().decodePoint(Hex.decode(publicKey));
+            // 公钥前面的02或者03表示是压缩公钥，04表示未压缩公钥, 04的时候，可以去掉前面的04
+            ECPublicKeyParameters publicKeyParameters = new ECPublicKeyParameters(pukPoint, domainParameters);
+            SM2Signer signer = new SM2Signer();
+            ParametersWithID parametersWithID = new ParametersWithID(publicKeyParameters, Strings.toByteArray(DEFAULT_ID));
+            signer.init(false, parametersWithID);
+            signer.update(message, 0, message.length);
+            return signer.verifySignature(signData);
+        }
+
+        /**
+         * 把64字节的纯R+S字节流转换成DER编码字节流
+         * @param rawSign rawSign
+         * @return bytes
+         * @throws IOException 异常
+         */
+        public static byte[] encodeSM2SignToDER(byte[] rawSign) throws IOException {
+            //要保证大数是正数
+            BigInteger r = new BigInteger(1, extractBytes(rawSign, 0, 32));
+            BigInteger s = new BigInteger(1, extractBytes(rawSign, 32, 32));
+            ASN1EncodableVector v = new ASN1EncodableVector();
+            v.add(new ASN1Integer(r));
+            v.add(new ASN1Integer(s));
+            return new DERSequence(v).getEncoded(ASN1Encoding.DER);
+        }
+        private static byte[] extractBytes(byte[] src, int offset, int length) {
+            byte[] result = new byte[length];
+            System.arraycopy(src, offset, result, 0, result.length);
+            return result;
+        }
+
+
+        public static byte[] decodeDERSM2Sign(ECDomainParameters domainParams, byte[] derSign) {
+            ASN1Sequence as = DERSequence.getInstance(derSign);
+            byte[] rBytes = ((ASN1Integer) as.getObjectAt(0)).getValue().toByteArray();
+            byte[] sBytes = ((ASN1Integer) as.getObjectAt(1)).getValue().toByteArray();
+            //由于大数的补0规则，所以可能会出现33个字节的情况，要修正回32个字节
+            rBytes = fixToCurveLengthBytes(domainParams, rBytes);
+            sBytes = fixToCurveLengthBytes(domainParams, sBytes);
+            byte[] rawSign = new byte[rBytes.length + sBytes.length];
+            System.arraycopy(rBytes, 0, rawSign, 0, rBytes.length);
+            System.arraycopy(sBytes, 0, rawSign, rBytes.length, sBytes.length);
+            return rawSign;
+        }
+
+        private static byte[] fixToCurveLengthBytes(ECDomainParameters domainParams, byte[] src) {
+            int curveLen = getCurveLength(domainParams);
+            if (src.length == curveLen) {
+                return src;
+            }
+            byte[] result = new byte[curveLen];
+            if (src.length > curveLen) {
+                System.arraycopy(src, src.length - result.length, result, 0, result.length);
+            } else {
+                System.arraycopy(src, 0, result, result.length - src.length, src.length);
+            }
+            return result;
+        }
+
+        public static int getCurveLength(ECDomainParameters domainParams) {
+            return (domainParams.getCurve().getFieldSize() + 7) / 8;
+        }
+
     }
 }
