@@ -42,6 +42,8 @@ public class Result {
     private int pages = -1;
     private Long request_time = null;
     private Long response_time = null;
+    private String response_id = null;
+    private String sign = null;
     private Long finish_time = null;
 
     private PageNavi navi;
@@ -88,6 +90,22 @@ public class Result {
         return result;
     }
 
+    public String getResponse_id() {
+        return response_id;
+    }
+
+    public void setResponse_id(String response_id) {
+        this.response_id = response_id;
+    }
+
+    public String getSign() {
+        return sign;
+    }
+
+    public void setSign(String sign) {
+        this.sign = sign;
+    }
+
     public String toString(){
         return json();
     }
@@ -129,6 +147,8 @@ public class Result {
         map.put("request_time", request_time);
         map.put("response_time", response_time);
         map.put("finish_time", finish_time);
+        map.put("response_id", response_id);
+        map.put("sign", sign);
 
         if (data instanceof DataSet || data instanceof EntitySet) {
             dataType = "list";
