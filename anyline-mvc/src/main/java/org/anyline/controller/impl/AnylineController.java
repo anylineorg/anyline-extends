@@ -624,7 +624,8 @@ public abstract class AnylineController extends AbstractBasicController {
      * @return String
      */
     public String result(Object code, boolean result, Object data, String message) {
-        DataSet messages = (DataSet) getRequest().getAttribute(Constant.REQUEST_ATTR_MESSAGE);
+        HttpServletRequest request = getRequest();
+        DataSet messages = (DataSet) request.getAttribute(Constant.REQUEST_ATTR_MESSAGE);
         message = BasicUtil.nvl(message, "");
         if (null != messages) {
             for (int i = 0; i < messages.size(); i++) {
@@ -634,9 +635,13 @@ public abstract class AnylineController extends AbstractBasicController {
                     message += "\n" + tmp;
                 }
             }
-            getRequest().removeAttribute(Constant.REQUEST_ATTR_MESSAGE);
+            request.removeAttribute(Constant.REQUEST_ATTR_MESSAGE);
         }
+
         Result rtn = Result.init(result, code,data,message);
+        rtn.setSign((String)request.getAttribute("response_sign"));
+        rtn.setResponse_id((String)request.getAttribute("response_id"));
+        rtn.setResponse_time((Long)request.getAttribute("response_time"));
         if(log.isInfoEnabled()){
             log.info("[controller return][result:{}][message:{}][request:{}][response:{}][finish:{}]"
                     ,result,message, rtn.getRequest_time(), rtn.getResponse_time(), rtn.getFinish_time());
