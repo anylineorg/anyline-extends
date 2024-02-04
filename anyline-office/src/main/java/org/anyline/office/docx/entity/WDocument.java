@@ -1049,6 +1049,9 @@ public class WDocument extends Welement{
         String rdm = System.currentTimeMillis()+"";
         String rId = "rId"+rdm;
         String src = element.attributeValue("body");
+        if(BasicUtil.isEmpty(src)){
+            src = element.attributeValue("src");
+        }
         String subfix = element.attributeValue("type");
 
         if(null == subfix) {
