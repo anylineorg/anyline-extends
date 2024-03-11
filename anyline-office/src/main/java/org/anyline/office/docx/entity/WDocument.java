@@ -101,6 +101,18 @@ public class WDocument extends Welement{
         }
         replaces.put(key, content);
     }
+    public void replace(String key, File ... words){
+       replace(key, BeanUtil.array2list(words));
+    }
+    public void replace(String key, List<File> words){
+        if(null != words) {
+            StringBuilder content = new StringBuilder();
+            for(File word:words) {
+                content.append("<word>").append(word.getAbsolutePath()).append("</word>");
+            }
+            replaces.put(key, content.toString());
+        }
+    }
 
     public void save(){
         save(Charset.forName("UTF-8"));
