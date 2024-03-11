@@ -1805,8 +1805,9 @@ public class Wtable extends Welement{
     }
 
     /**
-     * 替换整行单元格内容
-     * @param rows 行
+     * 替换整行单元格内容<br/>
+     * 如果有HTML转义符，需要通过WDocument对象的IS_HTML_ESCAPE属性设置是否解析文本转义符
+     * @param rows 行(下标从0开始)
      * @param src src
      * @param tar tar
      * @return wtr
