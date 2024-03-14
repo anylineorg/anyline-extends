@@ -220,6 +220,9 @@ public class OSSUtil {
 		    	}
 		        File file = new File(dir, key);
 				if(file.exists() && !over){
+					if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
+						log.info("[oss download file][文件已存在][local:{}][remote:{}]",file.getAbsolutePath(),key);
+					}
 					continue;
 				}
 		        File parent = file.getParentFile();
