@@ -196,9 +196,10 @@ public class OSSUtil {
 	 * 下载prefix目录下的所有文件到本地dir目录
 	 * @param dir  目录
 	 * @param prefix  前缀
+	 * @param over  已存存的文件是否覆盖
 	 * @return boolean
 	 */
-	public boolean download(File dir, String prefix){
+	public boolean download(File dir, String prefix, boolean over){
 		if(null == prefix){
 			prefix = "";
 		}
@@ -218,6 +219,9 @@ public class OSSUtil {
 		    		continue;
 		    	}
 		        File file = new File(dir, key);
+				if(file.exists() && !over){
+					continue;
+				}
 		        File parent = file.getParentFile();
 		        if(null != parent && !parent.exists()){
 		        	parent.mkdirs();
@@ -236,6 +240,9 @@ public class OSSUtil {
 		} while (objectListing.isTruncated());
 
 		return true;
+	}
+	public boolean download(File dir, String prefix){
+		return download(dir, prefix, false);
 	}
 	/**
 	 * 文件是否存在
