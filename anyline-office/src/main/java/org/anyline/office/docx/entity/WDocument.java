@@ -860,6 +860,16 @@ public class WDocument extends Welement{
         String pname = parent.getName();
         Element newPrev = null;
         Element wp = null;
+
+        if(null != styles && null != styles.get("page-break-after")){
+            // 分页 放在一个新段落中
+            Element pageP = parent.addElement("w:p");
+            pageP.addElement("w:r").addElement("w:br").addAttribute("w:type","page");
+            pageP.addElement("w:r").addElement("w:lastRenderedPageBreak");
+            DocxUtil.after(pageP, prev);
+            return pageP;
+        }
+
         pr(parent, styles);
         if(pname.equalsIgnoreCase("p")){
             box = parent.addElement("w:r");
@@ -897,11 +907,6 @@ public class WDocument extends Welement{
         pr(box, styles);
         parseHtml(box, prev, element, styles, false);
 
-        if(null != styles && null != styles.get("page-break-after")){
-            // 分页
-            wp.addElement("w:r").addElement("w:br").addAttribute("w:type","page");
-            wp.addElement("w:r").addElement("w:lastRenderedPageBreak");
-        }
         return newPrev;
     }
     private Element ol(Element parent, Element prev, Element element, Map<String, String> styles){
