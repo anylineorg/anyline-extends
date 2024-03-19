@@ -56,13 +56,26 @@ public class Wtable extends Welement{
     }
 
     /**
-     * 根据书签获取行
-     * @param bookmark 书签
+     * 根据书签或点位符获取行
+     * @param bookmark 书签或占位符 包含{和}的按占位符搜索
      * @return wtr
      */
     public Wtr tr(String bookmark){
-        Element src = parent(bookmark, "tr");
-        Wtr tr = new Wtr(root,this, src);
+        Wtr tr = null;
+        if(null != bookmark) {
+            if(bookmark.contains("{") && bookmark.contains("}")){
+                for(Wtr item:wtrs){
+                    String txt = item.getTexts();
+                    if(txt.contains(bookmark)){
+                        tr = item;
+                        break;
+                    }
+                }
+            }else {
+                Element src = parent(bookmark, "tr");
+                tr = new Wtr(root, this, src);
+            }
+        }
         return tr;
     }
 
@@ -674,7 +687,6 @@ public class Wtable extends Welement{
         index = index(index, wtrs.size());
         return wtrs.get(index);
     }
-
     /**
      * 获取row行col列位置的单元格
      * @param row 行
