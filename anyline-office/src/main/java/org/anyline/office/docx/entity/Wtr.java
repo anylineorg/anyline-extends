@@ -89,6 +89,30 @@ public class Wtr extends Welement{
     }
 
     /**
+     * 根据书签或点位符获取列
+     * @param bookmark 书签或占位符 包含{和}的按占位符搜索
+     * @return wtr
+     */
+    public Wtc tc(String bookmark){
+        List<Wtc> tcs = tcs(bookmark);
+        if(!tcs.isEmpty()){
+            return tcs.get(0);
+        }
+        return null;
+    }
+    public List<Wtc> tcs(String bookmark){
+        List<Wtc> list = new ArrayList<>();
+        if(null != bookmark) {
+            for(Wtc item:wtcs){
+                String txt = item.getTexts();
+                if(txt.contains(bookmark)){
+                    list.add(item);
+                }
+            }
+        }
+        return list;
+    }
+    /**
      * 获取单元格,计算合并列
      * @param index 索引
      * @param prev 如果index位置被合并了,是否返 当前合并组中的第一个单元格

@@ -22,6 +22,7 @@ import org.anyline.util.BasicUtil;
 import org.anyline.util.DomUtil;
 import org.anyline.util.HtmlUtil;
 import org.anyline.util.StyleParser;
+import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -450,10 +451,14 @@ public class Wtc extends Welement{
         Element tcPr = DocxUtil.addElement(tc, "tcPr");
         Element borders = DocxUtil.addElement(tcPr, "tcBorders");
         Element border = DocxUtil.addElement(borders, side);
-        border.addAttribute("w:val",style);
-        border.addAttribute("w:sz",size+"");
-        border.addAttribute("w:color",color.replace("#",""));
-        border.addAttribute("w:space","0");
+        if(null != style) {
+            DocxUtil.addAttribute(border, "val", style);
+        }
+        DocxUtil.addAttribute(border, "sz", size+"");
+        if(null != color) {
+            DocxUtil.addAttribute(border, "color", color.replace("#", ""));
+        }
+        DocxUtil.addAttribute(border, "space", "0");
     }
 
     /**

@@ -61,24 +61,52 @@ public class Wtable extends Welement{
      * @return wtr
      */
     public Wtr tr(String bookmark){
-        Wtr tr = null;
+        List<Wtr> trs = trs(bookmark);
+        if(!trs.isEmpty()){
+            return trs.get(0);
+        }
+        return null;
+    }
+    public List<Wtr> trs(String bookmark){
+        List<Wtr> list = new ArrayList<>();
         if(null != bookmark) {
             if(bookmark.contains("{") && bookmark.contains("}")){
                 for(Wtr item:wtrs){
                     String txt = item.getTexts();
                     if(txt.contains(bookmark)){
-                        tr = item;
-                        break;
+                        list.add(item);
                     }
                 }
             }else {
                 Element src = parent(bookmark, "tr");
-                tr = new Wtr(root, this, src);
+                Wtr tr = new Wtr(root, this, src);
+                list.add(tr);
             }
         }
-        return tr;
+        return list;
     }
 
+    /**
+     * 根据书签或点位符获取列
+     * @param bookmark 书签或占位符 包含{和}的按占位符搜索
+     * @return wtr
+     */
+    public Wtc tc(String bookmark){
+        List<Wtc> tcs = tcs(bookmark);
+        if(!tcs.isEmpty()){
+            return tcs.get(0);
+        }
+        return null;
+    }
+    public List<Wtc> tcs(String bookmark){
+        List<Wtc> list = new ArrayList<>();
+        if(null != bookmark) {
+            for(Wtr item:wtrs){
+                list.addAll(item.tcs(bookmark));
+            }
+        }
+        return list;
+    }
 
     public Element parent(String bookmark, String tag){
         return root.parent(bookmark, tag);
