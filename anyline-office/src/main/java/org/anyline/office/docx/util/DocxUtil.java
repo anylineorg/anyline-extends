@@ -643,6 +643,13 @@ public class DocxUtil {
         addAttribute(element, key, value);
         return element;
     }
+
+    /**
+     * 添加属性值，如果属性已存在 先删除原属性
+     * @param element Element
+     * @param key 属性key
+     * @param value 属性值
+     */
     public static void addAttribute(Element element, String key, String value){
         Attribute attribute = element.attribute(key);
         if(null == attribute){
