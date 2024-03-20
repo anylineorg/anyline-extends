@@ -295,7 +295,7 @@ public class Wtc extends Welement{
      * 设置上下左右边框
      * @param size 边框宽度(1px)
      * @param color 颜色
-     * @param style 样式(single)
+     * @param style 样式(默认single)
      * @return wtc
      */
     public Wtc setBorder(int size, String color, String style){
@@ -385,7 +385,7 @@ public class Wtc extends Welement{
      * 设置左边框
      * @param size 边框宽度(1px)
      * @param color 颜色
-     * @param style 样式(single)
+     * @param style 样式(默认single)
      * @return wtc
      */
     public Wtc setLeftBorder(int size, String color, String style){
@@ -396,7 +396,7 @@ public class Wtc extends Welement{
      * 设置右边框
      * @param size 边框宽度(1px)
      * @param color 颜色
-     * @param style 样式(single)
+     * @param style 样式(默认single)
      * @return wtc
      */
     public Wtc setRightBorder(int size, String color, String style){
@@ -407,7 +407,7 @@ public class Wtc extends Welement{
      * 设置上边框
      * @param size 边框宽度(1px)
      * @param color 颜色
-     * @param style 样式(single)
+     * @param style 样式(默认single)
      * @return wtc
      */
     public Wtc setTopBorder(int size, String color, String style){
@@ -418,7 +418,7 @@ public class Wtc extends Welement{
      * 设置下边框
      * @param size 边框宽度(1px)
      * @param color 颜色
-     * @param style 样式(single)
+     * @param style 样式(默认single)
      * @return wtc
      */
     public Wtc setBottomBorder(int size, String color, String style){
@@ -429,7 +429,7 @@ public class Wtc extends Welement{
      * 设置左上至右下边框
      * @param size 边框宽度(1px)
      * @param color 颜色
-     * @param style 样式(single)
+     * @param style 样式(默认single)
      * @return wtc
      */
     public Wtc setTl2brBorder(int size, String color, String style){
@@ -440,7 +440,7 @@ public class Wtc extends Welement{
      * 设置右上至左下边框
      * @param size 边框宽度(1px)
      * @param color 颜色
-     * @param style 样式(single)
+     * @param style 样式(默认single)
      * @return wtc
      */
     public Wtc setTr2blBorder(int size, String color, String style){
@@ -451,9 +451,10 @@ public class Wtc extends Welement{
         Element tcPr = DocxUtil.addElement(tc, "tcPr");
         Element borders = DocxUtil.addElement(tcPr, "tcBorders");
         Element border = DocxUtil.addElement(borders, side);
-        if(null != style) {
-            DocxUtil.addAttribute(border, "val", style);
+        if(null == style) {
+            style = "single";
         }
+        DocxUtil.addAttribute(border, "val", style);
         DocxUtil.addAttribute(border, "sz", size+"");
         if(null != color) {
             DocxUtil.addAttribute(border, "color", color.replace("#", ""));

@@ -1116,7 +1116,7 @@ public class Wtable extends Welement{
      * 设置表格左边框
      * @param size 边框宽度(1px)
      * @param color 颜色
-     * @param style 样式(single)
+     * @param style 样式(默认single)
      * @return wtc
      */
     public Wtable setLeftBorder(int size, String color, String style){
@@ -1127,7 +1127,7 @@ public class Wtable extends Welement{
      * 设置表格右边框
      * @param size 边框宽度(1px)
      * @param color 颜色
-     * @param style 样式(single)
+     * @param style 样式(默认single)
      * @return wtc
      */
     public Wtable setRightBorder(int size, String color, String style){
@@ -1138,7 +1138,7 @@ public class Wtable extends Welement{
      * 设置表格上边框
      * @param size 边框宽度(1px)
      * @param color 颜色
-     * @param style 样式(single)
+     * @param style 样式(默认single)
      * @return wtc
      */
     public Wtable setTopBorder(int size, String color, String style){
@@ -1149,7 +1149,7 @@ public class Wtable extends Welement{
      * 设置表格下边框
      * @param size 边框宽度(1px)
      * @param color 颜色
-     * @param style 样式(single)
+     * @param style 样式(默认single)
      * @return wtc
      */
     public Wtable setBottomBorder(int size, String color, String style){
@@ -1160,7 +1160,7 @@ public class Wtable extends Welement{
      * 设置表格边框
      * @param size 边框宽度(1px)
      * @param color 颜色
-     * @param style 样式(single)
+     * @param style 样式(默认single)
      * @return wtc
      */
     public Wtable setBorder(int size, String color, String style){
@@ -1175,15 +1175,16 @@ public class Wtable extends Welement{
      * @param side left/top/right/bottom
      * @param size 边框宽度(1px)
      * @param color 颜色
-     * @param style 样式(single)
+     * @param style 样式(默认single)
      */
     private void setBorder(String side, int size, String color, String style){
         Element tcPr = DocxUtil.addElement(src, "tblPr");
         Element borders = DocxUtil.addElement(tcPr, "tblBorders");
         Element border = DocxUtil.addElement(borders, side);
-        if(null != style) {
-            DocxUtil.addAttribute(border, "val", style);
+        if(null == style) {
+            style = "single";
         }
+        DocxUtil.addAttribute(border, "val", style);
         DocxUtil.addAttribute(border, "sz", size+"");
         if(null != color) {
             DocxUtil.addAttribute(border, "color", color.replace("#", ""));
