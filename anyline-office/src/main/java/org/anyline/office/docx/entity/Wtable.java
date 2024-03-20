@@ -1112,7 +1112,84 @@ public class Wtable extends Welement{
     }
 
 
-
+    /**
+     * 设置表格左边框
+     * @param size 边框宽度(1px)
+     * @param color 颜色
+     * @param style 样式(single)
+     * @return wtc
+     */
+    public Wtable setLeftBorder(int size, String color, String style){
+        setBorder("left", size, color, style);
+        return this;
+    }
+    /**
+     * 设置表格右边框
+     * @param size 边框宽度(1px)
+     * @param color 颜色
+     * @param style 样式(single)
+     * @return wtc
+     */
+    public Wtable setRightBorder(int size, String color, String style){
+        setBorder("right", size, color, style);
+        return this;
+    }
+    /**
+     * 设置表格上边框
+     * @param size 边框宽度(1px)
+     * @param color 颜色
+     * @param style 样式(single)
+     * @return wtc
+     */
+    public Wtable setTopBorder(int size, String color, String style){
+        setBorder("top", size, color, style);
+        return this;
+    }
+    /**
+     * 设置表格下边框
+     * @param size 边框宽度(1px)
+     * @param color 颜色
+     * @param style 样式(single)
+     * @return wtc
+     */
+    public Wtable setBottomBorder(int size, String color, String style){
+        setBorder("bottom", size, color, style);
+        return this;
+    }
+    /**
+     * 设置表格边框
+     * @param size 边框宽度(1px)
+     * @param color 颜色
+     * @param style 样式(single)
+     * @return wtc
+     */
+    public Wtable setBorder(int size, String color, String style){
+        setBorder("left", size, color, style);
+        setBorder("top", size, color, style);
+        setBorder("right", size, color, style);
+        setBorder("bottom", size, color, style);
+        return this;
+    }
+    /**
+     * 设置表格边框
+     * @param side left/top/right/bottom
+     * @param size 边框宽度(1px)
+     * @param color 颜色
+     * @param style 样式(single)
+     */
+    private void setBorder(String side, int size, String color, String style){
+        Element tcPr = DocxUtil.addElement(src, "tblPr");
+        Element borders = DocxUtil.addElement(tcPr, "tblBorders");
+        Element border = DocxUtil.addElement(borders, side);
+        if(null != style) {
+            DocxUtil.addAttribute(border, "val", style);
+        }
+        DocxUtil.addAttribute(border, "sz", size+"");
+        if(null != color) {
+            DocxUtil.addAttribute(border, "color", color.replace("#", ""));
+        }
+        DocxUtil.addAttribute(border, "space", "0");
+    }
 
 
     public Wtc setColor(int row, int col, String color){
