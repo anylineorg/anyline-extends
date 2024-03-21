@@ -433,7 +433,7 @@ public class SMUtil {
          * 验证签名
          * @param content       待签名内容
          * @param sign          签名值
-         * @return
+         * @return boolean
          */
         public boolean verify(String content, String sign)  {
             byte[] message = Hex.decode(Hex.toHexString(content.getBytes()));
