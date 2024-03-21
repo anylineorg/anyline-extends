@@ -21,6 +21,8 @@ import org.anyline.office.docx.util.DocxUtil;
 import org.dom4j.Element;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public class Wp extends Welement{
@@ -200,5 +202,35 @@ public class Wp extends Welement{
             wr.replace(target, replacement);
         }
         return this;
+    }
+    public String html(){
+        StringBuilder builder = new StringBuilder();
+        LinkedHashMap<String, String> styles = new LinkedHashMap<>();
+        StringBuilder body = new StringBuilder();
+        Iterator<Element> items = src.elementIterator();
+        while (items.hasNext()){
+            Element item = items.next();
+            String tag = item.getName();
+            if(tag.equalsIgnoreCase("pPr")){
+                //TODO 获取样式
+            } else if(tag.equalsIgnoreCase("r")){
+                body.append(new Wr(getDoc(), item).html());
+            } else if(tag.equalsIgnoreCase("tbl")){
+                body.append(new Wtable(getDoc(), item).html());
+            }
+        }
+        builder.append("<div");
+        //样式
+        if(!styles.isEmpty()) {
+            builder.append(" style='");
+            for (String key : styles.keySet()) {
+                builder.append(key).append(":").append(styles.get(key)).append(";");
+            }
+            builder.append("'");
+        }
+        builder.append(">");
+        builder.append(body);
+        builder.append("</div>");
+        return builder.toString();
     }
 }

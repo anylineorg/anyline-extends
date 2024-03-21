@@ -74,7 +74,7 @@ public class Welement {
             for(Element t:ts){
                 String txt = t.getTextTrim();
                 List<String> flags = DocxUtil.splitKey(txt, regex);
-                if(flags.size() == 0){
+                if(flags.isEmpty()){
                     continue;
                 }
                 list.add(t);
@@ -97,11 +97,10 @@ public class Welement {
             for(Element t:ts){
                 String txt = t.getTextTrim();
                 List<String> flags = DocxUtil.splitKey(txt, regex);
-                if(flags.size() == 0){
+                if(flags.isEmpty()){
                     continue;
                 }
-                for(int i=0; i<flags.size(); i++){
-                    String flag = flags.get(i);
+                for(String flag:flags){
                     String key = null;
                     if(flag.startsWith("${") && flag.endsWith("}")) {
                         key = flag.substring(2, flag.length() - 1);
@@ -136,13 +135,13 @@ public class Welement {
      */
     public String getTexts(){
         List<String> list = getTextList();
-        String texts = "";
+        StringBuilder builder = new StringBuilder();
         for(String item:list){
             if(null != item){
-                texts += item;
+                builder.append(item);
             }
         }
-        return texts;
+        return builder.toString();
     }
 
     /**

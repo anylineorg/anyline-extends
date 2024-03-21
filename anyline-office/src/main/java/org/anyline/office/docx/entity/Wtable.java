@@ -23,10 +23,7 @@ import org.anyline.util.*;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Wtable extends Welement{
     private String widthUnit = "px";     // 默认长度单位 px pt cm/厘米
@@ -1970,5 +1967,35 @@ public class Wtable extends Welement{
             wtable.removeContent();
         }
         return wtable;
+    }
+    public String html(){
+        StringBuilder builder = new StringBuilder();
+        LinkedHashMap<String, String> styles = new LinkedHashMap<>();
+        StringBuilder body = new StringBuilder();
+        Iterator<Element> items = src.elementIterator();
+        while (items.hasNext()){
+            Element item = items.next();
+            String tag = item.getName();
+            if(tag.equalsIgnoreCase("tblPr")){
+                //TODO 获取样式
+            }else if(tag.equalsIgnoreCase("tblGrid")){
+                //TODO 获取列宽
+            } else if(tag.equalsIgnoreCase("tr")){
+                body.append(new Wtr(getDoc(), this, item).html());
+            }
+        }
+        builder.append("<table");
+        //样式
+        if(!styles.isEmpty()) {
+            builder.append(" style='");
+            for (String key : styles.keySet()) {
+                builder.append(key).append(":").append(styles.get(key)).append(";");
+            }
+            builder.append("'");
+        }
+        builder.append(">");
+        builder.append(body);
+        builder.append("</table>");
+        return builder.toString();
     }
 }

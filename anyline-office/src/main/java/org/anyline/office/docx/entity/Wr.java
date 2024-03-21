@@ -22,6 +22,8 @@ import org.anyline.util.HtmlUtil;
 import org.dom4j.Element;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public class Wr extends Welement{
@@ -222,5 +224,33 @@ public class Wr extends Welement{
             wt.setText(text);
         }
         return this;
+    }
+    public String html(){
+        StringBuilder builder = new StringBuilder();
+        LinkedHashMap<String, String> styles = new LinkedHashMap<>();
+        StringBuilder body = new StringBuilder();
+        Iterator<Element> items = src.elementIterator();
+        while (items.hasNext()){
+            Element item = items.next();
+            String tag = item.getName();
+            if(tag.equalsIgnoreCase("rPr")){
+                //TODO 获取样式
+            } else if(tag.equalsIgnoreCase("t")){
+                body.append(item.getText());
+            }
+        }
+        builder.append("<span");
+        //样式
+        if(!styles.isEmpty()) {
+            builder.append(" style='");
+            for (String key : styles.keySet()) {
+                builder.append(key).append(":").append(styles.get(key)).append(";");
+            }
+            builder.append("'");
+        }
+        builder.append(">");
+        builder.append(body);
+        builder.append("</span>");
+        return builder.toString();
     }
 }

@@ -399,14 +399,22 @@ public class WDocument extends Welement{
     public Element parent(String bookmark){
         return parent(bookmark, null);
     }
+
+    /**
+     * 读取书签所有的table
+     * @param bookmark 书签
+     * @return docx table
+     */
     public Wtable table(String bookmark){
         Element src = parent(bookmark, "tbl");
-        Wtable table = new Wtable(this, src);
-        return table;
+        if(null != src) {
+            return new Wtable(this, src);
+        }
+        return null;
     }
 
     /**
-     * 获取doby下的table
+     * 获取body下的table
      * @param recursion 是否递归获取所有级别的table,正常情况下不需要,word中的tbl一般在src下的最顶级,除非有表格嵌套
      * @return tables
      */
@@ -1511,5 +1519,22 @@ public class WDocument extends Welement{
         return DocxUtil.listStyles(file);
     }
 
+    public String html(){
+        StringBuilder builder = new StringBuilder();
+        if(null == src){
+            reload();
+        }
+        Iterator<Element> it = src.elementIterator();
+        while(it.hasNext()){
+            Element item = it.next();
+            String tag = item.getName();
+            if(tag.equalsIgnoreCase("p")){
+                builder.append(new Wp(this, item).html());
+            }else if(tag.equalsIgnoreCase("tbl")){
+                builder.append(new Wtable(this, item).html());
+            }
+        }
+        return builder.toString();
+    }
 
 }

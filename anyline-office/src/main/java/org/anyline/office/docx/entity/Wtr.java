@@ -21,6 +21,8 @@ import org.anyline.office.docx.util.DocxUtil;
 import org.dom4j.Element;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public class Wtr extends Welement{
@@ -503,5 +505,33 @@ public class Wtr extends Welement{
             tr.removeContent();
         }
         return tr;
+    }
+    public String html(){
+        StringBuilder builder = new StringBuilder();
+        LinkedHashMap<String, String> styles = new LinkedHashMap<>();
+        StringBuilder body = new StringBuilder();
+        Iterator<Element> items = src.elementIterator();
+        while (items.hasNext()){
+            Element item = items.next();
+            String tag = item.getName();
+            if(tag.equalsIgnoreCase("trPr")){
+                //TODO 获取样式
+            } else if(tag.equalsIgnoreCase("tc")){
+                body.append(new Wtc(getDoc(), this, item).html());
+            }
+        }
+        builder.append("<tr");
+        //样式
+        if(!styles.isEmpty()) {
+            builder.append(" style='");
+            for (String key : styles.keySet()) {
+                builder.append(key).append(":").append(styles.get(key)).append(";");
+            }
+            builder.append("'");
+        }
+        builder.append(">");
+        builder.append(body);
+        builder.append("</tr>");
+        return builder.toString();
     }
 }

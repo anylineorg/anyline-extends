@@ -27,9 +27,7 @@ import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Wtc extends Welement{
     private Wtr parent;
@@ -853,5 +851,39 @@ public class Wtc extends Welement{
             tc.removeContent();
         }
         return tc;
+    }
+    public String html(){
+        StringBuilder builder = new StringBuilder();
+        LinkedHashMap<String, String> styles = new LinkedHashMap<>();
+        StringBuilder body = new StringBuilder();
+        Iterator<Element> items = src.elementIterator();
+        while (items.hasNext()){
+            Element item = items.next();
+            String tag = item.getName();
+            if(tag.equalsIgnoreCase("tcPr")){
+                //TODO 获取样式
+            } else if(tag.equalsIgnoreCase("p")){
+                body.append(new Wp(getDoc(),  item).html());
+            }else if(tag.equalsIgnoreCase("r")){
+                body.append(new Wr(getDoc(),  item).html());
+            }else if(tag.equalsIgnoreCase("tbl")){
+                body.append(new Wtable(getDoc(),  item).html());
+            }else if(tag.equalsIgnoreCase("t")){
+                body.append(item.getText());
+            }
+        }
+        builder.append("<td");
+        //样式
+        if(!styles.isEmpty()) {
+            builder.append(" style='");
+            for (String key : styles.keySet()) {
+                builder.append(key).append(":").append(styles.get(key)).append(";");
+            }
+            builder.append("'");
+        }
+        builder.append(">");
+        builder.append(body);
+        builder.append("</td>");
+        return builder.toString();
     }
 }
