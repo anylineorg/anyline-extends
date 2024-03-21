@@ -20,6 +20,7 @@ package org.anyline.web.controller;
 
 import org.anyline.adapter.EntityAdapter;
 import org.anyline.adapter.KeyAdapter.KEY_CASE;
+import org.anyline.data.param.Config;
 import org.anyline.data.param.ConfigParser;
 import org.anyline.data.param.ConfigStore;
 import org.anyline.data.param.ParseResult;
@@ -338,6 +339,7 @@ public abstract class AbstractBasicController {
 			Map<String,Object> requestValues = WebUtil.value(request);
 			for (String param : arrays) {
 				ParseResult parser = ConfigParser.parse(param,true);
+				parser.setParamFetchType(Config.FETCH_REQUEST_VALUE_TYPE_MULTIPLE);
 				if(requestValues.containsKey(parser.getVar())||requestValues.containsKey(parser.getKey())) {
 					List<Object> values = ConfigParser.getValues(requestValues, parser);
 					map.put(parser.getVar(), values);
@@ -351,6 +353,7 @@ public abstract class AbstractBasicController {
 				DataRow row = new DataRow(keyCase);
 				for (String param : arrays) {
 					ParseResult parser = ConfigParser.parse(param,true);
+					parser.setParamFetchType(Config.FETCH_REQUEST_VALUE_TYPE_MULTIPLE);
 					List<Object> values = map.get(parser.getVar());
 					if(null != values) {
 						if (values.size() > i) {
