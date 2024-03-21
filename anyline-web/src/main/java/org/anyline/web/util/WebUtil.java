@@ -18,6 +18,7 @@
 
 package org.anyline.web.util;
 
+import org.anyline.data.param.Config;
 import org.anyline.data.param.ConfigParser;
 import org.anyline.data.param.ParseResult;
 import org.anyline.entity.DataRow;
@@ -435,6 +436,7 @@ public class WebUtil {
 		parser.setKey(key);
 		parser.setKeyEncrypt(keyEncrypt);
 		parser.setValueEncrypt(valueEncrypt);
+		parser.setParamFetchType(Config.FETCH_REQUEST_VALUE_TYPE_MULTIPLE);
 		result = ConfigParser.getValues(values, parser);
 //		String values[] = null;
 //		if (keyEncrypt) {
