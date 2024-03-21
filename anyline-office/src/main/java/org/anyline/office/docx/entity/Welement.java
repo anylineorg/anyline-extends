@@ -168,4 +168,9 @@ public class Welement {
         }
         return BasicUtil.index(index, size);
     }
+    protected void t(StringBuilder builder, int lvl){
+        for(int i=0; i<lvl; i++){
+            builder.append("\t");
+        }
+    }
 }

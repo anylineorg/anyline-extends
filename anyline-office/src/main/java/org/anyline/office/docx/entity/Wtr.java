@@ -507,6 +507,9 @@ public class Wtr extends Welement{
         return tr;
     }
     public String html(){
+        return html(0);
+    }
+    public String html(int lvl){
         StringBuilder builder = new StringBuilder();
         LinkedHashMap<String, String> styles = new LinkedHashMap<>();
         StringBuilder body = new StringBuilder();
@@ -517,10 +520,12 @@ public class Wtr extends Welement{
             if(tag.equalsIgnoreCase("trPr")){
                 //TODO 获取样式
             } else if(tag.equalsIgnoreCase("tc")){
-                body.append(new Wtc(getDoc(), this, item).html());
+                body.append(new Wtc(getDoc(), this, item).html(lvl+1));
             }
         }
-        builder.append("\n\t<tr");
+        builder.append("\n");
+        t(builder, lvl);
+        builder.append("<tr");
         //样式
         if(!styles.isEmpty()) {
             builder.append(" style='");
@@ -531,7 +536,9 @@ public class Wtr extends Welement{
         }
         builder.append(">");
         builder.append(body);
-        builder.append("\n\t</tr>");
+        builder.append("\n");
+        t(builder, lvl);
+        builder.append("</tr>");
         return builder.toString();
     }
 }

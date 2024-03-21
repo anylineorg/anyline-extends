@@ -204,6 +204,9 @@ public class Wp extends Welement{
         return this;
     }
     public String html(){
+        return html(0);
+    }
+    public String html(int lvl){
         StringBuilder builder = new StringBuilder();
         LinkedHashMap<String, String> styles = new LinkedHashMap<>();
         StringBuilder body = new StringBuilder();
@@ -214,12 +217,14 @@ public class Wp extends Welement{
             if(tag.equalsIgnoreCase("pPr")){
                 //TODO 获取样式
             } else if(tag.equalsIgnoreCase("r")){
-                body.append(new Wr(getDoc(), item).html());
+                body.append(new Wr(getDoc(), item).html(lvl+1));
             } else if(tag.equalsIgnoreCase("tbl")){
-                body.append(new Wtable(getDoc(), item).html());
+                body.append(new Wtable(getDoc(), item).html(lvl+1));
             }
         }
-        builder.append("\n<div");
+        builder.append("\n");
+        t(builder, lvl);
+        builder.append("<div");
         //样式
         if(!styles.isEmpty()) {
             builder.append(" style='");
@@ -228,9 +233,12 @@ public class Wp extends Welement{
             }
             builder.append("'");
         }
-        builder.append(">\n");
+        builder.append(">");
+        builder.append("\n");
         builder.append(body);
-        builder.append("\n</div>");
+        builder.append("\n");
+        t(builder, lvl);
+        builder.append("</div>");
         return builder.toString();
     }
 }

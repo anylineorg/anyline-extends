@@ -1969,6 +1969,9 @@ public class Wtable extends Welement{
         return wtable;
     }
     public String html(){
+        return html(0);
+    }
+    public String html(int lvl){
         StringBuilder builder = new StringBuilder();
         LinkedHashMap<String, String> styles = new LinkedHashMap<>();
         StringBuilder body = new StringBuilder();
@@ -1981,10 +1984,13 @@ public class Wtable extends Welement{
             }else if(tag.equalsIgnoreCase("tblGrid")){
                 //TODO 获取列宽
             } else if(tag.equalsIgnoreCase("tr")){
-                body.append(new Wtr(getDoc(), this, item).html());
+                body.append(new Wtr(getDoc(), this, item).html(lvl+1));
             }
         }
-        builder.append("\n<table");
+
+        builder.append("\n");
+        t(builder, lvl);
+        builder.append("<table");
         //样式
         if(!styles.isEmpty()) {
             builder.append(" style='");
@@ -1994,8 +2000,11 @@ public class Wtable extends Welement{
             builder.append("'");
         }
         builder.append(">");
+        builder.append("\n");
         builder.append(body);
-        builder.append("\n</table>\n");
+        builder.append("\n");
+        t(builder, lvl);
+        builder.append("</table>\n");
         return builder.toString();
     }
 }

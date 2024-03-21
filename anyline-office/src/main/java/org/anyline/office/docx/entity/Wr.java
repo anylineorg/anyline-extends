@@ -226,6 +226,9 @@ public class Wr extends Welement{
         return this;
     }
     public String html(){
+        return html(0);
+    }
+    public String html(int lvl){
         StringBuilder builder = new StringBuilder();
         LinkedHashMap<String, String> styles = new LinkedHashMap<>();
         StringBuilder body = new StringBuilder();

@@ -853,6 +853,9 @@ public class Wtc extends Welement{
         return tc;
     }
     public String html(){
+        return html(0);
+    }
+    public String html(int lvl){
         StringBuilder builder = new StringBuilder();
         LinkedHashMap<String, String> styles = new LinkedHashMap<>();
         StringBuilder body = new StringBuilder();
@@ -865,16 +868,19 @@ public class Wtc extends Welement{
             if(tag.equalsIgnoreCase("tcPr")){
                 //TODO 获取样式
             } else if(tag.equalsIgnoreCase("p")){
-                body.append(new Wp(getDoc(),  item).html());
+                body.append(new Wp(getDoc(),  item).html(lvl+1));
             }else if(tag.equalsIgnoreCase("r")){
-                body.append(new Wr(getDoc(),  item).html());
+                body.append(new Wr(getDoc(),  item).html(lvl+1));
             }else if(tag.equalsIgnoreCase("tbl")){
-                body.append(new Wtable(getDoc(),  item).html());
+                body.append(new Wtable(getDoc(),  item).html(lvl+1));
             }else if(tag.equalsIgnoreCase("t")){
+                t(builder, lvl+1);
                 body.append(item.getText());
             }
         }
-        builder.append("\n\t\t<td");
+        builder.append("\n");
+        t(builder, lvl);
+        builder.append("<td");
         if(colspan > 1){
             builder.append(" colspan='").append(colspan).append("'");
         }
@@ -890,8 +896,11 @@ public class Wtc extends Welement{
             builder.append("'");
         }
         builder.append(">");
+        builder.append("\n");
         builder.append(body);
-        builder.append("\n\t\t</td>");
+        builder.append("\n");
+        t(builder, lvl);
+        builder.append("</td>");
         return builder.toString();
     }
 }
