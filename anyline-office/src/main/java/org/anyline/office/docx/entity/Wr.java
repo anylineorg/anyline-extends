@@ -242,6 +242,7 @@ public class Wr extends Welement{
                 body.append(item.getText());
             }
         }
+        t(builder, lvl);
         builder.append("<span");
         //样式
         if(!styles.isEmpty()) {

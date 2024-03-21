@@ -1984,11 +1984,10 @@ public class Wtable extends Welement{
             }else if(tag.equalsIgnoreCase("tblGrid")){
                 //TODO 获取列宽
             } else if(tag.equalsIgnoreCase("tr")){
+                body.append("\n");
                 body.append(new Wtr(getDoc(), this, item).html(lvl+1));
             }
         }
-
-        builder.append("\n");
         t(builder, lvl);
         builder.append("<table");
         //样式
@@ -2000,7 +1999,6 @@ public class Wtable extends Welement{
             builder.append("'");
         }
         builder.append(">");
-        builder.append("\n");
         builder.append(body);
         builder.append("\n");
         t(builder, lvl);

@@ -868,17 +868,20 @@ public class Wtc extends Welement{
             if(tag.equalsIgnoreCase("tcPr")){
                 //TODO 获取样式
             } else if(tag.equalsIgnoreCase("p")){
+                body.append("\n");
                 body.append(new Wp(getDoc(),  item).html(lvl+1));
             }else if(tag.equalsIgnoreCase("r")){
+                body.append("\n");
                 body.append(new Wr(getDoc(),  item).html(lvl+1));
             }else if(tag.equalsIgnoreCase("tbl")){
+                body.append("\n");
                 body.append(new Wtable(getDoc(),  item).html(lvl+1));
             }else if(tag.equalsIgnoreCase("t")){
+                body.append("\n");
                 t(builder, lvl+1);
                 body.append(item.getText());
             }
         }
-        builder.append("\n");
         t(builder, lvl);
         builder.append("<td");
         if(colspan > 1){
@@ -896,7 +899,6 @@ public class Wtc extends Welement{
             builder.append("'");
         }
         builder.append(">");
-        builder.append("\n");
         builder.append(body);
         builder.append("\n");
         t(builder, lvl);

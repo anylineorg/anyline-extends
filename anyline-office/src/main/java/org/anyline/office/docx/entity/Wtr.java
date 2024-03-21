@@ -520,10 +520,10 @@ public class Wtr extends Welement{
             if(tag.equalsIgnoreCase("trPr")){
                 //TODO 获取样式
             } else if(tag.equalsIgnoreCase("tc")){
+                body.append("\n");
                 body.append(new Wtc(getDoc(), this, item).html(lvl+1));
             }
         }
-        builder.append("\n");
         t(builder, lvl);
         builder.append("<tr");
         //样式
