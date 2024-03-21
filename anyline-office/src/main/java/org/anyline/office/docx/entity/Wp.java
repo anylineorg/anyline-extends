@@ -219,7 +219,7 @@ public class Wp extends Welement{
                 body.append(new Wtable(getDoc(), item).html());
             }
         }
-        builder.append("<div");
+        builder.append("\n<div");
         //样式
         if(!styles.isEmpty()) {
             builder.append(" style='");
@@ -228,9 +228,9 @@ public class Wp extends Welement{
             }
             builder.append("'");
         }
-        builder.append(">");
+        builder.append(">\n");
         builder.append(body);
-        builder.append("</div>");
+        builder.append("\n</div>");
         return builder.toString();
     }
 }

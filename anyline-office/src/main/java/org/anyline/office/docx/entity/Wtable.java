@@ -1984,7 +1984,7 @@ public class Wtable extends Welement{
                 body.append(new Wtr(getDoc(), this, item).html());
             }
         }
-        builder.append("<table");
+        builder.append("\n<table");
         //样式
         if(!styles.isEmpty()) {
             builder.append(" style='");
@@ -1995,7 +1995,7 @@ public class Wtable extends Welement{
         }
         builder.append(">");
         builder.append(body);
-        builder.append("</table>");
+        builder.append("\n</table>\n");
         return builder.toString();
     }
 }

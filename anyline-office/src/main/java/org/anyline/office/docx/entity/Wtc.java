@@ -857,6 +857,8 @@ public class Wtc extends Welement{
         LinkedHashMap<String, String> styles = new LinkedHashMap<>();
         StringBuilder body = new StringBuilder();
         Iterator<Element> items = src.elementIterator();
+        int colspan = getColspan();
+        int rowspan = getRowspan();
         while (items.hasNext()){
             Element item = items.next();
             String tag = item.getName();
@@ -872,7 +874,13 @@ public class Wtc extends Welement{
                 body.append(item.getText());
             }
         }
-        builder.append("<td");
+        builder.append("\n\t\t<td");
+        if(colspan > 1){
+            builder.append(" colspan='").append(colspan).append("'");
+        }
+        if(rowspan > 1){
+            builder.append(" rowspan='").append(rowspan).append("'");
+        }
         //样式
         if(!styles.isEmpty()) {
             builder.append(" style='");
@@ -883,7 +891,7 @@ public class Wtc extends Welement{
         }
         builder.append(">");
         builder.append(body);
-        builder.append("</td>");
+        builder.append("\n\t\t</td>");
         return builder.toString();
     }
 }

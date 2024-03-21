@@ -520,7 +520,7 @@ public class Wtr extends Welement{
                 body.append(new Wtc(getDoc(), this, item).html());
             }
         }
-        builder.append("<tr");
+        builder.append("\n\t<tr");
         //样式
         if(!styles.isEmpty()) {
             builder.append(" style='");
@@ -531,7 +531,7 @@ public class Wtr extends Welement{
         }
         builder.append(">");
         builder.append(body);
-        builder.append("</tr>");
+        builder.append("\n\t</tr>");
         return builder.toString();
     }
 }
