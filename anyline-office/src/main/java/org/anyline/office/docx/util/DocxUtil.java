@@ -1121,94 +1121,94 @@ public class DocxUtil {
         }
         return "dxa";
     }
-    public static final double PT_PER_PX = 0.75;
-    public static final int IN_PER_PT = 72;
-    public static final double CM_PER_PT = 28.3;
-    public static final double MM_PER_PT = 2.83;
-    public static final int EMU_PER_PX = 9525;
-    public static final int EMU_PER_DXA = 635;
-    public static final int px2dxa(int px){
+    public static double PT_PER_PX = 0.75;
+    public static int IN_PER_PT = 72;
+    public static double CM_PER_PT = 28.3;
+    public static double MM_PER_PT = 2.83;
+    public static int EMU_PER_PX = 9525;
+    public static int EMU_PER_DXA = 635;
+    public static int px2dxa(int px){
         return pt2dxa(px2pt(px));
     }
-    public static final int px2dxa(double px){
+    public static int px2dxa(double px){
         return pt2dxa(px2pt(px));
     }
-    public static final int pt2dxa(double pt){
+    public static int pt2dxa(double pt){
         return (int)(pt*20);
     }
-    public static final double dxa2pt(double dxa){
+    public static double dxa2pt(double dxa){
         return  dxa/20;
     }
-    public static final double dxa2px(double dxa){
+    public static double dxa2px(double dxa){
         return  pt2px(dxa2pt(dxa));
     }
-    public static final int px2emu(int px) {
+    public static int px2emu(int px) {
         return px* EMU_PER_PX;
     }
-    public static final double dxa2emu(double dxa){
+    public static double dxa2emu(double dxa){
         return dxa * EMU_PER_DXA;
     }
-    public static final double emu2px(double emu) {
-        return (emu*EMU_PER_PX);
+    public static double emu2px(double emu) {
+        return (emu/EMU_PER_PX);
     }
 
-    public static final double pt2px(double pt) {
+    public static double pt2px(double pt) {
         return (pt/PT_PER_PX);
     }
 
-    public static final double in2px(double in) {
+    public static double in2px(double in) {
         return (in2pt(in)*PT_PER_PX);
     }
 
-    public static final double px2in(double px) {
+    public static double px2in(double px) {
         return pt2in(px2pt(px));
     }
 
-    public static final double cm2px(double cm) {
+    public static double cm2px(double cm) {
         return (cm2pt(cm)*PT_PER_PX);
     }
 
-    public static final double px2cm(double px) {
+    public static double px2cm(double px) {
         return pt2cm(px2pt(px));
     }
 
-    public static final double mm2px(double mm) {
+    public static double mm2px(double mm) {
         return (mm2pt(mm)*PT_PER_PX);
     }
 
-    public static final double px2mm(double px) {
+    public static double px2mm(double px) {
         return pt2mm(px2pt(px));
     }
 
-    public static final double pt2in(double pt) {
+    public static double pt2in(double pt) {
         return (pt/IN_PER_PT);
     }
 
-    public static final double pt2mm(double mm) {
+    public static double pt2mm(double mm) {
         return (mm/MM_PER_PT);
     }
 
-    public static final double pt2cm(double in) {
+    public static double pt2cm(double in) {
         return (in/CM_PER_PT);
     }
 
-    public static final double px2pt(double px) {
+    public static double px2pt(double px) {
         return (px*PT_PER_PX);
     }
 
-    public static final double in2pt(double in) {
+    public static double in2pt(double in) {
         return (in*IN_PER_PT);
     }
 
-    public static final double mm2pt(double mm) {
+    public static double mm2pt(double mm) {
         return (mm*MM_PER_PT);
     }
 
-    public static final double cm2pt(double cm) {
+    public static double cm2pt(double cm) {
         return (cm*CM_PER_PT);
     }
 
-    public static final int cm2dxa(double cm) {
+    public static int cm2dxa(double cm) {
         return px2dxa(cm2px(cm));
     }
 

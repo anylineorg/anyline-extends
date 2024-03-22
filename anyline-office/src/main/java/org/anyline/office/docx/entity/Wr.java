@@ -315,6 +315,52 @@ public class Wr extends Welement{
         return null;
     }
     private String img(Element element){
+
+/*<w:drawing>
+<wp:inline distT="0" distB="0" distL="0" distR="0">
+    <wp:extent cx="2171700" cy="1409700"/>
+    <wp:effectExtent l="19050" t="0" r="0" b="0"/>
+    <wp:docPr id="1" name="图片 1" descr="D:\a.png"/>
+    <wp:cNvGraphicFramePr>
+        <a:graphicFrameLocks xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" noChangeAspect="1"></a:graphicFrameLocks>
+    </wp:cNvGraphicFramePr>
+    <a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
+        <a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture">
+            <pic:pic xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture">
+                <pic:nvPicPr>
+                    <pic:cNvPr id="0" name="Picture 1" descr="D:\a.png"/>
+                    <pic:cNvPicPr>
+                        <a:picLocks noChangeAspect="1" noChangeArrowheads="1"/>
+                    </pic:cNvPicPr>
+                </pic:nvPicPr>
+                <pic:blipFill>
+                    <a:blip r:embed="rId6"/>
+                    <a:srcRect/>
+                    <a:stretch>
+                        <a:fillRect/>
+                    </a:stretch>
+                </pic:blipFill>
+                <pic:spPr bwMode="auto">
+                    <a:xfrm>
+                        <a:off x="0" y="0"/>
+                        <a:ext cx="2171700" cy="1409700"/>
+                    </a:xfrm>
+                    <a:prstGeom prst="rect">
+                        <a:avLst/>
+                    </a:prstGeom>
+                    <a:noFill/>
+                    <a:ln w="9525">
+                        <a:noFill/>
+                        <a:miter lim="800000"/>
+                        <a:headEnd/>
+                        <a:tailEnd/>
+                    </a:ln>
+                </pic:spPr>
+            </pic:pic>
+        </a:graphicData>
+    </a:graphic>
+</wp:inline>
+</w:drawing>*/
         StringBuilder builder = new StringBuilder();
         Element pic = child(element, "inline", "graphic", "graphicData", "pic");
         if(null != pic){
@@ -327,63 +373,35 @@ public class Wr extends Welement{
                     Element rel = root.rel(embed);
                     if(null != rel){
                         String target = rel.attributeValue("Target"); //media/image1.jpeg
-                        InputStream is = root.read(target);
+                        InputStream is = root.read("word/"+target);
                         try {
                             byte[] bytes = BeanUtil.stream2bytes(is);
                             String base64 = Base64.getEncoder().encodeToString(bytes);
-                            builder.append("<img src='data:image/png;base64,").append(base64).append("'/>");
+                            int width = 0;
+                            int height = 0;
+                            Element ext = child(pic, "spPr", "xfrm", "ext");
+                            if(null != ext){
+                                width = (int)DocxUtil.emu2px(BasicUtil.parseInt(ext.attributeValue("cx"), 0));
+                                height = (int)DocxUtil.emu2px(BasicUtil.parseInt(ext.attributeValue("cy"), 0));
+                            }
+                            builder.append("<img src='data:image/png;base64,").append(base64).append("'");
+                            if(width > 0 && height > 0){
+                                builder.append(" style='width:").append(width).append("px; height:").append(height).append("px;'");
+                            }
+                            builder.append("/>");
                         }catch (Exception e){
                             e.printStackTrace();
+                        }finally {
+                            try {
+                                is.close();
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
                         }
                     }
                 }
             }
         }
-        return builder.toString();
-        /*<w:drawing>
-								<wp:inline distT="0" distB="0" distL="0" distR="0">
-									<wp:extent cx="2171700" cy="1409700"/>
-									<wp:effectExtent l="19050" t="0" r="0" b="0"/>
-									<wp:docPr id="1" name="图片 1" descr="D:\a.png"/>
-									<wp:cNvGraphicFramePr>
-										<a:graphicFrameLocks xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" noChangeAspect="1"></a:graphicFrameLocks>
-									</wp:cNvGraphicFramePr>
-									<a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
-										<a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture">
-											<pic:pic xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture">
-												<pic:nvPicPr>
-													<pic:cNvPr id="0" name="Picture 1" descr="D:\a.png"/>
-													<pic:cNvPicPr>
-														<a:picLocks noChangeAspect="1" noChangeArrowheads="1"/>
-													</pic:cNvPicPr>
-												</pic:nvPicPr>
-												<pic:blipFill>
-													<a:blip r:embed="rId6"/>
-													<a:srcRect/>
-													<a:stretch>
-														<a:fillRect/>
-													</a:stretch>
-												</pic:blipFill>
-												<pic:spPr bwMode="auto">
-													<a:xfrm>
-														<a:off x="0" y="0"/>
-														<a:ext cx="2171700" cy="1409700"/>
-													</a:xfrm>
-													<a:prstGeom prst="rect">
-														<a:avLst/>
-													</a:prstGeom>
-													<a:noFill/>
-													<a:ln w="9525">
-														<a:noFill/>
-														<a:miter lim="800000"/>
-														<a:headEnd/>
-														<a:tailEnd/>
-													</a:ln>
-												</pic:spPr>
-											</pic:pic>
-										</a:graphicData>
-									</a:graphic>
-								</wp:inline>
-							</w:drawing>*/
+return builder.toString();
     }
 }
