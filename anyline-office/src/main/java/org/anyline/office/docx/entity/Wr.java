@@ -20,14 +20,12 @@ package org.anyline.office.docx.entity;
 import org.anyline.metadata.BaseMetadata;
 import org.anyline.office.docx.util.DocxUtil;
 import org.anyline.util.BasicUtil;
+import org.anyline.util.BeanUtil;
 import org.anyline.util.HtmlUtil;
 import org.dom4j.Element;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 
 public class Wr extends Welement{
     public Wr(WDocument doc, Element src){
@@ -292,7 +290,8 @@ public class Wr extends Welement{
             if(tag.equalsIgnoreCase("t")){
                 body.append(item.getText());
             }else if(tag.equalsIgnoreCase("drawing")){
-                img(item);
+                String img = img(item);
+                body.append(img);
             }
         }
         t(builder, lvl);
@@ -329,6 +328,13 @@ public class Wr extends Welement{
                     if(null != rel){
                         String target = rel.attributeValue("Target"); //media/image1.jpeg
                         InputStream is = root.read(target);
+                        try {
+                            byte[] bytes = BeanUtil.stream2bytes(is);
+                            String base64 = Base64.getEncoder().encodeToString(bytes);
+                            builder.append("<img src='data:image/png;base64,").append(base64).append("'/>");
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
                     }
                 }
             }
