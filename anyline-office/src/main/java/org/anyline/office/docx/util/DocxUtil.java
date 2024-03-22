@@ -38,9 +38,9 @@ public class DocxUtil {
      * @param key 关键字
      * @return String
      */
-    public static String listStyle(File docx, String key){
+    public static String listStyle(File docx, String key, String charset){
         try {
-            String num_xml = ZipUtil.read(docx, "word/document.xml");
+            String num_xml = ZipUtil.read(docx, "word/document.xml", charset);
             Document document = DocumentHelper.parseText(num_xml);
             List<Element> ts = DomUtil.elements(document.getRootElement(),"t");
             for(Element t:ts){
@@ -71,10 +71,10 @@ public class DocxUtil {
      * @param docx docx文件
      * @return String
      */
-    public static List<String> listStyles(File docx){
+    public static List<String> listStyles(File docx, String charset){
         List<String> list = new ArrayList<>();
         try {
-            String num_xml = ZipUtil.read(docx, "word/numbering.xml");
+            String num_xml = ZipUtil.read(docx, "word/numbering.xml", charset);
             Document document = DocumentHelper.parseText(num_xml);
             List<Element> nums = document.getRootElement().elements("num");
             for(Element num:nums){
@@ -90,11 +90,11 @@ public class DocxUtil {
      * 合并文件(只合并内容document.xml)合并到第一个文件中
      * @param files files
      */
-    public static void merge(File ... files){
+    public static void merge(String charset, File ... files){
         if(null != files && files.length>1){
             List<String> docs = new ArrayList<>();
             for(File file:files){
-                docs.add(ZipUtil.read(file,"word/document.xml"));
+                docs.add(ZipUtil.read(file,"word/document.xml", charset));
             }
             String result = merge(docs);
             try {
@@ -1212,7 +1212,7 @@ public class DocxUtil {
         return px2dxa(cm2px(cm));
     }
 
-    private static Map<String, Integer>fontSizes = new HashMap<String, Integer>() {
+    private static Map<String, Integer> fontSizes = new HashMap<String, Integer>() {
         {
             put("初号", 84);
             put("小初", 72);

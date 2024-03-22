@@ -23,6 +23,7 @@ import org.anyline.util.BasicUtil;
 import org.anyline.util.HtmlUtil;
 import org.dom4j.Element;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -290,6 +291,8 @@ public class Wr extends Welement{
             String tag = item.getName();
             if(tag.equalsIgnoreCase("t")){
                 body.append(item.getText());
+            }else if(tag.equalsIgnoreCase("drawing")){
+                img(item);
             }
         }
         t(builder, lvl);
@@ -299,5 +302,82 @@ public class Wr extends Welement{
         builder.append(body);
         builder.append("</span>");
         return builder.toString();
+    }
+    public Element child(Element parent, String ... tags){
+        if(null != tags){
+            Element element = parent;
+            for(String tag:tags){
+                if(null != element){
+                    element = element.element(tag);
+                }
+            }
+            return element;
+        }
+        return null;
+    }
+    private String img(Element element){
+        StringBuilder builder = new StringBuilder();
+        Element pic = child(element, "inline", "graphic", "graphicData", "pic");
+        if(null != pic){
+            Element blip = child(pic, "blipFill", "blip");
+            if(null != blip){
+                //资源文件id
+                String embed = blip.attributeValue("embed");
+                if(null != embed){
+                    //	<Relationship Id="rId6" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/image1.jpeg"/>
+                    Element rel = root.rel(embed);
+                    if(null != rel){
+                        String target = rel.attributeValue("Target"); //media/image1.jpeg
+                        InputStream is = root.read(target);
+                    }
+                }
+            }
+        }
+        return builder.toString();
+        /*<w:drawing>
+								<wp:inline distT="0" distB="0" distL="0" distR="0">
+									<wp:extent cx="2171700" cy="1409700"/>
+									<wp:effectExtent l="19050" t="0" r="0" b="0"/>
+									<wp:docPr id="1" name="图片 1" descr="D:\a.png"/>
+									<wp:cNvGraphicFramePr>
+										<a:graphicFrameLocks xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" noChangeAspect="1"></a:graphicFrameLocks>
+									</wp:cNvGraphicFramePr>
+									<a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
+										<a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture">
+											<pic:pic xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture">
+												<pic:nvPicPr>
+													<pic:cNvPr id="0" name="Picture 1" descr="D:\a.png"/>
+													<pic:cNvPicPr>
+														<a:picLocks noChangeAspect="1" noChangeArrowheads="1"/>
+													</pic:cNvPicPr>
+												</pic:nvPicPr>
+												<pic:blipFill>
+													<a:blip r:embed="rId6"/>
+													<a:srcRect/>
+													<a:stretch>
+														<a:fillRect/>
+													</a:stretch>
+												</pic:blipFill>
+												<pic:spPr bwMode="auto">
+													<a:xfrm>
+														<a:off x="0" y="0"/>
+														<a:ext cx="2171700" cy="1409700"/>
+													</a:xfrm>
+													<a:prstGeom prst="rect">
+														<a:avLst/>
+													</a:prstGeom>
+													<a:noFill/>
+													<a:ln w="9525">
+														<a:noFill/>
+														<a:miter lim="800000"/>
+														<a:headEnd/>
+														<a:tailEnd/>
+													</a:ln>
+												</pic:spPr>
+											</pic:pic>
+										</a:graphicData>
+									</a:graphic>
+								</wp:inline>
+							</w:drawing>*/
     }
 }

@@ -31,12 +31,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.*;
 
 public class WDocument extends Welement{
     private static Logger log = LoggerFactory.getLogger(WDocument.class);
     private File file;
+    private String charset = "UTF-8";
     private String xml = null;      // document.xml文本
     // word/document.xml
     private org.dom4j.Document doc = null; 
@@ -44,7 +46,7 @@ public class WDocument extends Welement{
 
     // word/_rels/document.xml.rels
     private String relsXml = null;
-    private org.dom4j.Document relsDoc;
+    private org.dom4j.Document rels;
 
     private Map<String, Map<String, String>> styles = new HashMap<String, Map<String, String>>();
     private Map<String, String> replaces = new HashMap<String, String>();
@@ -58,13 +60,22 @@ public class WDocument extends Welement{
         this.file = new File(file);
     }
 
+    public WDocument(File file, String charset){
+        this.file = file;
+        this.charset = charset;
+    }
+    public WDocument(String file, String charset){
+        this.file = new File(file);
+        this.charset = charset;
+    }
+
     private void load(){
         if(null == xml){
             try {
-                xml = ZipUtil.read(file, "word/document.xml");
-                relsXml = ZipUtil.read(file, "word/_rels/document.xml.rels");
+                xml = ZipUtil.read(file, "word/document.xml", charset);
+                relsXml = ZipUtil.read(file, "word/_rels/document.xml.rels", charset);
                 doc = DocumentHelper.parseText(xml);
-                relsDoc = DocumentHelper.parseText(relsXml);
+                rels = DocumentHelper.parseText(relsXml);
                 src = doc.getRootElement().element("body");
             }catch (Exception e){
                 e.printStackTrace();
@@ -73,14 +84,35 @@ public class WDocument extends Welement{
     }
     public void reload(){
         try {
-            xml = ZipUtil.read(file, "word/document.xml");
-            relsXml = ZipUtil.read(file, "word/_rels/document.xml.rels");
+            xml = ZipUtil.read(file, "word/document.xml", charset);
+            relsXml = ZipUtil.read(file, "word/_rels/document.xml.rels", charset);
             doc = DocumentHelper.parseText(xml);
-            relsDoc = DocumentHelper.parseText(relsXml);
+            rels = DocumentHelper.parseText(relsXml);
             src = doc.getRootElement().element("body");
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 根据资源文件id获取element
+     * @param id 文件id
+     * @return Element
+     */
+    public Element rel(String id){
+        if(null != id) {
+            List<Element> elements = rels.getRootElement().elements();
+            for (Element element : elements) {
+                if (id.equalsIgnoreCase(element.attributeValue("Id"))) {
+                    return element;
+                }
+            }
+        }
+        return null;
+    }
+    public InputStream read(String path){
+        InputStream is = ZipUtil.read(file, path);
+        return is;
     }
     public void flush(){
         try {
@@ -128,7 +160,7 @@ public class WDocument extends Welement{
             //合并列的表格,如果没有设置宽度,在wps中只占一列,需要在表格中根据总列数添加
             checkMergeCol();
             ZipUtil.replace(file,"word/document.xml", DomUtil.format(doc), charset);
-            ZipUtil.replace(file,"word/_rels/document.xml.rels", DomUtil.format(relsDoc), charset);
+            ZipUtil.replace(file,"word/_rels/document.xml.rels", DomUtil.format(rels), charset);
 
         }catch (Exception e){
             e.printStackTrace();
@@ -253,7 +285,7 @@ public class WDocument extends Welement{
      */
     private void checkContentTypes(){
         try {
-            String xml = ZipUtil.read(file,"[Content_Types].xml");
+            String xml = ZipUtil.read(file,"[Content_Types].xml", charset);
             org.dom4j.Document doc = DocumentHelper.parseText(xml);
             Element root = doc.getRootElement();
             checkContentTypes(root, "png","image/png");
@@ -983,7 +1015,7 @@ public class WDocument extends Welement{
     }
     private Element word(Element parent, Element prev, File word, String bookmark, Map<String, String> styles){
         Element newPrev = null;
-        String wxml = ZipUtil.read(word,"word/document.xml");
+        String wxml = ZipUtil.read(word,"word/document.xml", charset);
         try {
             Element wsrc =  DocumentHelper.parseText(wxml).getRootElement().element("body");
             List<Element> elements = null;
@@ -1106,13 +1138,13 @@ public class WDocument extends Welement{
             }
             Map<String,File> map = new HashMap<>();
             map.put("word/media/"+img.getName(),img);
-            ZipUtil.append( map,file);
+            ZipUtil.append(map, file);
             if(HttpUtil.isUrl(src)) {
                 // 删除临时文件
                 img.delete();
             }
             // 创建文件资源引用
-            Element relRoot = relsDoc.getRootElement();
+            Element relRoot = rels.getRootElement();
             Element imgRel = relRoot.addElement("Relationship");
             imgRel.addAttribute("Id",rId);
             imgRel.addAttribute("Type","http://schemas.openxmlformats.org/officeDocument/2006/relationships/image");
@@ -1486,7 +1518,7 @@ public class WDocument extends Welement{
      * @return List
      */
     public String listStyle(String key){
-        return DocxUtil.listStyle(file, key);
+        return DocxUtil.listStyle(file, key, charset);
     }
 
     /**
@@ -1516,7 +1548,7 @@ public class WDocument extends Welement{
      * @return List
      */
     public List<String> listStyles(){
-        return DocxUtil.listStyles(file);
+        return DocxUtil.listStyles(file, charset);
     }
 
     public String html(){
