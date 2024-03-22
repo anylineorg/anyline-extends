@@ -17,6 +17,7 @@
 
 package org.anyline.office.docx.entity;
 
+import org.anyline.handler.Uploader;
 import org.anyline.office.docx.util.DocxUtil;
 import org.anyline.util.BasicUtil;
 import org.dom4j.Element;
@@ -258,10 +259,8 @@ public class Wp extends Welement{
         }
         return styles;
     }
-    public String html(){
-        return html(0);
-    }
-    public String html(int lvl){
+
+    public String html(Uploader uploader, int lvl){
         StringBuilder builder = new StringBuilder();
         StringBuilder body = new StringBuilder();
         Iterator<Element> items = src.elementIterator();
@@ -270,10 +269,10 @@ public class Wp extends Welement{
             String tag = item.getName();
            if(tag.equalsIgnoreCase("r")){
                 body.append("\n");
-                body.append(new Wr(getDoc(), item).html(lvl+1));
+                body.append(new Wr(getDoc(), item).html(uploader, lvl+1));
             } else if(tag.equalsIgnoreCase("tbl")){
                 body.append("\n");
-                body.append(new Wtable(getDoc(), item).html(lvl+1));
+                body.append(new Wtable(getDoc(), item).html(uploader, lvl+1));
             }
         }
         t(builder, lvl);

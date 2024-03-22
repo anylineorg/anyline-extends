@@ -16,8 +16,7 @@
 
 
 package org.anyline.office.docx.entity;
-
-import org.anyline.metadata.BaseMetadata;
+import org.anyline.handler.Uploader;
 import org.anyline.office.docx.util.DocxUtil;
 import org.anyline.util.BasicUtil;
 import org.anyline.util.BeanUtil;
@@ -278,9 +277,12 @@ public class Wr extends Welement{
         return styles;
     }
     public String html(){
-        return html(0);
+        return html(null, 0);
     }
-    public String html(int lvl){
+    public String html(Uploader uploader){
+        return html(uploader, 0);
+    }
+    public String html(Uploader uploader, int lvl){
         StringBuilder builder = new StringBuilder();
         StringBuilder body = new StringBuilder();
         Iterator<Element> items = src.elementIterator();
@@ -290,7 +292,7 @@ public class Wr extends Welement{
             if(tag.equalsIgnoreCase("t")){
                 body.append(item.getText());
             }else if(tag.equalsIgnoreCase("drawing")){
-                String img = img(item);
+                String img = img(uploader, item);
                 body.append(img);
             }
         }
@@ -302,19 +304,7 @@ public class Wr extends Welement{
         builder.append("</span>");
         return builder.toString();
     }
-    public Element child(Element parent, String ... tags){
-        if(null != tags){
-            Element element = parent;
-            for(String tag:tags){
-                if(null != element){
-                    element = element.element(tag);
-                }
-            }
-            return element;
-        }
-        return null;
-    }
-    private String img(Element element){
+    private String img(Uploader uploader, Element element){
 
 /*<w:drawing>
 <wp:inline distT="0" distB="0" distL="0" distR="0">
@@ -375,8 +365,6 @@ public class Wr extends Welement{
                         String target = rel.attributeValue("Target"); //media/image1.jpeg
                         InputStream is = root.read("word/"+target);
                         try {
-                            byte[] bytes = BeanUtil.stream2bytes(is);
-                            String base64 = Base64.getEncoder().encodeToString(bytes);
                             int width = 0;
                             int height = 0;
                             Element ext = child(pic, "spPr", "xfrm", "ext");
@@ -384,7 +372,16 @@ public class Wr extends Welement{
                                 width = (int)DocxUtil.emu2px(BasicUtil.parseInt(ext.attributeValue("cx"), 0));
                                 height = (int)DocxUtil.emu2px(BasicUtil.parseInt(ext.attributeValue("cy"), 0));
                             }
-                            builder.append("<img src='data:image/png;base64,").append(base64).append("'");
+                            builder.append("<img src='");
+                            if(null == uploader) {
+                                byte[] bytes = BeanUtil.stream2bytes(is);
+                                String base64 = Base64.getEncoder().encodeToString(bytes);
+                                builder.append("data:image/png;base64,").append(base64);
+                            }else{
+                                String url = uploader.upload(null, is);
+                                builder.append(url);
+                            }
+                            builder.append("'");
                             if(width > 0 && height > 0){
                                 builder.append(" style='width:").append(width).append("px; height:").append(height).append("px;'");
                             }

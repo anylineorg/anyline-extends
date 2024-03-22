@@ -21,6 +21,7 @@ import org.anyline.entity.html.Table;
 import org.anyline.entity.html.Td;
 import org.anyline.entity.html.Tr;
 import org.anyline.net.HttpUtil;
+import org.anyline.handler.Uploader;
 import org.anyline.office.docx.util.DocxUtil;
 import org.anyline.util.*;
 import org.anyline.util.regular.RegularUtil;
@@ -1551,7 +1552,7 @@ public class WDocument extends Welement{
         return DocxUtil.listStyles(file, charset);
     }
 
-    public String html(){
+    public String html(Uploader uploader, int lvl){
         StringBuilder builder = new StringBuilder();
         if(null == src){
             reload();
@@ -1561,9 +1562,9 @@ public class WDocument extends Welement{
             Element item = it.next();
             String tag = item.getName();
             if(tag.equalsIgnoreCase("p")){
-                builder.append(new Wp(this, item).html());
+                builder.append(new Wp(this, item).html(uploader, lvl+1));
             }else if(tag.equalsIgnoreCase("tbl")){
-                builder.append(new Wtable(this, item).html());
+                builder.append(new Wtable(this, item).html(uploader, lvl+1));
             }
         }
         return builder.toString();

@@ -17,6 +17,7 @@
 
 package org.anyline.office.docx.entity;
 
+import org.anyline.handler.Uploader;
 import org.anyline.office.docx.util.DocxUtil;
 import org.anyline.util.BasicUtil;
 import org.dom4j.Element;
@@ -524,34 +525,21 @@ public class Wtr extends Welement{
         }
         return styles;
     }
-    public String html(){
-        return html(0);
-    }
-    public String html(int lvl){
+    public String html(Uploader uploader, int lvl){
         StringBuilder builder = new StringBuilder();
         LinkedHashMap<String, String> styles = new LinkedHashMap<>();
         StringBuilder body = new StringBuilder();
         Iterator<Element> items = src.elementIterator();
         while (items.hasNext()){
             Element item = items.next();
-            String tag = item.getName();
-            if(tag.equalsIgnoreCase("trPr")){
-                //TODO 获取样式
-            } else if(tag.equalsIgnoreCase("tc")){
+            String tag = item.getName();if(tag.equalsIgnoreCase("tc")){
                 body.append("\n");
-                body.append(new Wtc(getDoc(), this, item).html(lvl+1));
+                body.append(new Wtc(getDoc(), this, item).html(uploader, lvl+1));
             }
         }
         t(builder, lvl);
         builder.append("<tr");
-        //样式
-        if(!styles.isEmpty()) {
-            builder.append(" style='");
-            for (String key : styles.keySet()) {
-                builder.append(key).append(":").append(styles.get(key)).append(";");
-            }
-            builder.append("'");
-        }
+        styles(builder);
         builder.append(">");
         builder.append(body);
         builder.append("\n");

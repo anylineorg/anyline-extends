@@ -17,6 +17,7 @@
 
 package org.anyline.office.docx.entity;
 
+import org.anyline.handler.Uploader;
 import org.anyline.office.docx.util.DocxUtil;
 import org.anyline.util.BasicUtil;
 import org.anyline.util.DomUtil;
@@ -913,10 +914,8 @@ public class Wtc extends Welement{
         }
         return styles;
     }
-    public String html(){
-        return html(0);
-    }
-    public String html(int lvl){
+
+    public String html(Uploader uploader, int lvl){
         StringBuilder builder = new StringBuilder();
         LinkedHashMap<String, String> styles = new LinkedHashMap<>();
         StringBuilder body = new StringBuilder();
@@ -928,13 +927,13 @@ public class Wtc extends Welement{
             String tag = item.getName();
             if(tag.equalsIgnoreCase("p")){
                 body.append("\n");
-                body.append(new Wp(getDoc(),  item).html(lvl+1));
+                body.append(new Wp(getDoc(),  item).html(uploader, lvl+1));
             }else if(tag.equalsIgnoreCase("r")){
                 body.append("\n");
-                body.append(new Wr(getDoc(),  item).html(lvl+1));
+                body.append(new Wr(getDoc(),  item).html(uploader, lvl+1));
             }else if(tag.equalsIgnoreCase("tbl")){
                 body.append("\n");
-                body.append(new Wtable(getDoc(),  item).html(lvl+1));
+                body.append(new Wtable(getDoc(),  item).html(uploader, lvl+1));
             }else if(tag.equalsIgnoreCase("t")){
                 body.append("\n");
                 t(builder, lvl+1);

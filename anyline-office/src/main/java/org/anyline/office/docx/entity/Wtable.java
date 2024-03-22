@@ -18,6 +18,7 @@
 package org.anyline.office.docx.entity;
 
 import org.anyline.entity.html.TableBuilder;
+import org.anyline.handler.Uploader;
 import org.anyline.office.docx.util.DocxUtil;
 import org.anyline.util.*;
 import org.dom4j.DocumentHelper;
@@ -2038,11 +2039,10 @@ public class Wtable extends Welement{
         LinkedHashMap<String, String> styles = new LinkedHashMap<>();
         return styles;
     }
-    public String html(int lvl){
+    public String html(Uploader uploader, int lvl){
         spans();//计算colspan rowspan
         StringBuilder builder = new StringBuilder();
         StringBuilder body = new StringBuilder();
-        LinkedHashMap<String, String> styles = styles();
         int rows = 0;
         for(Wtr tr:wtrs){
             body.append("\n");
@@ -2059,7 +2059,7 @@ public class Wtable extends Welement{
                 tc.setRowspan(rowspan);
                 tc.setColspan(colspan);
                 if(colspan > 0 && rowspan > 0) {
-                    body.append(tc.html(lvl + 2));
+                    body.append(tc.html(uploader, lvl + 2));
                 }
                 if(colspan > 1){
                     cols += colspan-1;

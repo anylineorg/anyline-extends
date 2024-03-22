@@ -1,5 +1,6 @@
 package org.anyline.office.docx.entity;
 
+import org.anyline.handler.Uploader;
 import org.anyline.office.docx.util.DocxUtil;
 import org.anyline.util.BasicUtil;
 import org.anyline.util.DomUtil;
@@ -169,6 +170,20 @@ public class Welement {
         }
         return BasicUtil.index(index, size);
     }
+
+    public Element child(Element parent, String ... tags){
+        if(null != tags){
+            Element element = parent;
+            for(String tag:tags){
+                if(null != element){
+                    element = element.element(tag);
+                }
+            }
+            return element;
+        }
+        return null;
+    }
+
     protected void t(StringBuilder builder, int lvl){
         for(int i=0; i<lvl; i++){
             builder.append("\t");
@@ -193,9 +208,15 @@ public class Welement {
         return color;
     }
     public String html(){
-        return html(0);
+        return html(null, 0);
     }
     public String html(int lvl){
+        return html(null, lvl);
+    }
+    public String html(Uploader uploader){
+        return html(uploader, 0);
+    }
+    public String html(Uploader uploader, int lvl){
         return "";
     }
 }
