@@ -17,7 +17,9 @@
 
 package org.anyline.office.docx.entity;
 
+import org.anyline.metadata.BaseMetadata;
 import org.anyline.office.docx.util.DocxUtil;
+import org.anyline.util.BasicUtil;
 import org.anyline.util.HtmlUtil;
 import org.dom4j.Element;
 
@@ -225,33 +227,74 @@ public class Wr extends Welement{
         }
         return this;
     }
+    public LinkedHashMap<String, String> styles(){
+        LinkedHashMap<String, String> styles = new LinkedHashMap<>();
+        Element pr = src.element("rPr");
+        if(null != pr){
+            //<w:color w:val="0070C0"/>
+            Element color = pr.element("color");
+            if(null != color){
+                String val = color(color.attributeValue("val"));
+                if(null != val){
+                    styles.put("color", val);
+                }
+            }
+            //<w:highlight w:val="yellow"/>
+            Element highlight = pr.element("highlight");
+            if(null != highlight){
+                String val = color(highlight.attributeValue("val"));
+                if(null != val){
+                    styles.put("background-color", val);
+                }
+            }
+
+            //<w:rFonts w:hint="eastAsia"/>
+            Element font = pr.element("rFonts");
+            if(null != font){
+                String hint = font.attributeValue("hint");
+                if(null != hint){
+                    styles.put("font-family", hint);
+                }
+            }
+            //<w:sz w:val="24"/>
+            Element size = pr.element("sz");
+            if(null == size){
+                size = pr.element("szCs");
+            }
+            if(null != size){
+                int val = BasicUtil.parseInt(size.attributeValue("val"), 0);
+                if(val > 0){
+                    styles.put("font-size", val+"pt");
+                }
+            }
+            //<w:jc w:val="center"/>
+            Element jc = pr.element("jc");
+            if(null != jc){
+                String val = jc.attributeValue("val");
+                if(null != val){
+                    styles.put("text-align", val);
+                }
+            }
+        }
+        return styles;
+    }
     public String html(){
         return html(0);
     }
     public String html(int lvl){
         StringBuilder builder = new StringBuilder();
-        LinkedHashMap<String, String> styles = new LinkedHashMap<>();
         StringBuilder body = new StringBuilder();
         Iterator<Element> items = src.elementIterator();
         while (items.hasNext()){
             Element item = items.next();
             String tag = item.getName();
-            if(tag.equalsIgnoreCase("rPr")){
-                //TODO 获取样式
-            } else if(tag.equalsIgnoreCase("t")){
+            if(tag.equalsIgnoreCase("t")){
                 body.append(item.getText());
             }
         }
         t(builder, lvl);
         builder.append("<span");
-        //样式
-        if(!styles.isEmpty()) {
-            builder.append(" style='");
-            for (String key : styles.keySet()) {
-                builder.append(key).append(":").append(styles.get(key)).append(";");
-            }
-            builder.append("'");
-        }
+        styles(builder);
         builder.append(">");
         builder.append(body);
         builder.append("</span>");

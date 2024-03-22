@@ -33,6 +33,8 @@ public class Wtc extends Welement{
     private Wtr parent;
     private List<Wp> wps = new ArrayList<>();
     private String widthUnit = "px";     // 默认长度单位 px pt cm/厘米
+    private int colspan = -1; //-1:未设置  1:不合并  0:被合并  >1:合并其他单元格
+    private int rowspan = -1;
     public Wtc(WDocument doc, Wtr parent, Element src){
         this.root = doc;
         this.src = src;
@@ -92,19 +94,37 @@ public class Wtc extends Welement{
         this.widthUnit = widthUnit;
     }
 
+    public void setColspan(int colspan) {
+        this.colspan = colspan;
+    }
+
+    public void setRowspan(int rowspan) {
+        this.rowspan = rowspan;
+    }
+
     /**
      * 当前单元格合并列数量
      * @return colspan
      */
     public int getColspan(){
+        if(colspan == -1) {
+            colspan = parseColspan();
+        }
+        if(colspan == -1){
+            return 1;
+        }
+        return colspan;
+    }
+
+    public int parseColspan(){
         Element tcPr = src.element("tcPr");
-        if(null != tcPr){
+        if (null != tcPr) {
             Element gridSpan = tcPr.element("gridSpan");
-            if(null != gridSpan){
-                return BasicUtil.parseInt(gridSpan.attributeValue("val"), 1);
+            if (null != gridSpan) {
+                colspan = BasicUtil.parseInt(gridSpan.attributeValue("val"), 1);
             }
         }
-        return 1;
+        return colspan;
     }
 
     /**
@@ -112,14 +132,26 @@ public class Wtc extends Welement{
      * @return rowspan
      */
     public int getRowspan(){
+        if(rowspan == -1){
+            return 1;
+        }
+        return rowspan;
+    }
+
+    /**
+     *
+     * @return 2:合并其他行 1:不合并 0:被合并
+     */
+    public int parseRowspan(){
         Element tcPr = src.element("tcPr");
         if(null != tcPr){
             Element vMerge = tcPr.element("vMerge");
             if(null != vMerge){
                 String val = vMerge.attributeValue("val");
                 if(!"restart".equalsIgnoreCase(val)){
-                    return -1;
+                    return 0;
                 }
+                return 2;
             }
         }
         return 1;
@@ -840,17 +872,46 @@ public class Wtc extends Welement{
         return this;
     }
 
-    /**
-     * 复制一列
-     * @param content 是复制空其中内容
-     * @return wtr
-     */
-    public Wtc clone(boolean content){
-        Wtc tc = new Wtc(root, parent, this.getSrc().createCopy());
-        if(!content){
-            tc.removeContent();
+    public LinkedHashMap<String, String> styles(){
+        LinkedHashMap<String, String> styles = new LinkedHashMap<>();
+        Element pr = src.element("tcPr");
+        if(null != pr){
+            //<w:tcW w:w="3436" w:type="dxa"/>
+            Element w = pr.element("tcW");
+            if(null != w){
+                int width = BasicUtil.parseInt(w.attributeValue("w"), 0);
+                if(width > 0){
+                    styles.put("width", (int)DocxUtil.dxa2px(width)+"px");
+                }
+            }
+            /*<w:tcBorders>
+                <w:top w:val="single" w:sz="4" w:space="0" w:color="C0504D" w:themeColor="accent2"/>
+                <w:left w:val="single" w:sz="4" w:space="0" w:color="C0504D" w:themeColor="accent2"/>
+                <w:bottom w:val="single" w:sz="4" w:space="0" w:color="C0504D" w:themeColor="accent2"/>
+                <w:right w:val="single" w:sz="4" w:space="0" w:color="C0504D" w:themeColor="accent2"/>
+            </w:tcBorders>
+            */
+            //<w:shd w:val="pct5" w:color="92D050" w:fill="auto"/>
+            Element shd = src.element("shd");
+            if(null != shd){
+                String color = color(shd.attributeValue("color"));
+                if(null != color){
+                    styles.put("background-color", color);
+                }
+            }
+            //<w:vAlign w:val="center"/>
+            Element valign = pr.element("vAlign");
+            if(null != valign){
+                String val = valign.attributeValue("val");
+                if(null != val){
+                    if(val.equalsIgnoreCase("center")){
+                        val = "middle";
+                    }
+                    styles.put("vertical-align", val);
+                }
+            }
         }
-        return tc;
+        return styles;
     }
     public String html(){
         return html(0);
@@ -865,9 +926,7 @@ public class Wtc extends Welement{
         while (items.hasNext()){
             Element item = items.next();
             String tag = item.getName();
-            if(tag.equalsIgnoreCase("tcPr")){
-                //TODO 获取样式
-            } else if(tag.equalsIgnoreCase("p")){
+            if(tag.equalsIgnoreCase("p")){
                 body.append("\n");
                 body.append(new Wp(getDoc(),  item).html(lvl+1));
             }else if(tag.equalsIgnoreCase("r")){
@@ -884,19 +943,12 @@ public class Wtc extends Welement{
         }
         t(builder, lvl);
         builder.append("<td");
+        styles(builder);
         if(colspan > 1){
             builder.append(" colspan='").append(colspan).append("'");
         }
         if(rowspan > 1){
             builder.append(" rowspan='").append(rowspan).append("'");
-        }
-        //样式
-        if(!styles.isEmpty()) {
-            builder.append(" style='");
-            for (String key : styles.keySet()) {
-                builder.append(key).append(":").append(styles.get(key)).append(";");
-            }
-            builder.append("'");
         }
         builder.append(">");
         builder.append(body);
@@ -904,5 +956,17 @@ public class Wtc extends Welement{
         t(builder, lvl);
         builder.append("</td>");
         return builder.toString();
+    }
+    /**
+     * 复制一列
+     * @param content 是复制空其中内容
+     * @return wtr
+     */
+    public Wtc clone(boolean content){
+        Wtc tc = new Wtc(root, parent, this.getSrc().createCopy());
+        if(!content){
+            tc.removeContent();
+        }
+        return tc;
     }
 }

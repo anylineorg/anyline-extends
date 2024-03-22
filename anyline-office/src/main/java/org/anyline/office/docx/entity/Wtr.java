@@ -18,6 +18,7 @@
 package org.anyline.office.docx.entity;
 
 import org.anyline.office.docx.util.DocxUtil;
+import org.anyline.util.BasicUtil;
 import org.dom4j.Element;
 
 import java.util.ArrayList;
@@ -505,6 +506,23 @@ public class Wtr extends Welement{
             tr.removeContent();
         }
         return tr;
+    }
+
+
+    public LinkedHashMap<String, String> styles(){
+        LinkedHashMap<String, String> styles = new LinkedHashMap<>();
+        Element pr = src.element("trPr");
+        if(null != pr){
+            //<w:trHeight w:val="284"/>
+            Element h = pr.element("trHeight");
+            if(null != h){
+                int height = BasicUtil.parseInt(h.attributeValue("val"), 0);
+                if(height > 0){
+                    styles.put("height", (int)DocxUtil.dxa2px(height)+"px");
+                }
+            }
+        }
+        return styles;
     }
     public String html(){
         return html(0);

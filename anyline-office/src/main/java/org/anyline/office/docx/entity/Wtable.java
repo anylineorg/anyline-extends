@@ -1959,6 +1959,129 @@ public class Wtable extends Welement{
         isAutoLoad = autoLoad;
     }
 
+    private final List<List<Spans>> spans_set = new ArrayList<>();
+    public Spans spans(int row, int col){
+        if(row < spans_set.size()){
+            List<Spans> spans = spans_set.get(row);
+            if(col < spans.size()){
+                return spans.get(col);
+            }
+        }
+        return null;
+    }
+    public int rowspan(int row, int col){
+        Spans spans = spans(row, col);
+        if(null != spans){
+            return spans.getRowspan();
+        }
+        return -1;
+    }
+    public int colspan(int row, int col){
+        Spans spans = spans(row, col);
+        if(null != spans){
+            return spans.getColspan();
+        }
+        return -1;
+    }
+    /**
+     * 计算行列合并值
+     */
+    public void spans(){
+        //1不合并 0被合并 >1合并其他单元格
+        spans_set.clear();
+        int rows = wtrs.size();
+        for(int row=0; row<rows; row++){
+            Wtr tr = wtrs.get(row);
+            List<Spans> spans_row = new ArrayList<>();
+            spans_set.add(spans_row);
+            List<Wtc> tcs = tr.getTcs();
+            int cols = tcs.size();
+            for(int col=0; col<cols; col++){
+                Wtc tc = tcs.get(col);
+                //合并列
+                int colspan = tc.parseColspan();
+                if(colspan == -1){
+                    colspan = 1;
+                }
+                Spans spans = new Spans();
+                spans_row.add(spans);
+                spans.setColspan(colspan);
+                if(colspan > 1){
+                    //右则标签被删除，补齐
+                    for(int i=1; i<colspan; i++){
+                        Spans right = new Spans();
+                        right.setColspan(0);
+                        right.setRowspan(1);
+                        spans_row.add(right);
+                    }
+                }
+                //2:合并其他行 1:不合并 0:被合并
+                int rowspan = tc.parseRowspan();
+                if(rowspan == 0){
+                    //被合并,上面单元格 +rowspan
+                    for(int i=row-1; i>=0; i--){
+                        Spans up = spans_set.get(i).get(col);
+                        if(up.getRowspan() != 0){
+                            up.addRowspan(1);
+                            break;
+                        }
+                    }
+                    spans.setRowspan(0);
+                }else{
+                    spans.setRowspan(1);
+                }
+
+            }
+        }
+    }
+    public LinkedHashMap<String, String> styles(){
+        LinkedHashMap<String, String> styles = new LinkedHashMap<>();
+        return styles;
+    }
+    public String html(int lvl){
+        spans();//计算colspan rowspan
+        StringBuilder builder = new StringBuilder();
+        StringBuilder body = new StringBuilder();
+        LinkedHashMap<String, String> styles = styles();
+        int rows = 0;
+        for(Wtr tr:wtrs){
+            body.append("\n");
+            t(body, lvl+1);
+            body.append("<tr");
+            tr.styles(body);
+            body.append(">\n");
+            List<Wtc> tcs = tr.getTcs();
+            int cols = 0;
+            for(Wtc tc:tcs){
+                Spans spans = spans(rows, cols);
+                int rowspan = spans.getRowspan();
+                int colspan = spans.getColspan();
+                tc.setRowspan(rowspan);
+                tc.setColspan(colspan);
+                if(colspan > 0 && rowspan > 0) {
+                    body.append(tc.html(lvl + 2));
+                }
+                if(colspan > 1){
+                    cols += colspan-1;
+                }
+                cols ++;
+            }
+            body.append("\n");
+            t(body, lvl+1);
+            body.append("</tr>");
+            rows ++;
+        }
+        t(builder, lvl);
+        builder.append("<table");
+        styles(builder);
+        builder.append(">");
+        builder.append(body);
+        builder.append("\n");
+        t(builder, lvl);
+        builder.append("</table>\n");
+        return builder.toString();
+    }
+
 
     public Wtable clone(boolean content){
         Element src = this.src.createCopy();
@@ -1967,42 +2090,5 @@ public class Wtable extends Welement{
             wtable.removeContent();
         }
         return wtable;
-    }
-    public String html(){
-        return html(0);
-    }
-    public String html(int lvl){
-        StringBuilder builder = new StringBuilder();
-        LinkedHashMap<String, String> styles = new LinkedHashMap<>();
-        StringBuilder body = new StringBuilder();
-        Iterator<Element> items = src.elementIterator();
-        while (items.hasNext()){
-            Element item = items.next();
-            String tag = item.getName();
-            if(tag.equalsIgnoreCase("tblPr")){
-                //TODO 获取样式
-            }else if(tag.equalsIgnoreCase("tblGrid")){
-                //TODO 获取列宽
-            } else if(tag.equalsIgnoreCase("tr")){
-                body.append("\n");
-                body.append(new Wtr(getDoc(), this, item).html(lvl+1));
-            }
-        }
-        t(builder, lvl);
-        builder.append("<table");
-        //样式
-        if(!styles.isEmpty()) {
-            builder.append(" style='");
-            for (String key : styles.keySet()) {
-                builder.append(key).append(":").append(styles.get(key)).append(";");
-            }
-            builder.append("'");
-        }
-        builder.append(">");
-        builder.append(body);
-        builder.append("\n");
-        t(builder, lvl);
-        builder.append("</table>\n");
-        return builder.toString();
     }
 }

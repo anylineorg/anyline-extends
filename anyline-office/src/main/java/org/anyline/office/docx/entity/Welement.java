@@ -6,6 +6,7 @@ import org.anyline.util.DomUtil;
 import org.dom4j.Element;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -172,5 +173,29 @@ public class Welement {
         for(int i=0; i<lvl; i++){
             builder.append("\t");
         }
+    }
+    public LinkedHashMap<String, String> styles(){
+        LinkedHashMap<String, String> styles = new LinkedHashMap<>();
+        return styles;
+    }
+    public LinkedHashMap<String, String> styles(StringBuilder builder){
+        LinkedHashMap<String, String> styles = styles();
+        if(!styles.isEmpty()){
+            builder.append(" style = '");
+            for (String key:styles.keySet()){
+                builder.append(key).append(":").append(styles.get(key)).append(";");
+            }
+            builder.append("'");
+        }
+        return styles;
+    }
+    public String color(String color){
+        return color;
+    }
+    public String html(){
+        return html(0);
+    }
+    public String html(int lvl){
+        return "";
     }
 }
