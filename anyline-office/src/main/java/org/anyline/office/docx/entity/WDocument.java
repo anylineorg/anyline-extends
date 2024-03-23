@@ -20,7 +20,7 @@ package org.anyline.office.docx.entity;
 import org.anyline.entity.html.Table;
 import org.anyline.entity.html.Td;
 import org.anyline.entity.html.Tr;
-import org.anyline.net.HttpUtil;
+import org.anyline.handler.Downloader;
 import org.anyline.handler.Uploader;
 import org.anyline.office.docx.util.DocxUtil;
 import org.anyline.util.*;
@@ -51,6 +51,14 @@ public class WDocument extends Welement{
 
     private Map<String, Map<String, String>> styles = new HashMap<String, Map<String, String>>();
     private Map<String, String> replaces = new HashMap<String, String>();
+    /**
+     * word转html时遇到文件需要上传到文件服务器，并返回url
+     */
+    private Uploader uploader;
+    /**
+     * html转word时遇到url需要下载到本地
+     */
+    private Downloader downloader;
     private int listNum = 0;
 
 
@@ -518,6 +526,23 @@ public class WDocument extends Welement{
         }
 
     }
+
+    public Uploader getUploader() {
+        return uploader;
+    }
+
+    public void setUploader(Uploader uploader) {
+        this.uploader = uploader;
+    }
+
+    public Downloader getDownloader() {
+        return downloader;
+    }
+
+    public void setDownloader(Downloader downloader) {
+        this.downloader = downloader;
+    }
+
     public static int index(Element parent, Element element){
         int index = parent.indexOf(element);
         while(element.getParent() != parent){
@@ -1127,9 +1152,14 @@ public class WDocument extends Welement{
         File img = null;
         try {
             // 下载文件
-            if(HttpUtil.isUrl(src)) {
+            if(RegularUtil.isUrl(src)) {
                 img = new File(tmpdir,"image" + rdm + "." + subfix);
-                HttpUtil.download(src, img);
+                if(null != downloader){
+                    downloader.download(src, img);
+                    //HttpUtil.download(src, img);
+                }else{
+                    log.error("未提供 downloader,无法下载:{}", src);
+                }
             }else{
                 // 本地图片
                 if(src.startsWith("file:")){
@@ -1140,7 +1170,7 @@ public class WDocument extends Welement{
             Map<String,File> map = new HashMap<>();
             map.put("word/media/"+img.getName(),img);
             ZipUtil.append(map, file);
-            if(HttpUtil.isUrl(src)) {
+            if(RegularUtil.isUrl(src) && img.exists()) {
                 // 删除临时文件
                 img.delete();
             }

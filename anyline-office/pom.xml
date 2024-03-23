@@ -19,12 +19,7 @@
     <dependencies>
         <dependency>
             <groupId>org.anyline</groupId>
-            <artifactId>anyline-net</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpmime</artifactId>
-            <scope>provided</scope>
+            <artifactId>anyline-core</artifactId>
         </dependency>
     </dependencies>
 </project>
