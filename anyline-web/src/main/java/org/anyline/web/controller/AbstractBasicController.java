@@ -77,7 +77,7 @@ public abstract class AbstractBasicController {
 		}
 		if(!is_elistener_load) {
 			try {
-				elistener = SpringContextUtil.getBean(EntityListener.class);
+				//elistener = SpringContextUtil.getBean(EntityListener.class);
 			}catch (Exception e){}
 			is_elistener_load = true;
 		}
@@ -95,7 +95,7 @@ public abstract class AbstractBasicController {
 		}
 		if(!is_clistener_load) {
 			try {
-				clistener = SpringContextUtil.getBean(ControllerListener.class);
+				//clistener = SpringContextUtil.getBean(ControllerListener.class);
 			}catch (Exception e){}
 			is_clistener_load = true;
 		}

@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.anyline</groupId>
         <artifactId>anyline-dependency</artifactId>
-        <version>8.7.1-SNAPSHOT</version>
+        <version>8.7.2-SNAPSHOT</version>
         <relativePath/>
     </parent>
 
@@ -25,6 +25,11 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpmime</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>

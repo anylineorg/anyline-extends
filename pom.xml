@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.anyline</groupId>
 	<artifactId>anyline-extends</artifactId>
-	<version>8.7.1-SNAPSHOT</version>
+	<version>8.7.2-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>anyline-extends</name>
     <modules>
@@ -43,6 +43,8 @@
 		<module>anyline-mvc</module>
 		<module>anyline-web</module>
 		<module>anyline-web-ext</module>
+		<module>anyline-feishu</module>
+		<module>anyline-extends-environment</module>
 	</modules>
 	<build>
 		<plugins>
