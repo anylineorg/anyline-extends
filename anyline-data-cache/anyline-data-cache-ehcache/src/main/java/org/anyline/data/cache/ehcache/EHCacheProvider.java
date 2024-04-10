@@ -169,18 +169,18 @@ public class EHCacheProvider implements CacheProvider {
 			result = cache.get(key);
 			if(null == result){
 		    	if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
-		    		log.warn("[缓存不存在][cnannel:{}][key:{}][生存:-1/{}]",channel, key,cache.getCacheConfiguration().getTimeToLiveSeconds());
+		    		log.warn("[缓存不存在][channel:{}][key:{}][生存:-1/{}]", channel, key,cache.getCacheConfiguration().getTimeToLiveSeconds());
 		    	}
 				return null;
 			}
 			if(result.isExpired()){
 		    	if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
-		    		log.warn("[缓存数据提取成功但已过期][耗时:{}][cnannel:{}][key:{}][命中:{}][生存:{}/{}]",System.currentTimeMillis()-fr,channel,key,result.getHitCount(),(System.currentTimeMillis() - result.getCreationTime())/1000,result.getTimeToLive());
+		    		log.warn("[缓存数据提取成功但已过期][耗时:{}][channel:{}][key:{}][命中:{}][生存:{}/{}]", System.currentTimeMillis()-fr, channel, key, result.getHitCount(), (System.currentTimeMillis() - result.getCreationTime())/1000, result.getTimeToLive());
 		    	}
 		    	result = null;
 			}else{
 				if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
-		    		log.info("[缓存数据提取成功并有效][耗时:{}][cnannel:{}][key:{}][命中:{}][生存:{}/{}]",System.currentTimeMillis()-fr,channel,key,result.getHitCount(),(System.currentTimeMillis() - result.getCreationTime())/1000,result.getTimeToLive());
+		    		log.info("[缓存数据提取成功并有效][耗时:{}][channel:{}][key:{}][命中:{}][生存:{}/{}]", System.currentTimeMillis()-fr, channel, key, result.getHitCount(), (System.currentTimeMillis() - result.getCreationTime())/1000, result.getTimeToLive());
 		    	}
 			}
 		}
