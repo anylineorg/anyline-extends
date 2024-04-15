@@ -113,7 +113,7 @@ public class EHCacheProvider implements CacheProvider {
 				for(String name:names){
 					channels.add(name);
 				}
-				if (ConfigTable.IS_DEBUG && log.isWarnEnabled()) {
+				if (ConfigTable.IS_DEBUG && log.isInfoEnabled()) {
 					log.info("[加载ehcache配置文件][耗时:{}", System.currentTimeMillis() - fr);
 					for (String name : manager.getCacheNames()) {
 						log.info("[解析ehcache配置文件] [name:{}]", name);
@@ -168,18 +168,18 @@ public class EHCacheProvider implements CacheProvider {
 		if(null != cache){
 			result = cache.get(key);
 			if(null == result){
-		    	if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
-		    		log.warn("[缓存不存在][channel:{}][key:{}][生存:-1/{}]", channel, key,cache.getCacheConfiguration().getTimeToLiveSeconds());
+		    	if(ConfigTable.IS_DEBUG && log.isInfoEnabled()){
+		    		log.info("[缓存不存在][channel:{}][key:{}][生存:-1/{}]", channel, key,cache.getCacheConfiguration().getTimeToLiveSeconds());
 		    	}
 				return null;
 			}
 			if(result.isExpired()){
-		    	if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
-		    		log.warn("[缓存数据提取成功但已过期][耗时:{}][channel:{}][key:{}][命中:{}][生存:{}/{}]", System.currentTimeMillis()-fr, channel, key, result.getHitCount(), (System.currentTimeMillis() - result.getCreationTime())/1000, result.getTimeToLive());
+		    	if(ConfigTable.IS_DEBUG && log.isInfoEnabled()){
+		    		log.info("[缓存数据提取成功但已过期][耗时:{}][channel:{}][key:{}][命中:{}][生存:{}/{}]", System.currentTimeMillis()-fr, channel, key, result.getHitCount(), (System.currentTimeMillis() - result.getCreationTime())/1000, result.getTimeToLive());
 		    	}
 		    	result = null;
 			}else{
-				if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
+				if(ConfigTable.IS_DEBUG && log.isInfoEnabled()){
 		    		log.info("[缓存数据提取成功并有效][耗时:{}][channel:{}][key:{}][命中:{}][生存:{}/{}]", System.currentTimeMillis()-fr, channel, key, result.getHitCount(), (System.currentTimeMillis() - result.getCreationTime())/1000, result.getTimeToLive());
 		    	}
 			}
