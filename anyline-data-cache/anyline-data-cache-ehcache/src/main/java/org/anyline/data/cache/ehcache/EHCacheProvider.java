@@ -72,7 +72,7 @@ public class EHCacheProvider implements CacheProvider {
 				return new FileInputStream(file);
 			}
 		}
-		if("jar".equals(ConfigTable.getPackageType())){
+		if("jar".equals(ConfigTable.getProjectProtocol())){
 			path = FileUtil.merge(ConfigTable.getRoot(),"config", "ehcache.xml");
 			log.info("[检测ehcache配置文件][path={}]", path);
 			file = new File(path);

@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.anyline.feishu.util.FieshuBean
+org.anyline.feishu.util.FeishuBean

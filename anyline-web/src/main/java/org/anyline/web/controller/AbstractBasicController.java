@@ -37,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Lazy;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -60,6 +61,7 @@ public abstract class AbstractBasicController {
 	private static boolean is_elistener_load = false;
 	private static boolean is_clistener_load = false;
 
+	@Lazy
 	@Autowired(required = false)
 	@Qualifier("anyline.service")
 	protected AnylineService service;
@@ -101,11 +103,11 @@ public abstract class AbstractBasicController {
 		}
 		return clistener;
 	}
-	/******************************************************************************************************************
+	/* *****************************************************************************************************************
 	 *
 	 * 封装参数
 	 *
-	 *******************************************************************************************************************/
+	 * ****************************************************************************************************************/
 
 	/**
 	 * 从封装request参数到实体类对象
@@ -129,9 +131,8 @@ public abstract class AbstractBasicController {
 			entity = (T) clazz.newInstance();
 			/* 属性赋值 */
 			List<String> arrays = BeanUtil.merge(fixs, params);
-			if (arrays.size() > 0) {
+			if (!arrays.isEmpty()) {
 				/* 根据指定的属性与request参数对应关系 */
-
 				for (String param : arrays) {
 					/* 解析属性与request参数对应关系 */
 

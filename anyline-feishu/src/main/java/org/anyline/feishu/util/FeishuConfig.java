@@ -18,9 +18,9 @@ public class FeishuConfig extends AnylineConfig {
     /**
      * 服务号相关信息
      */
-    public String APP_ID			 = DEFAULT_APP_ID				; // AppID(应用ID)
-    public String APP_SECRET 			 = DEFAULT_APP_SECRET				; // APPKEY(应用密钥)
-    public String OAUTH_REDIRECT_URL = DEFAULT_OAUTH_REDIRECT_URL	; // 登录成功回调URL
+    public String APP_ID			    = DEFAULT_APP_ID				; // AppID(应用ID)
+    public String APP_SECRET 			= DEFAULT_APP_SECRET				; // APPKEY(应用密钥)
+    public String OAUTH_REDIRECT_URL    = DEFAULT_OAUTH_REDIRECT_URL	; // 登录成功回调URL
 
     public static Hashtable<String,AnylineConfig>getInstances(){
         return instances;
@@ -78,14 +78,17 @@ public class FeishuConfig extends AnylineConfig {
     public static FeishuConfig register(DataRow row){
         return register(DEFAULT_INSTANCE_KEY, row);
     }
-    public static FeishuConfig register(String instance,  String app, String key, String redirect){
+    public static FeishuConfig register(String instance,  String app, String secret, String redirect){
         DataRow row = new DataRow();
-        row.put("DEFAULT_APP_ID", app);
-        row.put("DEFAULT_APP_SECRET", key);
+        row.put("APP_ID", app);
+        row.put("APP_SECRET", secret);
         row.put("OAUTH_REDIRECT_URL", redirect);
         return register(instance, row);
     }
-    public static FeishuConfig register(String app, String key, String redirect){
-        return register(DEFAULT_INSTANCE_KEY, app, key, redirect);
+    public static FeishuConfig register(String app, String secret, String redirect){
+        return register(DEFAULT_INSTANCE_KEY, app, secret, redirect);
+    }
+    public static FeishuConfig register(String app, String secret){
+        return register(DEFAULT_INSTANCE_KEY, app, secret, null);
     }
 }

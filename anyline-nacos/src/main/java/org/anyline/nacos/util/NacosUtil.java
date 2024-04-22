@@ -83,7 +83,7 @@ public class NacosUtil {
 			@Override
 			public void receiveConfigInfo(String content) {
 				log.warn("[nacos reload config][group:{}][namespace:{}][data:{}][class:{}]", config.GROUP, config.NAMESPACE, ConfigTable.CONFIG_NAME, ConfigTable.class.getSimpleName());
-				ConfigTable.parse(content);
+				ConfigTable.parseXML(content);
 			}
 			@Override
 			public Executor getExecutor() {
