@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configs>
+	<config key="default">
+		<property key="APP_ID">101***22</property>
+		<property key="APP_SECRET">bd7f56f0***822566</property>
+		<property key="OAUTH_REDIRECT_URL">http://***</property>
+	</config>
+</configs> 
