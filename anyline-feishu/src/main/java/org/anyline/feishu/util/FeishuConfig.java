@@ -8,13 +8,14 @@ import org.anyline.util.ConfigTable;
 import java.util.Hashtable;
 
 public class FeishuConfig extends AnylineConfig {
-    public static String CONFIG_NAME = "anyline-qq-mp.xml";
+    public static String CONFIG_NAME = "anyline-feishu.xml";
     private static Hashtable<String,AnylineConfig> instances = new Hashtable<>();
 
     public static String DEFAULT_APP_ID = ""				; // AppID(应用ID)
     public static String DEFAULT_APP_SECRET = ""				; // APPKEY(应用密钥)
     public static String DEFAULT_OAUTH_REDIRECT_URL		; // 登录成功回调URL
 
+    protected static String[] compatibles = {"OAUTH_REDIRECT_URL:AUTH_REDIRECT_URL"};
     /**
      * 服务号相关信息
      */

@@ -120,12 +120,13 @@ public class FeishuUtil {
 		String url = "https://open.feishu.cn/open-apis/authen/v1/oidc/access_token";
 		Map<String, String> header = new Hashtable<>();
 		header.put("Content-Type","application/json; charset=utf-8");
-		header.put("Authorization", "Bearer " + tenant_access_token);
+		header.put("Authorization", "Bearer " + tenant_access_token());
 		Map<String,String> params = new HashMap<>();
 		params.put("grant_type", "authorization_code");
 		params.put("code", code);
 		String json = BeanUtil.map2json(params);
 		String body = HttpUtil.post(header, url, new StringEntity(json, "UTF-8")).getText();
+		log.info("[get feishu access token][body:{}]", body);
 		DataRow row = DataRow.parseJson(KeyAdapter.KEY_CASE.SRC, body);
 		token = row.getRow("data");
 		return token;
@@ -140,6 +141,7 @@ public class FeishuUtil {
 		header.put("Content-Type","application/json; charset=utf-8");
 		header.put("Authorization", "Bearer " + token.getString("access_token"));
 		String body = HttpUtil.get(header, url).getText();
+		log.info("[get feishu user info][body:{}]", body);
 		DataRow row = DataRow.parseJson(KeyAdapter.KEY_CASE.SRC, body);
 		DataRow data = row.getRow("data");
 		user.setName(data.getString("name"));
@@ -186,19 +188,25 @@ public class FeishuUtil {
 	 * @param state
 	 * @return
 	 */
-	public String ceateAuthUrl(String callback, String state){
+	public String createAuthUrl(String callback, String scope, String state){
 		StringBuilder builder = new StringBuilder();
 		//https://open.feishu.cn/open-apis/authen/v1/authorize?app_id=cli_a69b4944f47b100e&redirect_uri=https%3A%2F%2Ffs.deepbit.cn&scope=contact:contact%20bitable:app:readonly&state=213
 		builder.append("https://open.feishu.cn/open-apis/authen/v1/authorize?app_id=").append(config.APP_ID);
+		if(BasicUtil.isEmpty(callback)){
+			callback = config.OAUTH_REDIRECT_URL;
+		}
 		builder.append("&redirect_uri=").append(HttpUtil.encode(callback, false, true));
 		//参考https://open.feishu.cn/document/server-docs/application-scope/scope-list
-		builder.append("&scope=").append("contact:contact.base:readonly");
+		builder.append("&scope=").append(scope);
 		if(BasicUtil.isNotEmpty(state)) {
 			builder.append("&state=").append(state);
 		}
 		return builder.toString();
 	}
-	public String ceateAuthUrl(String state){
-		return ceateAuthUrl(config.OAUTH_REDIRECT_URL, state);
+	public String createAuthUrl(String callback, String state){
+		return createAuthUrl(callback, "contact:contact.base:readonly", state);
+	}
+	public String createAuthUrl(String state){
+		return createAuthUrl(config.OAUTH_REDIRECT_URL, state);
 	}
 } 

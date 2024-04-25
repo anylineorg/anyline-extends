@@ -21,6 +21,7 @@ package org.anyline.web.tag;
 import org.anyline.alipay.util.AlipayUtil;
 import org.anyline.entity.DataRow;
 import org.anyline.entity.DataSet;
+import org.anyline.feishu.util.FeishuUtil;
 import org.anyline.qq.mp.util.QQMPConfig;
 import org.anyline.qq.util.QQConfig;
 import org.anyline.util.AnylineConfig;
@@ -130,6 +131,11 @@ public class Auth extends BaseBodyTag {
 					scope = "auth_base";
 				}
 				url = AlipayUtil.getInstance(key).ceateAuthUrl(redirect,scope,state);
+			}else if("feishu".equalsIgnoreCase(type) || "fs".equalsIgnoreCase(type)) {
+				if(BasicUtil.isEmpty(scope)){
+					scope = "contact:contact.base:readonly";
+				}
+				url = FeishuUtil.getInstance(key).createAuthUrl(redirect, scope, state);
 			}
 			log.info("[第三方登录][result:{}][url:{}]",result,url);
 			if(result){
