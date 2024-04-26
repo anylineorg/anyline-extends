@@ -6,7 +6,10 @@ public class Department {
     private String name;
     private String parentCode;
     private String leaderCode;
-
+    public Department(){}
+    public Department(String openid){
+        this.openid = openid;
+    }
     public String getOpenid() {
         return openid;
     }

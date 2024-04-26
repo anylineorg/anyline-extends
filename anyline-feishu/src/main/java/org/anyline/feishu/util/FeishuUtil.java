@@ -210,9 +210,11 @@ public class FeishuUtil {
 		String body = HttpUtil.get(header, url).getText();
 		DataRow row = DataRow.parseJson(body);
 		List<String> ids = (List<String>)row.getRow("data").getList("user_ids");
-		List<List<String>> pages = BeanUtil.page(ids, 50);
-		for(List<String> page:pages){
-			users.addAll(users(page));
+		if(null != ids) {
+			List<List<String>> pages = BeanUtil.page(ids, 50);
+			for (List<String> page : pages) {
+				users.addAll(users(page));
+			}
 		}
 		return users;
 	}
@@ -226,8 +228,10 @@ public class FeishuUtil {
 		String body = HttpUtil.get(header, url, "UTF-8", params).getText();
 		DataRow row = DataRow.parseJson(body);
 		DataSet items = row.getRow("data").getSet("items");
-		for(DataRow item:items){
-			users.add(info(item));
+		if(null != items) {
+			for (DataRow item : items) {
+				users.add(info(item));
+			}
 		}
 		return users;
 	}
@@ -252,8 +256,10 @@ public class FeishuUtil {
 		String body = HttpUtil.get(header, url, "UTF-8", params).getText();
 		DataRow row = DataRow.parseJson(body);
 		DataSet items = row.getRow("data").getSet("items");
-		for(DataRow item:items){
-			users.add(info(item));
+		if(null != items) {
+			for (DataRow item : items) {
+				users.add(info(item));
+			}
 		}
 		return users;
 	}
@@ -266,28 +272,30 @@ public class FeishuUtil {
 	 */
 	public List<Department> departments(String parent) {
 		List<Department> departments = new ArrayList<>();
-		String url = "https://open.feishu.cn/open-apis/contact/v3/departments/:department_id/children";
+		String url = "https://open.feishu.cn/open-apis/contact/v3/departments/"+parent+"/children";
 		Map<String, String> header = new HashMap<>();
 		header.put("Authorization", "Bearer " + tenant_access_token());
-		Map<String, Object> params = new HashMap<>();
-		params.put("department_id", parent);
-		String body = HttpUtil.get(header, url, "UTF-8", params).getText();
+		String body = HttpUtil.get(header, url).getText();
 		DataRow row = DataRow.parseJson(body);
 		if (row.getInt("CODE", -1) == 0) {
 			DataSet items = row.getRow("data").getItems();
-			for(DataRow item:items){
-				Department department = new Department();
-				department.setCode(item.getString("department_id"));;
-				department.setName(item.getString("name"));
-				department.setOpenid(item.getString("open_department_id"));
-				department.setParentCode(item.getString("parent_department_id"));
-				DataSet leaders = item.getSet("leaders");
-				for(DataRow leader:leaders){
-					if(leader.getInt("leaderType", 0) == 1){
-						department.setLeaderCode(leader.getString("leaderID"));
+			if(null != items) {
+				for (DataRow item : items) {
+					Department department = new Department();
+					department.setCode(item.getString("department_id"));
+					department.setName(item.getString("name"));
+					department.setOpenid(item.getString("open_department_id"));
+					department.setParentCode(item.getString("parent_department_id"));
+					DataSet leaders = item.getSet("leaders");
+					if(null != leaders) {
+						for (DataRow leader : leaders) {
+							if (leader.getInt("leaderType", 0) == 1) {//主负责人
+								department.setLeaderCode(leader.getString("leaderID"));
+							}
+						}
 					}
+					departments.add(department);
 				}
-				departments.add(department);
 			}
 		} else {
 			log.warn("[departments][response:{}]", body);
