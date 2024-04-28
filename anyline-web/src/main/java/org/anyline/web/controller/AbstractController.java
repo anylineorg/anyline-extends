@@ -49,7 +49,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public abstract class AbstractBasicController {
+public abstract class AbstractController {
 	protected final Logger log = LoggerFactory.getLogger(this.getClass());
 	protected String dir;				// <result>文件默认目录
 
@@ -71,7 +71,7 @@ public abstract class AbstractBasicController {
 	@Autowired(required = false)
 	@Qualifier("anyline.entity.listener")
 	public void setListener(EntityListener listener){
-		AbstractBasicController.elistener = listener;
+		AbstractController.elistener = listener;
 	}
 	protected static EntityListener getEntityListener(){
 		if(null != elistener){
@@ -89,7 +89,7 @@ public abstract class AbstractBasicController {
 	@Autowired(required = false)
 	@Qualifier("anyline.controller.listener")
 	public void setListener(ControllerListener listener){
-		AbstractBasicController.clistener = listener;
+		AbstractController.clistener = listener;
 	}
 	protected static ControllerListener getControllerListener(){
 		if(null != clistener){
@@ -319,15 +319,17 @@ public abstract class AbstractBasicController {
 			}
 		}
 
-		if (arrays.size() > 0) {
+		if (!arrays.isEmpty()) {
 			// raw [json]格式
 			DataSet list = WebUtil.values(request);
-			if(list.size()>0){
+			if(!list.isEmpty()){
 				for(DataRow item:list) {
 					DataRow row = new DataRow();
 					for (String param : arrays) {
-						Object value = item.get(param);
-						row.put(keyCase, param, value);
+						ParseResult parser = ConfigParser.parse(param,true);
+						parser.setParamFetchType(Config.FETCH_REQUEST_VALUE_TYPE_SINGLE);
+						Object value = ConfigParser.getValue(item, parser);
+						row.put(keyCase, parser.getVar(), value);
 					}
 					set.add(row);
 				}
@@ -361,7 +363,7 @@ public abstract class AbstractBasicController {
 							row.put(parser.getVar(), values.get(i));
 						} else {
 							List<ParseResult> defs = parser.getDefs();
-							if (null != defs && defs.size() > 0) {
+							if (null != defs && !defs.isEmpty()) {
 								ParseResult def = defs.get(0);
 								String key = def.getKey();
 								if (null != key && key.startsWith("${") && key.endsWith("}")) {
