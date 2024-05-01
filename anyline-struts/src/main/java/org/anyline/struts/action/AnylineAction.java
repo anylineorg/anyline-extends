@@ -43,7 +43,7 @@ import org.anyline.entity.PageNavi;
 import org.anyline.util.BasicUtil;
 import org.anyline.util.ConfigTable;
 import org.anyline.util.encrypt.DESUtil;
-import org.anyline.web.controller.AbstractBasicController;
+import org.anyline.web.controller.AbstractController;
 import org.anyline.web.util.Constant;
 import org.anyline.web.util.WebUtil;
 import org.apache.struts2.interceptor.ServletRequestAware;
@@ -56,7 +56,7 @@ import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Map;
  
-public class AnylineAction extends AbstractBasicController implements ServletRequestAware, ServletResponseAware {
+public class AnylineAction extends AbstractController implements ServletRequestAware, ServletResponseAware {
 	public static int RESULT_TYPE_DEFAULT = 0; 
 	public static int RESULT_TYPE_JSON = 1;
 

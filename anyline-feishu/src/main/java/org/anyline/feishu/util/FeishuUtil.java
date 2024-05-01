@@ -20,18 +20,19 @@ package org.anyline.feishu.util;
 import com.lark.oapi.Client;
 import org.anyline.adapter.KeyAdapter;
 import org.anyline.entity.DataRow;
-import org.anyline.feishu.entity.FeishuUser;
+import org.anyline.entity.DataSet;
+import org.anyline.feishu.entity.Department;
+import org.anyline.feishu.entity.User;
 import org.anyline.net.HttpUtil;
 import org.anyline.util.AnylineConfig;
 import org.anyline.util.BasicUtil;
 import org.anyline.util.BeanUtil;
+import org.anyline.util.DateUtil;
 import org.apache.http.entity.StringEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Map;
+import java.util.*;
 
 public class FeishuUtil {
 	private static final Logger log = LoggerFactory.getLogger(FeishuUtil.class); 
@@ -131,11 +132,12 @@ public class FeishuUtil {
 		token = row.getRow("data");
 		return token;
 	}
-	public FeishuUser user_info(String code){
-		return user_info(access_token(code));
+	public User user(String code){
+		User user = user(access_token(code));
+		return user;
 	}
-	public FeishuUser user_info(DataRow token){
-		FeishuUser user = new FeishuUser();
+	public User user(DataRow token){
+		User user = new User();
 		String url = "https://open.feishu.cn/open-apis/authen/v1/user_info";
 		Map<String, String> header = new Hashtable<>();
 		header.put("Content-Type","application/json; charset=utf-8");
@@ -144,12 +146,47 @@ public class FeishuUtil {
 		log.info("[get feishu user info][body:{}]", body);
 		DataRow row = DataRow.parseJson(KeyAdapter.KEY_CASE.SRC, body);
 		DataRow data = row.getRow("data");
+		user = info(data);
+		return user;
+	}
+	public static User info(DataRow data){
+		User user = new User();
 		user.setName(data.getString("name"));
 		user.setEnName(data.getString("en_name"));
-		user.setAvatarBig(data.getString("avatar_big"));
-		user.setAvatarUrl(data.getString("avatar_url"));
-		user.setAvatarThumb(data.getString("avatar_thumb"));
-		user.setAvatarMiddle(data.getString("avatar_middle"));
+		if(data.isNotEmpty("avatar")){
+			//批量获取用户列表
+			DataRow avators = data.getRow("avatar");
+			if(null != avators){
+				user.setAvatarBig(data.getString("AVATAR_640"));
+				user.setAvatarUrl(data.getString("AVATAR_ORIGIN"));
+				user.setAvatarThumb(data.getString("AVATAR_72"));
+				user.setAvatarMiddle(data.getString("AVATAR_240"));
+			}
+		}else {
+			//用户登录获取信息
+			user.setAvatarBig(data.getString("avatar_big"));
+			user.setAvatarUrl(data.getString("avatar_url"));
+			user.setAvatarThumb(data.getString("avatar_thumb"));
+			user.setAvatarMiddle(data.getString("avatar_middle"));
+		}
+		if(data.isNotEmpty("status")){
+			DataRow status = data.getRow("status");
+			if(null != status){
+				user.setActivateStatus(status.getBoolean("is_activated", null));	//激活
+				user.setFrozenStatus(status.getBoolean("is_frozen", null));		//冻结
+				user.setResignStatus(status.getBoolean("is_resigned", null));		//离职
+			}
+		}
+		int joinTime = data.getInt("join_time", 0);
+		if(joinTime > 0){
+			user.setJoinTime(DateUtil.parse((long)(joinTime*1000)));
+		}
+		user.setNickname(data.getString("nickname"));
+		List<String> depts = (List<String>)data.getList("department_ids");
+		user.setDepartmentIds(depts);
+		user.setLeaderId(data.getString("leader_user_id"));
+		user.setJobTitle(data.getString("job_title"));
+		user.setWorkStation(data.getString("work_station"));
 		user.setOpenid(data.getString("open_id"));
 		user.setUnionid(data.getString("union_id"));
 		user.setEmail(data.getString("email"));
@@ -160,6 +197,113 @@ public class FeishuUtil {
 		user.setTenantKey(data.getString("tenant_key"));
 		return user;
 	}
+
+	/**
+	 * 所有可访问用户
+	 * @return List
+	 */
+	public List<User> users(){
+		List<User> users = new ArrayList<>();
+		String url ="https://open.feishu.cn/open-apis/contact/v3/scopes";
+		Map<String,String> header = new HashMap<>();
+		header.put("Authorization", "Bearer " + tenant_access_token());
+		String body = HttpUtil.get(header, url).getText();
+		DataRow row = DataRow.parseJson(body);
+		List<String> ids = (List<String>)row.getRow("data").getList("user_ids");
+		if(null != ids) {
+			List<List<String>> pages = BeanUtil.page(ids, 50);
+			for (List<String> page : pages) {
+				users.addAll(users(page));
+			}
+		}
+		return users;
+	}
+	public List<User> users(List<String> ids){
+		List<User> users = new ArrayList<>();
+		Map<String,String> header = new HashMap<>();
+		header.put("Authorization", "Bearer " + tenant_access_token());
+		Map<String, Object> params = new HashMap<>();
+		params.put("user_ids", ids);
+		String url = "https://open.feishu.cn/open-apis/contact/v3/users/batch";
+		String body = HttpUtil.get(header, url, "UTF-8", params).getText();
+		DataRow row = DataRow.parseJson(body);
+		DataSet items = row.getRow("data").getSet("items");
+		if(null != items) {
+			for (DataRow item : items) {
+				users.add(info(item));
+			}
+		}
+		return users;
+	}
+	public List<User> users(Department department){
+		List<User> users = new ArrayList<>();
+		Map<String,String> header = new HashMap<>();
+		header.put("Authorization", "Bearer " + tenant_access_token());
+		Map<String, Object> params = new HashMap<>();
+		params.put("department_id", "0");
+		if(null != department){
+			String id = department.getCode();
+			String openid = department.getOpenid();
+			if(BasicUtil.isNotEmpty(id)){
+				params.put("department_id_type", "department_id");
+				params.put("department_id", id);
+			}else if(BasicUtil.isNotEmpty(openid)){
+				params.put("department_id_type", "open_department_id");
+				params.put("department_id", openid);
+			}
+		}
+		String url = "https://open.feishu.cn/open-apis/contact/v3/users/find_by_department";
+		String body = HttpUtil.get(header, url, "UTF-8", params).getText();
+		DataRow row = DataRow.parseJson(body);
+		DataSet items = row.getRow("data").getSet("items");
+		if(null != items) {
+			for (DataRow item : items) {
+				users.add(info(item));
+			}
+		}
+		return users;
+	}
+	public List<Department> departments() {
+		return departments("0");
+	}
+	/**
+	 * 所有可访问部门
+	 * @return List
+	 */
+	public List<Department> departments(String parent) {
+		List<Department> departments = new ArrayList<>();
+		String url = "https://open.feishu.cn/open-apis/contact/v3/departments/"+parent+"/children";
+		Map<String, String> header = new HashMap<>();
+		header.put("Authorization", "Bearer " + tenant_access_token());
+		String body = HttpUtil.get(header, url).getText();
+		DataRow row = DataRow.parseJson(body);
+		if (row.getInt("CODE", -1) == 0) {
+			DataSet items = row.getRow("data").getItems();
+			if(null != items) {
+				for (DataRow item : items) {
+					Department department = new Department();
+					department.setCode(item.getString("department_id"));
+					department.setName(item.getString("name"));
+					department.setOpenid(item.getString("open_department_id"));
+					department.setParentCode(item.getString("parent_department_id"));
+					DataSet leaders = item.getSet("leaders");
+					if(null != leaders) {
+						for (DataRow leader : leaders) {
+							if (leader.getInt("leaderType", 0) == 1) {//主负责人
+								department.setLeaderCode(leader.getString("leaderID"));
+							}
+						}
+					}
+					departments.add(department);
+				}
+			}
+		} else {
+			log.warn("[departments][response:{}]", body);
+		}
+		return departments;
+	}
+
+
 	private void flushToken(){
 		String url = "https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal/";
 		Map<String, String> header = new Hashtable<>();

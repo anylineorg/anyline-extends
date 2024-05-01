@@ -42,13 +42,12 @@ import org.anyline.data.prepare.RunPrepare;
 import org.anyline.entity.DataRow;
 import org.anyline.entity.DataSet;
 import org.anyline.entity.PageNavi;
-import org.anyline.net.HttpUtil;
 import org.anyline.proxy.EntityAdapterProxy;
 import org.anyline.util.BasicUtil;
 import org.anyline.util.BeanUtil;
 import org.anyline.util.ConfigTable;
 import org.anyline.util.encrypt.DESUtil;
-import org.anyline.web.controller.AbstractBasicController;
+import org.anyline.web.controller.AbstractController;
 import org.anyline.web.util.Constant;
 import org.anyline.web.util.Result;
 import org.anyline.web.util.WebUtil;
@@ -65,7 +64,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public abstract class AnylineController extends AbstractBasicController {
+public abstract class AnylineController extends AbstractController {
 
     protected HttpServletRequest _request;
     protected HttpServletResponse _response;
