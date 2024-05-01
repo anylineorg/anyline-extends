@@ -25,7 +25,6 @@ import org.anyline.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
