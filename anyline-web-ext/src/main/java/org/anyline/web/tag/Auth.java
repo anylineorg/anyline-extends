@@ -135,7 +135,10 @@ public class Auth extends BaseBodyTag {
 				if(BasicUtil.isEmpty(scope)){
 					scope = "contact:contact.base:readonly";
 				}
-				url = FeishuUtil.getInstance(key).createAuthUrl(redirect, scope, state);
+				FeishuUtil util = FeishuUtil.getInstance(key);
+				if(null != util) {
+					url = util.createAuthUrl(redirect, scope, state);
+				}
 			}
 			log.info("[第三方登录][result:{}][url:{}]",result,url);
 			if(result){
