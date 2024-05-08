@@ -15,6 +15,8 @@
  */
 
 
+
+
 package org.anyline.sms.entity;
  
 public class SMSResult {

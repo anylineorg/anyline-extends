@@ -15,6 +15,8 @@
  */
 
 
+
+
 package org.anyline.web.util;
  
 public class Constant {

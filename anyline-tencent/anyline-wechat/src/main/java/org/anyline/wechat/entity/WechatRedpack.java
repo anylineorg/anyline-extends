@@ -15,6 +15,8 @@
  */
 
 
+
+
 package org.anyline.wechat.entity;
 /** 
  *  

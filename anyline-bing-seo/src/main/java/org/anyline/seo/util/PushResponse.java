@@ -15,6 +15,8 @@
  */
 
 
+
+
 package org.anyline.seo.util;
 
 public class PushResponse {

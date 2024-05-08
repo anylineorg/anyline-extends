@@ -1,1 +1,3 @@
+
+
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.anyline.baidu.map.util.BaiduMapBean

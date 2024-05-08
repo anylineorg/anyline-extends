@@ -15,6 +15,8 @@
  */
 
 
+
+
 package org.anyline.qq.open.entity;
 /** 
  * 统一下单返回结果 

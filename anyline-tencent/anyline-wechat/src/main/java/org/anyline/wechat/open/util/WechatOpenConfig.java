@@ -15,6 +15,8 @@
  */
 
 
+
+
 package org.anyline.wechat.open.util;
 
 import org.anyline.entity.DataRow;

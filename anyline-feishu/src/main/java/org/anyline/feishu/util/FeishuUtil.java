@@ -15,6 +15,8 @@
  */
 
 
+
+
 package org.anyline.feishu.util;
 
 import com.lark.oapi.Client;
@@ -275,7 +277,9 @@ public class FeishuUtil {
 		String url = "https://open.feishu.cn/open-apis/contact/v3/departments/"+parent+"/children";
 		Map<String, String> header = new HashMap<>();
 		header.put("Authorization", "Bearer " + tenant_access_token());
-		String body = HttpUtil.get(header, url).getText();
+		Map<String,Object> params = new HashMap<>();
+		params.put("page_size", 50);
+		String body = HttpUtil.get(header, url, "UTF-8" ,params).getText();
 		DataRow row = DataRow.parseJson(body);
 		if (row.getInt("CODE", -1) == 0) {
 			DataSet items = row.getRow("data").getItems();

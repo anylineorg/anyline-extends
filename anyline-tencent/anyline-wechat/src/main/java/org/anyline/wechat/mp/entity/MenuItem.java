@@ -15,6 +15,8 @@
  */
 
 
+
+
 package org.anyline.wechat.mp.entity;
 
 import java.util.ArrayList;

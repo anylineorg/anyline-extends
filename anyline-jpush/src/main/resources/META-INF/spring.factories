@@ -1,1 +1,3 @@
+
+
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.anyline.jpush.util.JPushBean

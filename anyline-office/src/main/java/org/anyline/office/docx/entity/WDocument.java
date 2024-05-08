@@ -15,6 +15,8 @@
  */
 
 
+
+
 package org.anyline.office.docx.entity;
 
 import org.anyline.entity.html.Table;
@@ -1401,7 +1403,7 @@ public class WDocument extends Welement{
                 }else if("li".equalsIgnoreCase(tag)){
                     prev = li(src, prev, element, itemStyles);
                 }else if("br".equalsIgnoreCase(tag)){
-                    parent.addElement("w:br");
+                    prev = parent.addElement("w:br");
                 }else if("u".equalsIgnoreCase(tag)){
                     itemStyles.put("underline","true");
                     prev = parseHtml(parent, prev, element, itemStyles, false);
