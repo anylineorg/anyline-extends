@@ -59,16 +59,18 @@ public abstract class AbstractController {
 	protected static EntityAdapter adapter;
 	protected static EntityListener elistener;
 	protected static ControllerListener clistener;
-	private static boolean is_adapter_load = false;
 	private static boolean is_elistener_load = false;
 	private static boolean is_clistener_load = false;
+
+	protected AnylineService service;
+
 
 	@Lazy
 	@Autowired(required = false)
 	@Qualifier("anyline.service")
-	protected AnylineService service;
-
-
+	public void setService(AnylineService service){
+		this.service = service;
+	}
 
 	@Autowired(required = false)
 	@Qualifier("anyline.entity.listener")
