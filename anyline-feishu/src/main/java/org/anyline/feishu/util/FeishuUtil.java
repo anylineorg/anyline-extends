@@ -243,6 +243,7 @@ public class FeishuUtil {
 		header.put("Authorization", "Bearer " + tenant_access_token());
 		Map<String, Object> params = new HashMap<>();
 		params.put("department_id", "0");
+		params.put("page_size", 50);
 		if(null != department){
 			String id = department.getCode();
 			String openid = department.getOpenid();
@@ -255,12 +256,23 @@ public class FeishuUtil {
 			}
 		}
 		String url = "https://open.feishu.cn/open-apis/contact/v3/users/find_by_department";
-		String body = HttpUtil.get(header, url, "UTF-8", params).getText();
-		DataRow row = DataRow.parseJson(body);
-		DataSet items = row.getRow("data").getSet("items");
-		if(null != items) {
-			for (DataRow item : items) {
-				users.add(info(item));
+		while (true) {
+			String body = HttpUtil.get(header, url, "UTF-8", params).getText();
+			DataRow row = DataRow.parseJson(body);
+			DataRow data = row.getRow("data");
+			if(null != data) {
+				DataSet items = data.getSet("items");
+				if (null != items) {
+					for (DataRow item : items) {
+						users.add(info(item));
+					}
+				}
+				params.put("page_token", data.getString("page_token"));
+				if(!data.getBoolean("has_more", false)){
+					break;
+				}
+			}else{
+				break;
 			}
 		}
 		return users;
@@ -279,30 +291,42 @@ public class FeishuUtil {
 		header.put("Authorization", "Bearer " + tenant_access_token());
 		Map<String,Object> params = new HashMap<>();
 		params.put("page_size", 50);
-		String body = HttpUtil.get(header, url, "UTF-8" ,params).getText();
-		DataRow row = DataRow.parseJson(body);
-		if (row.getInt("CODE", -1) == 0) {
-			DataSet items = row.getRow("data").getItems();
-			if(null != items) {
-				for (DataRow item : items) {
-					Department department = new Department();
-					department.setCode(item.getString("department_id"));
-					department.setName(item.getString("name"));
-					department.setOpenid(item.getString("open_department_id"));
-					department.setParentCode(item.getString("parent_department_id"));
-					DataSet leaders = item.getSet("leaders");
-					if(null != leaders) {
-						for (DataRow leader : leaders) {
-							if (leader.getInt("leaderType", 0) == 1) {//主负责人
-								department.setLeaderCode(leader.getString("leaderID"));
+		while (true) {
+			String body = HttpUtil.get(header, url, "UTF-8", params).getText();
+			DataRow row = DataRow.parseJson(body);
+			if (row.getInt("CODE", -1) == 0) {
+				DataRow data = row.getRow("data");
+				if(null != data) {
+					DataSet items = data.getItems();
+					if (null != items) {
+						for (DataRow item : items) {
+							Department department = new Department();
+							department.setCode(item.getString("department_id"));
+							department.setName(item.getString("name"));
+							department.setOpenid(item.getString("open_department_id"));
+							department.setParentCode(item.getString("parent_department_id"));
+							DataSet leaders = item.getSet("leaders");
+							if (null != leaders) {
+								for (DataRow leader : leaders) {
+									if (leader.getInt("leaderType", 0) == 1) {//主负责人
+										department.setLeaderCode(leader.getString("leaderID"));
+									}
+								}
 							}
+							departments.add(department);
 						}
 					}
-					departments.add(department);
+					if(!data.getBoolean("has_more")){
+						break;
+					}
+					params.put("page_token", data.getString("page_token"));
+				}else{
+					break;
 				}
+			} else {
+				log.warn("[departments][response:{}]", body);
+				break;
 			}
-		} else {
-			log.warn("[departments][response:{}]", body);
 		}
 		return departments;
 	}
