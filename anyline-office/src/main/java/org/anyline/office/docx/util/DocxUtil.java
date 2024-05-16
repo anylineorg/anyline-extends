@@ -772,6 +772,12 @@ public class DocxUtil {
         String name = element.getName();
         String prName = name+"Pr";
         Element pr = DocxUtil.addElement(element, prName);
+        //pr需要放在第一个位置 否则样式对后面的内容可能无效
+        List<Element> elements = element.elements();
+        if(elements.size() > 1){
+            elements.remove(pr);
+            elements.add(0, pr);
+        }
         if("p".equalsIgnoreCase(name)){
             for(String sk: styles.keySet()){
                 String sv = styles.get(sk);

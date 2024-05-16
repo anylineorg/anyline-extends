@@ -25,7 +25,6 @@ import org.anyline.util.BasicUtil;
 import org.anyline.util.DomUtil;
 import org.anyline.util.HtmlUtil;
 import org.anyline.util.StyleParser;
-import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -846,8 +845,9 @@ public class Wtc extends Welement{
         if(root.IS_HTML_ESCAPE) {
             text = HtmlUtil.display(text);
         }
-        t.setText(text);
+        //先设置样式，内容放前面样式可能失效
         DocxUtil.pr(r, styles);
+        t.setText(text);
         return this;
     }
     public Wtc addText(String text){
