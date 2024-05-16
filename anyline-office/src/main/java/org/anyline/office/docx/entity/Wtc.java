@@ -845,7 +845,6 @@ public class Wtc extends Welement{
         if(root.IS_HTML_ESCAPE) {
             text = HtmlUtil.display(text);
         }
-        //先设置样式，内容放前面样式可能失效
         DocxUtil.pr(r, styles);
         t.setText(text);
         return this;
