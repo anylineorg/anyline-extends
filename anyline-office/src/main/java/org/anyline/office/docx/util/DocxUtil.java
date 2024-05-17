@@ -275,6 +275,11 @@ public class DocxUtil {
         }
     }
 
+    /**
+     * 是否有内容(表格、文本、图片)
+     * @param element element
+     * @return boolean
+     */
     public static boolean isEmpty(Element element){
         List<Element> elements = DomUtil.elements(element, "drawing,tbl,t");
         for(Element item:elements){

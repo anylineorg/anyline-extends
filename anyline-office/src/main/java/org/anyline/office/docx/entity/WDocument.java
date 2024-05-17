@@ -941,13 +941,17 @@ public class WDocument extends Welement{
         pr(parent, styles);
         if(pname.equalsIgnoreCase("p")){
             box = parent.addElement("w:r");
-            prev = box.addElement("w:br");
+            if(!DocxUtil.isEmpty(parent)){//如果上级为空 就不插入换行符
+                prev = box.addElement("w:br");
+            }
             DocxUtil.after(box, prev);
             newPrev = parent;
             wp = parent;
         }else if(pname.equalsIgnoreCase("r")){
             box = parent.getParent().addElement("w:r");
-            prev = box.addElement("w:br");
+            if(!DocxUtil.isEmpty(parent)) {//如果上级为空 就不插入换行符
+                prev = box.addElement("w:br");
+            }
             DocxUtil.after(box, prev);
             newPrev = parent.getParent();
             wp = newPrev;
