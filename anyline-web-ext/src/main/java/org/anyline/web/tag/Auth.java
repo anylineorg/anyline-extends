@@ -94,7 +94,7 @@ public class Auth extends BaseBodyTag {
 					if(WechatConfig.SNSAPI_SCOPE.USERINFO.getCode().equals(scope) || "info".equals(scope)){
 						apiScope = WechatConfig.SNSAPI_SCOPE.USERINFO;
 					}
-					url = WechatMPUtil.ceateAuthUrl(key, redirect, apiScope, state);
+					url = WechatMPUtil.createAuthUrl(key, redirect, apiScope, state);
 				}
 			}else if("qq".equalsIgnoreCase(type)){
 				QQMPConfig qqconfig = QQMPConfig.getInstance(key);
@@ -132,7 +132,7 @@ public class Auth extends BaseBodyTag {
 				if(BasicUtil.isEmpty(scope)){
 					scope = "auth_base";
 				}
-				url = AlipayUtil.getInstance(key).ceateAuthUrl(redirect,scope,state);
+				url = AlipayUtil.getInstance(key).createAuthUrl(redirect,scope,state);
 			}else if("feishu".equalsIgnoreCase(type) || "fs".equalsIgnoreCase(type)) {
 				if(BasicUtil.isEmpty(scope)){
 					scope = "contact:contact.base:readonly";

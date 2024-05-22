@@ -215,7 +215,7 @@ public class WechatMPUtil extends WechatUtil {
 	 * @param state state 原样返回
 	 * @return String
 	 */
-	public static String ceateAuthUrl(String key, String redirect, SNSAPI_SCOPE scope, String state){
+	public static String createAuthUrl(String key, String redirect, SNSAPI_SCOPE scope, String state){
 		String url = null;
 		try{
 			WechatConfig config = WechatMPConfig.getInstance(key);

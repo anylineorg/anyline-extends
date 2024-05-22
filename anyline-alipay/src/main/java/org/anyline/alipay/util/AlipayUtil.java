@@ -228,7 +228,7 @@ public class AlipayUtil {
 	 * @param scope 获取信息范围
 	 * @return String
 	 */
-	public String ceateAuthUrl(String redirect, String scope, String state){
+	public String createAuthUrl(String redirect, String scope, String state){
 		try {
 			redirect = URLEncoder.encode(redirect, "UTF-8");
 		}catch (Exception e){
