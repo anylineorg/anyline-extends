@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WebConfigChain extends WebConfig implements  ConfigChain{
-	private List<Config> configs = new ArrayList<Config>();
+	private List<Config> configs = new ArrayList<>();
 
 
 	public Config getConfig(String id, String var){
@@ -183,5 +183,21 @@ public class WebConfigChain extends WebConfig implements  ConfigChain{
 		}
 		chain.integrality(integrality);
 		return chain;
+	}
+	public WebConfigChain clone(){
+		WebConfigChain clone = null;
+		try {
+			clone = (WebConfigChain) super.clone();
+		}catch (Exception ignored){
+			clone = new WebConfigChain();
+		}
+		if(null != this.configs){
+			List<Config> configs = new ArrayList<>();
+			for(Config config:this.configs){
+				configs.add(config.clone());
+			}
+			clone.configs = configs;
+		}
+		return clone;
 	}
 }
