@@ -54,6 +54,7 @@ public class Sum extends BaseBodyTag {
 			pageContext.removeAttribute(var);
 		}
 		try {
+			JspWriter out = pageContext.getOut();
 			if (null != data) {
 				if (data instanceof String) {
 					if (data.toString().endsWith("}")) {
@@ -75,7 +76,8 @@ public class Sum extends BaseBodyTag {
 				if(BasicUtil.isNotEmpty(selector) && data instanceof DataSet){
 					items = BeanUtil.select(items,selector.split(","));
 				}
-				BigDecimal result = new BigDecimal(0); 
+
+				BigDecimal sum = new BigDecimal(0);
 				if (null != items){
 					for (Object item : items) {
 						if(null == item){
@@ -88,21 +90,47 @@ public class Sum extends BaseBodyTag {
 							val = BeanUtil.getFieldValue(item, property);
 						}
 						if(null != val){
-							result = result.add(new BigDecimal(val.toString()));
+							sum = sum.add(new BigDecimal(val.toString()));
+						}
+					}
+
+					if(BasicUtil.isNotEmpty(min)){
+						BigDecimal minNum = new BigDecimal(min.toString());
+						if(minNum.compareTo(sum) > 0){
+							log.warn("[number sum][value:{}][小于最小值:{}]", sum,min);
+							sum = minNum;
+						}
+					}
+					if(BasicUtil.isNotEmpty(max)){
+						BigDecimal maxNum = new BigDecimal(max.toString());
+						if(maxNum.compareTo(sum) < 0){
+							log.warn("[number sum][value:{}][超过最大值:{}]",sum, max);
+							sum = maxNum;
+						}
+					}
+					if(null != scale){
+						if(null != round){
+							sum = sum.setScale(scale, round);
+						}else {
+							sum = sum.setScale(scale);
 						}
 					}
 					if(BasicUtil.isNotEmpty(format)){
-						html = NumberUtil.format(result,format); 
+						html = NumberUtil.format(sum,format);
 					}else{
-						html = result.toString();
+						html = sum.toString();
 					}
-				} 
+
+					if(BasicUtil.isNotEmpty(hide)){
+						out.print("<span class='"+hide+"' style='display:none;'>"+sum+"</span>");
+					}
+				}
+
 			}
 			if(BasicUtil.isEmpty(html) && BasicUtil.isNotEmpty(nvl)){
 				html = nvl;
 			}
 			if(null == var) {
-				JspWriter out = pageContext.getOut();
 				out.print(html);
 			}else{
 				pageContext.setAttribute(var, html);
@@ -164,6 +192,15 @@ public class Sum extends BaseBodyTag {
 		selector = null; 
 		format = null;
 		var = null;
+		value = null;
+		body = null;
+		def = null;
+		min = null;
+		max = null;
+		evl = null;
+		scale = null;
+		round = null;
+		hide = null;
 	} 
  
 	public String getScope() {
