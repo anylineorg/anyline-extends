@@ -38,6 +38,13 @@ public class Sum extends BaseBodyTag {
 	private String property; 
 	private String format;
 	private String nvl;
+	private Object min;
+	private Object max;
+	private String def; // 默认值
+	private Integer scale;//小数位
+	private Integer round; // 参考BigDecimal.ROUND_UP;
+	private String hide; // 隐藏span.class
+	private String echo; // 显示位置 span.class
  
 	@SuppressWarnings("rawtypes")
 	public int doEndTag() throws JspException {
@@ -186,5 +193,60 @@ public class Sum extends BaseBodyTag {
 	public void setFormat(String format) {
 		this.format = format;
 	}
-	 
+
+	public Object getMin() {
+		return min;
+	}
+
+	public void setMin(Object min) {
+		this.min = min;
+	}
+
+	public Object getMax() {
+		return max;
+	}
+
+	public void setMax(Object max) {
+		this.max = max;
+	}
+
+	public String getDef() {
+		return def;
+	}
+
+	public void setDef(String def) {
+		this.def = def;
+	}
+
+	public Integer getScale() {
+		return scale;
+	}
+
+	public void setScale(Integer scale) {
+		this.scale = scale;
+	}
+
+	public Integer getRound() {
+		return round;
+	}
+
+	public void setRound(Integer round) {
+		this.round = round;
+	}
+
+	public String getHide() {
+		return hide;
+	}
+
+	public void setHide(String hide) {
+		this.hide = hide;
+	}
+
+	public String getEcho() {
+		return echo;
+	}
+
+	public void setEcho(String echo) {
+		this.echo = echo;
+	}
 }
