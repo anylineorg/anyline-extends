@@ -43,6 +43,7 @@ public class User {
     private List<String> departmentIds  ;//部门
     private String leaderId             ;//直接上级
     private Date joinTime               ; //入职时间
+    private String joinYmd              ; //入职日期
     private int frozenStatus = -1       ; //冻结 0:否 1:是 -1:未知
     private int activateStatus = -1     ; //激活 0:否 1:是 -1:未知
     private int resignStatus = -1       ; //离职 0:否 1:是 -1:未知
@@ -85,6 +86,14 @@ public class User {
 
     public void setJoinTime(Date joinTime) {
         this.joinTime = joinTime;
+    }
+
+    public String getJoinYmd() {
+        return joinYmd;
+    }
+
+    public void setJoinYmd(String joinYmd) {
+        this.joinYmd = joinYmd;
     }
 
     public int getFrozenStatus() {

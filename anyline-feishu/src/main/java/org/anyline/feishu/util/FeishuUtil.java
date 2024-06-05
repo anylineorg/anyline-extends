@@ -179,9 +179,11 @@ public class FeishuUtil {
 				user.setResignStatus(status.getBoolean("is_resigned", null));		//离职
 			}
 		}
-		int joinTime = data.getInt("join_time", 0);
+		Long joinTime = data.getLong("join_time", 0);
 		if(joinTime > 0){
-			user.setJoinTime(DateUtil.parse((long)(joinTime*1000)));
+			Date date = DateUtil.parse(joinTime*1000);
+			user.setJoinTime(date);
+			user.setJoinYmd(DateUtil.format(date, "yyyy-MM-dd"));
 		}
 		user.setNickname(data.getString("nickname"));
 		List<String> depts = (List<String>)data.getList("department_ids");
