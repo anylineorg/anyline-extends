@@ -214,7 +214,7 @@ public class WechatPayUtil {
             return new WechatRefundResult(false,"未设置密钥文件密码");
         }
         try{
-            CloseableHttpClient httpclient = HttpUtil.ceateSSLClient(keyStoreFile, HttpUtil.PROTOCOL_TLSV1, keyStorePassword);
+            CloseableHttpClient httpclient = HttpUtil.createSSLClient(keyStoreFile, HttpUtil.PROTOCOL_TLSV1, keyStorePassword);
             StringEntity reqEntity  = new StringEntity(xml);
             reqEntity.setContentType("application/x-www-form-urlencoded");
             String txt = HttpBuilder.init()
@@ -281,7 +281,7 @@ public class WechatPayUtil {
             return new WechatRedpackResult(false,"未设置密钥文件密码");
         }
         try{
-            CloseableHttpClient httpclient = HttpUtil.ceateSSLClient(keyStoreFile, HttpUtil.PROTOCOL_TLSV1, keyStorePassword);
+            CloseableHttpClient httpclient = HttpUtil.createSSLClient(keyStoreFile, HttpUtil.PROTOCOL_TLSV1, keyStorePassword);
             StringEntity  reqEntity  = new StringEntity(xml,"UTF-8");
             reqEntity.setContentType("application/x-www-form-urlencoded");
             String txt = HttpBuilder.init()
@@ -347,7 +347,7 @@ public class WechatPayUtil {
             return new WechatFissionRedpackResult(false,"未设置密钥文件密码");
         }
         try{
-            CloseableHttpClient httpclient = HttpUtil.ceateSSLClient(keyStoreFile, HttpUtil.PROTOCOL_TLSV1, keyStorePassword);
+            CloseableHttpClient httpclient = HttpUtil.createSSLClient(keyStoreFile, HttpUtil.PROTOCOL_TLSV1, keyStorePassword);
             StringEntity  reqEntity  = new StringEntity(xml,"UTF-8");
             reqEntity.setContentType("application/x-www-form-urlencoded");
             String txt = HttpBuilder.init()
@@ -407,7 +407,7 @@ public class WechatPayUtil {
             return new WechatEnterpriseTransferResult(false,"未设置密钥文件密码");
         }
         try{
-            CloseableHttpClient httpclient = HttpUtil.ceateSSLClient(keyStoreFile, HttpUtil.PROTOCOL_TLSV1, keyStorePassword);
+            CloseableHttpClient httpclient = HttpUtil.createSSLClient(keyStoreFile, HttpUtil.PROTOCOL_TLSV1, keyStorePassword);
             StringEntity  reqEntity  = new StringEntity(xml,"UTF-8");
             reqEntity.setContentType("application/x-www-form-urlencoded");
             String txt = HttpBuilder.init()
@@ -481,7 +481,7 @@ public class WechatPayUtil {
             return new WechatEnterpriseTransferBankResult(false,"未设置密钥文件密码");
         }
         try{
-            CloseableHttpClient httpclient = HttpUtil.ceateSSLClient(keyStoreFile, HttpUtil.PROTOCOL_TLSV1, keyStorePassword);
+            CloseableHttpClient httpclient = HttpUtil.createSSLClient(keyStoreFile, HttpUtil.PROTOCOL_TLSV1, keyStorePassword);
             StringEntity  reqEntity  = new StringEntity(xml,"UTF-8");
             reqEntity.setContentType("application/x-www-form-urlencoded");
             String txt = HttpBuilder.init()
