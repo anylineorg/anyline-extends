@@ -38,6 +38,7 @@ public class NumberFormat extends BaseBodyTag implements Cloneable{
 	private Integer round; // 参考BigDecimal.ROUND_UP;
 	private String hide; // 隐藏span.class
 	private String echo; // 显示位置 span.class
+	private Boolean factor = null;//正数时 是否带正负号
 
  
  
@@ -82,6 +83,11 @@ public class NumberFormat extends BaseBodyTag implements Cloneable{
 				}else{
 					result = num.toString();
 				}
+				if(num.compareTo(BigDecimal.ZERO) > 0){
+					if(null != factor && factor && !result.startsWith("+")){
+						result = "+" + result;
+					}
+				}
 			}else{
 				if(null == result && null != nvl){
 					result = nvl.toString();
@@ -90,6 +96,7 @@ public class NumberFormat extends BaseBodyTag implements Cloneable{
 					result = evl.toString();
 				}
 			}
+
 			if(null != result) {
 				if(BasicUtil.isNotEmpty(var)){
 					pageContext.getRequest().setAttribute(var, result);
@@ -127,10 +134,19 @@ public class NumberFormat extends BaseBodyTag implements Cloneable{
 		scale = null;
 		round = null;
 		hide = null;
+		factor = null;
 	} 
 	@Override 
 	protected Object clone() throws CloneNotSupportedException {
 		return super.clone(); 
+	}
+
+	public Boolean getFactor() {
+		return factor;
+	}
+
+	public void setFactor(Boolean factor) {
+		this.factor = factor;
 	}
 
 	public String getEcho() {

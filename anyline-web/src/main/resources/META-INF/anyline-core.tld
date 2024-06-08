@@ -912,6 +912,10 @@
 		<name>number</name>
 		<tagclass>org.anyline.web.tag.NumberFormat</tagclass>
 		<attribute>
+			<name>factor</name>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
 			<name>value</name>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
