@@ -25,6 +25,7 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 import org.anyline.cache.CacheElement;
 import org.anyline.cache.CacheProvider;
+import org.anyline.proxy.CacheProxy;
 import org.anyline.util.ConfigTable;
 import org.anyline.util.FileUtil;
 import org.slf4j.Logger;
@@ -48,7 +49,9 @@ public class EHCacheProvider implements CacheProvider {
 	public int getLvl(){
 		return 1;
 	}
-
+	public EHCacheProvider(){
+		CacheProxy.init(this);
+	}
 	public static InputStream getConfigFile() throws Exception{
 		File file = null;
 		String path = ConfigTable.getString("EHCACHE_CONFIG_PATH");
