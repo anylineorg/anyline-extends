@@ -780,31 +780,6 @@
 		</attribute>
 	</tag>
 	<tag>
-		<name>selecttext</name>
-		<tagclass>org.anyline.web.tag.SelectText</tagclass>
-		<attribute>
-			<name>data</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-		<attribute>
-			<name>valueKey</name>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-		<attribute>
-			<name>textKey</name>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-		<attribute>
-			<name>value</name>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-		<attribute>
-			<name>evl</name>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-	</tag>
-	<tag>
 		<name>substring</name>
 		<tagclass>org.anyline.web.tag.SubString</tagclass>
 		<attribute>

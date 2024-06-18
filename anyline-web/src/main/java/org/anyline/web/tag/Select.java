@@ -21,6 +21,7 @@ package org.anyline.web.tag;
 
 import org.anyline.util.BasicUtil;
 import org.anyline.util.BeanUtil;
+import org.anyline.util.ClassUtil;
 import org.anyline.util.ConfigTable;
 
 import javax.servlet.http.HttpServletRequest;
@@ -93,13 +94,24 @@ public class Select extends BaseBodyTag {
 		try {
 			if ("text".equals(type)) {
 				if (null != items) {
-					for (Object item : items) {
-						String val = BeanUtil.parseRuntimeValue(item, valueKey, encrypt);
-						String text = BeanUtil.parseRuntimeValue(item, textKey);
-						if (null != val && null != this.value && val.equals(value.toString())) {
-							html = text; 
-						} 
-					} 
+					if(items instanceof Map){
+						Map map = (Map)items;
+						Object item = map.get(value);
+						if(null != item){
+							if(ClassUtil.isPrimitiveClass(item) || item instanceof String){
+								html = item.toString();
+							}else{
+								html = BeanUtil.parseRuntimeValue(item, textKey);
+							}
+						}
+					}else {
+						for (Object item : items) {
+							String val = BeanUtil.parseRuntimeValue(item, valueKey, encrypt);
+							if (null != val && null != this.value && val.equals(value.toString())) {
+								html =  BeanUtil.parseRuntimeValue(item, textKey);
+							}
+						}
+					}
 				} 
 			} else {
 				StringBuffer builder = new StringBuffer();
