@@ -87,7 +87,7 @@ public class QQOpenUtil{
 			order.setNotify_url(config.PAY_NOTIFY_URL); 
 		} 
 		 
-		Map<String, Object> map = BeanUtil.toMap(order); 
+		Map<String, Object> map = BeanUtil.object2map(order); 
 		String sign = sign(map); 
 		map.put("sign", sign); 
 		if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){

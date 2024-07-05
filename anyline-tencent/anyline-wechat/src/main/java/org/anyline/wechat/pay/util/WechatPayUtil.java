@@ -120,7 +120,7 @@ public class WechatPayUtil {
         if(BasicUtil.isEmpty(order.getOut_trade_no())){
             throw new Exception("未设置交易单号");
         }
-        Map<String, Object> map = BeanUtil.toMap(order);
+        Map<String, Object> map = BeanUtil.object2map(order);
         String sign = WechatUtil.sign(config.API_SECRET,map);
         map.put("sign", sign);
         if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
@@ -189,7 +189,7 @@ public class WechatPayUtil {
         if(BasicUtil.isEmpty(refund.getMch_id())){
             refund.setMch_id(config.MCH_ID);
         }
-        Map<String, Object> map = BeanUtil.toMap(refund);
+        Map<String, Object> map = BeanUtil.object2map(refund);
         String sign = WechatUtil.sign(config.API_SECRET,map);
 
         map.put("sign", sign);
@@ -256,7 +256,7 @@ public class WechatPayUtil {
         if(BasicUtil.isEmpty(pack.getMch_billno())){
             pack.setMch_billno(BasicUtil.getRandomLowerString(20));
         }
-        Map<String, Object> map = BeanUtil.toMap(pack);
+        Map<String, Object> map = BeanUtil.object2map(pack);
         String sign = WechatUtil.sign(config.API_SECRET,map);
 
         map.put("sign", sign);
@@ -322,7 +322,7 @@ public class WechatPayUtil {
         if(BasicUtil.isEmpty(pack.getMch_billno())){
             pack.setMch_billno(BasicUtil.getRandomLowerString(20));
         }
-        Map<String, Object> map = BeanUtil.toMap(pack);
+        Map<String, Object> map = BeanUtil.object2map(pack);
         String sign = WechatUtil.sign(config.API_SECRET,map);
 
         map.put("sign", sign);
@@ -382,7 +382,7 @@ public class WechatPayUtil {
         if(BasicUtil.isEmpty(transfer.getPartner_trade_no())){
             transfer.setPartner_trade_no(BasicUtil.getRandomLowerString(20));
         }
-        Map<String, Object> map = BeanUtil.toMap(transfer);
+        Map<String, Object> map = BeanUtil.object2map(transfer);
         String sign = WechatUtil.sign(config.API_SECRET,map);
 
         map.put("sign", sign);
@@ -456,7 +456,7 @@ public class WechatPayUtil {
         if(BasicUtil.isEmpty(transfer.getPartner_trade_no())){
             transfer.setPartner_trade_no(BasicUtil.getRandomLowerString(20));
         }
-        Map<String, Object> map = BeanUtil.toMap(transfer);
+        Map<String, Object> map = BeanUtil.object2map(transfer);
         String sign = WechatUtil.sign(config.API_SECRET,map);
 
         map.put("sign", sign);
