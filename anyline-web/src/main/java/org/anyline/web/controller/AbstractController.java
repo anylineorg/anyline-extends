@@ -83,7 +83,7 @@ public abstract class AbstractController {
 		}
 		if(!is_elistener_load) {
 			try {
-				ConfigTable.worker.getBean(EntityListener.class);
+				ConfigTable.environment().getBean(EntityListener.class);
 			}catch (Exception e){}
 			is_elistener_load = true;
 		}
@@ -101,7 +101,7 @@ public abstract class AbstractController {
 		}
 		if(!is_clistener_load) {
 			try {
-				clistener = ConfigTable.worker.getBean(ControllerListener.class);
+				clistener = ConfigTable.environment().getBean(ControllerListener.class);
 			}catch (Exception e){}
 			is_clistener_load = true;
 		}
