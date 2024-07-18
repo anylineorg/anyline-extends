@@ -19,6 +19,7 @@
 
 
 package org.anyline.poi.excel;
+
 import org.anyline.entity.html.Table;
 import org.anyline.entity.html.Td;
 import org.anyline.entity.html.Tr;
@@ -27,8 +28,6 @@ import org.anyline.util.BasicUtil;
 import org.anyline.util.BeanUtil;
 import org.anyline.util.FileUtil;
 import org.anyline.util.regular.RegularUtil;
-import org.apache.poi.EncryptedDocumentException;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -189,18 +188,12 @@ public class ExcelUtil {
 	 * @return List
 	 *
 	 */
-	public static List<List<String>> read(InputStream is, int sheet, int rows) {
+	public static List<List<String>> read(InputStream is, int sheet, int rows) throws Exception {
 		return read(is, sheet, rows, 0);
 	}
-	public static List<List<String>> read(InputStream is, int sheet, int rows, int foot) {
-		List<List<String>> list = null;
-		try {
-			Workbook workbook = getWorkbook(is);
-			list = read(workbook.getSheetAt(sheet), rows, foot);
-		}catch (Exception e){
-			e.printStackTrace();
-		}
-		return list;
+	public static List<List<String>> read(InputStream is, int sheet, int rows, int foot) throws Exception {
+		Workbook workbook = getWorkbook(is);
+		return read(workbook.getSheetAt(sheet), rows, foot);
 	}
 	/**
 	 * 读取指定Sheet也的内容
@@ -209,10 +202,10 @@ public class ExcelUtil {
 	 * @return List
 	 *
 	 */
-	public static List<List<String>> read(File file, int sheet) {
+	public static List<List<String>> read(File file, int sheet) throws Exception {
 		return read(file, sheet, 0);
 	}
-	public static List<List<String>> read(InputStream is, int sheet) {
+	public static List<List<String>> read(InputStream is, int sheet) throws Exception {
 		return read(is, sheet, 0);
 	}
 
@@ -221,10 +214,10 @@ public class ExcelUtil {
 	 * @param file 文件 第0个sheet第0行开始读取
 	 * @return list
 	 */
-	public static List<List<String>> read(File file){
+	public static List<List<String>> read(File file) throws Exception {
 		return read(file, 0, 0);
 	}
-	public static List<List<String>> read(InputStream is){
+	public static List<List<String>> read(InputStream is) throws Exception {
 		return read(is, 0, 0);
 	}
 
@@ -235,15 +228,9 @@ public class ExcelUtil {
 	 * @param rows 从rows行开始读取
 	 * @return list
 	 */
-	public static List<List<String>> read(File file, String sheet, int rows) {
-		List<List<String>> list = null;
-		try {
-			Workbook workbook = getWorkbook(file);
-			list = read(workbook.getSheet(sheet), rows, 0);
-		}catch (Exception e){
-			e.printStackTrace();
-		}
-		return list;
+	public static List<List<String>> read(File file, String sheet, int rows) throws Exception {
+		Workbook workbook = getWorkbook(file);
+		return read(workbook.getSheet(sheet), rows, 0);
 	}
 	/**
 	 * 读取excel
@@ -253,28 +240,16 @@ public class ExcelUtil {
 	 * @param foot 到第几行结束(如果负数表示 表尾有多少行不需要读取)
 	 * @return list
 	 */
-	public static List<List<String>> read(File file, String sheet, int rows, int foot) {
-		List<List<String>> list = null;
-		try {
-			Workbook workbook = getWorkbook(file);
-			list = read(workbook.getSheet(sheet), rows, foot);
-		}catch (Exception e){
-			e.printStackTrace();
-		}
-		return list;
+	public static List<List<String>> read(File file, String sheet, int rows, int foot) throws Exception {
+		Workbook workbook = getWorkbook(file);
+		return read(workbook.getSheet(sheet), rows, foot);
 	}
 
-	public static List<List<String>> read(InputStream is, String sheet, int rows, int foot) {
-		List<List<String>> list = null;
-		try {
-			Workbook workbook = getWorkbook(is);
-			list = read(workbook.getSheet(sheet), rows, foot);
-		}catch (Exception e){
-			e.printStackTrace();
-		}
-		return list;
+	public static List<List<String>> read(InputStream is, String sheet, int rows, int foot) throws Exception {
+		Workbook workbook = getWorkbook(is);
+		return read(workbook.getSheet(sheet), rows, foot);
 	}
-	public static List<List<String>> read(InputStream is, String sheet, int rows) {
+	public static List<List<String>> read(InputStream is, String sheet, int rows) throws Exception {
 		return read(is, sheet, rows, 0);
 	}
 	/**
@@ -283,15 +258,15 @@ public class ExcelUtil {
 	 * @param sheet sheet
 	 * @return list
 	 */
-	public static List<List<String>> read(File file, String sheet) {
+	public static List<List<String>> read(File file, String sheet) throws Exception {
 		return read(file, sheet, 0);
 	}
 
-	public static List<List<String>> read(InputStream is, String sheet) {
+	public static List<List<String>> read(InputStream is, String sheet) throws Exception {
 		return read(is, sheet, 0);
 	}
 
-	public static Workbook getWorkbook(File file) throws EncryptedDocumentException, InvalidFormatException, IOException {
+	public static Workbook getWorkbook(File file) throws Exception {
 		InputStream is = null;
 		Workbook wb = null;
 
@@ -316,7 +291,7 @@ public class ExcelUtil {
 	}
 
 
-	public static Workbook getWorkbook(InputStream is) throws EncryptedDocumentException, InvalidFormatException, IOException {
+	public static Workbook getWorkbook(InputStream is) throws Exception {
 		Workbook wb = null;
 			try {
 				wb = WorkbookFactory.create(is);
@@ -431,53 +406,29 @@ public class ExcelUtil {
 	 * @param row 行
 	 * @return List
 	 */
-	public static List<String> values(File file, int sheet, int row)  {
-		List<String> list = new ArrayList<>();
-		try {
-			Workbook workbook = WorkbookFactory.create(file);
-			return values(workbook.getSheetAt(sheet), row);
-		}catch (Exception e){
-			e.printStackTrace();
-		}
-		return list;
+	public static List<String> values(File file, int sheet, int row)  throws Exception{
+		Workbook workbook = WorkbookFactory.create(file);
+		return values(workbook.getSheetAt(sheet), row);
 	}
-	public static List<String> values(InputStream is, int sheet, int row)  {
-		List<String> list = new ArrayList<>();
-		try {
-			Workbook workbook = WorkbookFactory.create(is);
-			return values(workbook.getSheetAt(sheet), row);
-		}catch (Exception e){
-			e.printStackTrace();
-		}
-		return list;
+	public static List<String> values(InputStream is, int sheet, int row) throws Exception {
+		Workbook workbook = WorkbookFactory.create(is);
+		return values(workbook.getSheetAt(sheet), row);
 	}
-	public static List<String> values(InputStream is, int row)  {
+	public static List<String> values(InputStream is, int row) throws Exception {
 		return values(is, 0, row);
 	}
-	public static List<String> values(File file, int row)  {
+	public static List<String> values(File file, int row) throws Exception {
 		return values(file, 0, row);
 	}
-	public static List<String> values(File file, String sheet, int row)  {
-		List<String> list = new ArrayList<>();
-		try {
-			Workbook workbook = WorkbookFactory.create(file);
-			return values(workbook.getSheet(sheet), row);
-		}catch (Exception e){
-			e.printStackTrace();
-		}
-		return list;
+	public static List<String> values(File file, String sheet, int row) throws Exception {
+		Workbook workbook = WorkbookFactory.create(file);
+		return values(workbook.getSheet(sheet), row);
 	}
-	public static List<String> values(InputStream is, String sheet, int row)  {
-		List<String> list = new ArrayList<>();
-		try {
-			Workbook workbook = WorkbookFactory.create(is);
-			return values(workbook.getSheet(sheet), row);
-		}catch (Exception e){
-			e.printStackTrace();
-		}
-		return list;
+	public static List<String> values(InputStream is, String sheet, int row) throws Exception {
+		Workbook workbook = WorkbookFactory.create(is);
+		return values(workbook.getSheet(sheet), row);
 	}
-	public static List<String> values(Sheet sheet, int row){
+	public static List<String> values(Sheet sheet, int row) {
 		List<String> list = new ArrayList<>();
 		Row r = sheet.getRow(row);
 		int rowNum = r.getLastCellNum();
@@ -487,80 +438,60 @@ public class ExcelUtil {
 		return list;
 	}
 
-	public static List<String> values(String path, int sheet, int row)  {
+	public static List<String> values(String path, int sheet, int row) throws Exception {
 		return values(new File(path), sheet, row);
 	}
-	public static List<String> values(String path, String sheet, int row)  {
+	public static List<String> values(String path, String sheet, int row) throws Exception {
 		return values(new File(path), sheet, row);
 	}
-	public static List<String> values(String path,  int row)  {
+	public static List<String> values(String path,  int row) throws Exception {
 		return values(new File(path), 0, row);
 	}
 
-	public static String value(Sheet sheet, int row, int col){
+	public static String value(Sheet sheet, int row, int col) throws Exception {
 		return value(sheet.getRow(row).getCell(col));
 	}
 
-	public static String value(String path, int sheet, int row, int col) {
+	public static String value(String path, int sheet, int row, int col) throws Exception {
 		File file = new File(path);
 		return value(file, sheet, row, col);
 	}
-	public static String value(Workbook workbook, int sheet, int row, int col){
+	public static String value(Workbook workbook, int sheet, int row, int col) throws Exception {
 		return value(workbook.getSheetAt(sheet), row, col);
 	}
-	public static String value(Workbook workbook, String sheet, int row, int col){
+	public static String value(Workbook workbook, String sheet, int row, int col) throws Exception {
 		return value(workbook.getSheet(sheet), row, col);
 	}
-	public static String value(File file, int sheet, int row, int col) {
-		try {
-			Workbook workbook = WorkbookFactory.create(file);
-			return value(workbook, sheet, row, col);
-		}catch (Exception e){
-			e.printStackTrace();
-		}
-		return null;
+	public static String value(File file, int sheet, int row, int col) throws Exception {
+		Workbook workbook = WorkbookFactory.create(file);
+		return value(workbook, sheet, row, col);
 	}
-	public static String value(File file, String sheet, int row, int col) {
-		try {
-			Workbook workbook = WorkbookFactory.create(file);
-			return value(workbook, sheet, row, col);
-		}catch (Exception e){
-			e.printStackTrace();
-		}
-		return null;
+	public static String value(File file, String sheet, int row, int col) throws Exception {
+		Workbook workbook = WorkbookFactory.create(file);
+		return value(workbook, sheet, row, col);
 	}
-	public static String value(InputStream is, int sheet, int row, int col) {
-		try {
-			Workbook workbook = WorkbookFactory.create(is);
-			return value(workbook, sheet, row, col);
-		}catch (Exception e){
-			e.printStackTrace();
-		}
-		return null;
+	public static String value(InputStream is, int sheet, int row, int col) throws Exception {
+		Workbook workbook = WorkbookFactory.create(is);
+		return value(workbook, sheet, row, col);
 	}
-	public static String value(InputStream is, String sheet, int row, int col) {
-		try {
-			Workbook workbook = WorkbookFactory.create(is);
-			return value(workbook, sheet, row, col);
-		}catch (Exception e){
-			e.printStackTrace();
-		}
-		return null;
+	public static String value(InputStream is, String sheet, int row, int col) throws Exception {
+		Workbook workbook = WorkbookFactory.create(is);
+		return value(workbook, sheet, row, col);
 	}
 
-	public static String value(InputStream is, int row, int col) {
+	public static String value(InputStream is, int row, int col) throws Exception {
 		return value(is, 0, row, col);
 	}
-	public static void value(String path, int sheet, int row, int col, String value) {
+	public static void value(String path, int sheet, int row, int col, String value) throws Exception {
 		value( new File(path), sheet, row, col, value);
 	}
-	public static void value(String path, int row, int col, String value) {
+	public static void value(String path, int row, int col, String value) throws Exception {
 		value( new File(path), 0, row, col, value);
 	}
-	public static void value(String path, String sheet, int row, int col, String value) {
+	public static void value(String path, String sheet, int row, int col, String value) throws Exception {
 		value( new File(path), sheet, row, col, value);
 	}
-	public static void value(File file, int sheet, int row, int col, String value) {
+	public static void value(File file, int sheet, int row, int col, String value) throws Exception {
 		OutputStream os = null;
 		try {
 			File tempFile = FileUtil.createTempFile(file);
@@ -571,8 +502,6 @@ public class ExcelUtil {
 			tempFile.delete();
 			os = new FileOutputStream(file);
 			workbook.write(os);
-		}catch(Exception e){
-			e.printStackTrace();
 		}finally {
 			if(null != os) {
 				try {
@@ -585,7 +514,7 @@ public class ExcelUtil {
 			}
 		}
 	}
-	public static void value(File file, String sheet, int row, int col, String value) {
+	public static void value(File file, String sheet, int row, int col, String value) throws Exception {
 		OutputStream os = null;
 		try {
 			File tempFile = FileUtil.createTempFile(file);
@@ -596,8 +525,6 @@ public class ExcelUtil {
 			tempFile.delete();
 			os = new FileOutputStream(file);
 			workbook.write(os);
-		}catch(Exception e){
-			e.printStackTrace();
 		}finally {
 			if(null != os) {
 				try {
@@ -610,16 +537,16 @@ public class ExcelUtil {
 		}
 	}
 
-	public static void value(String path, int sheet, int row, int col, double value) {
+	public static void value(String path, int sheet, int row, int col, double value) throws Exception {
 		value( new File(path), sheet, row, col, value);
 	}
-	public static void value(String path, int row, int col, double value) {
+	public static void value(String path, int row, int col, double value) throws Exception {
 		value( new File(path), 0, row, col, value);
 	}
-	public static void value(String path, String sheet, int row, int col, double value) {
+	public static void value(String path, String sheet, int row, int col, double value) throws Exception {
 		value( new File(path), sheet, row, col, value);
 	}
-	public static void value(File file, int sheet, int row, int col, double value) {
+	public static void value(File file, int sheet, int row, int col, double value) throws Exception {
 		OutputStream os = null;
 		try {
 			File tempFile = FileUtil.createTempFile(file);
@@ -630,8 +557,6 @@ public class ExcelUtil {
 			tempFile.delete();
 			os = new FileOutputStream(file);
 			workbook.write(os);
-		}catch(Exception e){
-			e.printStackTrace();
 		}finally {
 			if(null != os) {
 				try {
@@ -644,7 +569,7 @@ public class ExcelUtil {
 			}
 		}
 	}
-	public static void value(File file, String sheet, int row, int col, double value) {
+	public static void value(File file, String sheet, int row, int col, double value) throws Exception {
 		OutputStream os = null;
 		try {
 			File tempFile = FileUtil.createTempFile(file);
@@ -655,8 +580,6 @@ public class ExcelUtil {
 			tempFile.delete();
 			os = new FileOutputStream(file);
 			workbook.write(os);
-		}catch(Exception e){
-			e.printStackTrace();
 		}finally {
 			if(null != os) {
 				try {
@@ -670,13 +593,13 @@ public class ExcelUtil {
 	}
 
 
-	public static void value(String path, int sheet, int row, int col, int value) {
+	public static void value(String path, int sheet, int row, int col, int value) throws Exception {
 		value( new File(path), sheet, row, col, value);
 	}
-	public static void value(String path, String sheet, int row, int col, int value) {
+	public static void value(String path, String sheet, int row, int col, int value) throws Exception {
 		value( new File(path), sheet, row, col, value);
 	}
-	public static void value(File file, int sheet, int row, int col, int value) {
+	public static void value(File file, int sheet, int row, int col, int value) throws Exception {
 		OutputStream os = null;
 		try {
 			File tempFile = FileUtil.createTempFile(file);
@@ -687,8 +610,6 @@ public class ExcelUtil {
 			tempFile.delete();
 			os = new FileOutputStream(file);
 			workbook.write(os);
-		}catch(Exception e){
-			e.printStackTrace();
 		}finally {
 			if(null != os) {
 				try {
@@ -701,7 +622,7 @@ public class ExcelUtil {
 			}
 		}
 	}
-	public static void value(File file, String sheet, int row, int col, int value) {
+	public static void value(File file, String sheet, int row, int col, int value) throws Exception {
 		OutputStream os = null;
 		try {
 			File tempFile = FileUtil.createTempFile(file);
@@ -712,8 +633,6 @@ public class ExcelUtil {
 			tempFile.delete();
 			os = new FileOutputStream(file);
 			workbook.write(os);
-		}catch(Exception e){
-			e.printStackTrace();
 		}finally {
 			if(null != os) {
 				try {
@@ -726,7 +645,7 @@ public class ExcelUtil {
 		}
 	}
 
-	public static void value(Sheet sheet, int row, int col, String value){
+	public static void value(Sheet sheet, int row, int col, String value) throws Exception {
 		Row r = sheet.getRow(row);
 		if(null == r){
 			r = sheet.createRow(row);
@@ -737,7 +656,7 @@ public class ExcelUtil {
 		}
 		cell.setCellValue(value);
 	}
-	public static void value(Sheet sheet, int row, int col, double value){
+	public static void value(Sheet sheet, int row, int col, double value) throws Exception {
 		Row r = sheet.getRow(row);
 		if(null == r){
 			r = sheet.createRow(row);
@@ -748,7 +667,7 @@ public class ExcelUtil {
 		}
 		cell.setCellValue(value);
 	}
-	public static void value(Sheet sheet, int row, int col, int value){
+	public static void value(Sheet sheet, int row, int col, int value) throws Exception {
 		Row r = sheet.getRow(row);
 		if(null == r){
 			r = sheet.createRow(row);

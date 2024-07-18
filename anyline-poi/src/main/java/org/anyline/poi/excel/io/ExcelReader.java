@@ -39,7 +39,7 @@ public class ExcelReader {
 	public static ExcelReader init(){
 		return new ExcelReader();
 	}
-	public DataSet read(){
+	public DataSet read() throws Exception {
 		DataSet set = new DataSet();
 		if(null == is &&(null == file || !file.exists())){
 			return set;
@@ -69,7 +69,7 @@ public class ExcelReader {
 				}
 			}
 		}
-		if(list.size()>0) {
+		if(!list.isEmpty()) {
 			if (head != -1) {
 				// 取第head行作为表头不是head行
 				List<String> headers = list.get(head);
