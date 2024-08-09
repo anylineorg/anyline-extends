@@ -116,7 +116,7 @@ public class FeishuUtil {
 	/**
 	 *
 	 * @param code 用户授权确认后重定向中的code
-	 * @return
+	 * @return DataRow
 	 */
 	public DataRow access_token(String code){
 		DataRow token = null;
@@ -359,8 +359,9 @@ public class FeishuUtil {
 	/**
 	 * 创建用户登录连接
 	 * @param callback 回调地址(可以从url获取access_token)
-	 * @param state
-	 * @return
+	 * @param scope scope
+	 * @param state state
+	 * @return String
 	 */
 	public String createAuthUrl(String callback, String scope, String state){
 		StringBuilder builder = new StringBuilder();
