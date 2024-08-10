@@ -57,10 +57,10 @@ public abstract class AbstractController {
 
 
 	protected static EntityAdapter adapter;
-	protected static EntityListener elistener;
-	protected static ControllerListener clistener;
-	private static boolean is_elistener_load = false;
-	private static boolean is_clistener_load = false;
+	protected static EntityListener entity_listener;
+	protected static ControllerListener controller_listener;
+	private static boolean is_entity_listener_load = false;
+	private static boolean is_controller_listener_load = false;
 
 	protected AnylineService service;
 
@@ -75,37 +75,37 @@ public abstract class AbstractController {
 	@Autowired(required = false)
 	@Qualifier("anyline.entity.listener")
 	public void setListener(EntityListener listener){
-		AbstractController.elistener = listener;
+		AbstractController.entity_listener = listener;
 	}
 	protected static EntityListener getEntityListener(){
-		if(null != elistener){
-			return elistener;
+		if(null != entity_listener){
+			return entity_listener;
 		}
-		if(!is_elistener_load) {
+		if(!is_entity_listener_load) {
 			try {
 				ConfigTable.environment().getBean(EntityListener.class);
 			}catch (Exception e){}
-			is_elistener_load = true;
+			is_entity_listener_load = true;
 		}
-		return elistener;
+		return entity_listener;
 	}
 
 	@Autowired(required = false)
 	@Qualifier("anyline.controller.listener")
 	public void setListener(ControllerListener listener){
-		AbstractController.clistener = listener;
+		AbstractController.controller_listener = listener;
 	}
 	protected static ControllerListener getControllerListener(){
-		if(null != clistener){
-			return clistener;
+		if(null != controller_listener){
+			return controller_listener;
 		}
-		if(!is_clistener_load) {
+		if(!is_controller_listener_load) {
 			try {
-				clistener = ConfigTable.environment().getBean(ControllerListener.class);
+				controller_listener = ConfigTable.environment().getBean(ControllerListener.class);
 			}catch (Exception e){}
-			is_clistener_load = true;
+			is_controller_listener_load = true;
 		}
-		return clistener;
+		return controller_listener;
 	}
 	/* *****************************************************************************************************************
 	 *
@@ -160,9 +160,9 @@ public abstract class AbstractController {
 					BeanUtil.setFieldValue(entity, field, value);
 				}
 			}// end 未指定属性与request参数对应关系
-			elistener = getEntityListener();
-			if(null != elistener){
-				elistener.after(request, entity);
+			entity_listener = getEntityListener();
+			if(null != entity_listener){
+				entity_listener.after(request, entity);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -226,9 +226,9 @@ public abstract class AbstractController {
 			}*/
 		}
 
-		elistener = getEntityListener();
-		if(null != elistener){
-			elistener.after(request, row);
+		entity_listener = getEntityListener();
+		if(null != entity_listener){
+			entity_listener.after(request, row);
 		}
 		return row;
 	}
@@ -380,9 +380,9 @@ public abstract class AbstractController {
 					}
 				}
 
-				elistener = getEntityListener();
-				if(null != elistener){
-					elistener.after(request, row);
+				entity_listener = getEntityListener();
+				if(null != entity_listener){
+					entity_listener.after(request, row);
 				}
 				set.addRow(row);
 			}
@@ -443,9 +443,9 @@ public abstract class AbstractController {
 		store.setValue(WebUtil.value(request));
 		store.setRequest(request);
 
-		clistener = getControllerListener();
-		if(null != clistener){
-			clistener.after(request, store);
+		controller_listener = getControllerListener();
+		if(null != controller_listener){
+			controller_listener.after(request, store);
 		}
 		return store;
 	}
@@ -474,9 +474,9 @@ public abstract class AbstractController {
 		}
 		store.setValue(WebUtil.value(request));
 		store.setRequest(request);
-		clistener = getControllerListener();
-		if(null != clistener){
-			clistener.after(request, store);
+		controller_listener = getControllerListener();
+		if(null != controller_listener){
+			controller_listener.after(request, store);
 		}
 		return store;
 	}
@@ -505,9 +505,9 @@ public abstract class AbstractController {
 		store.setPageNavi(navi);
 		store.setValue(WebUtil.value(request));
 		store.setRequest(request);
-		clistener = getControllerListener();
-		if(null != clistener){
-			clistener.after(request, store);
+		controller_listener = getControllerListener();
+		if(null != controller_listener){
+			controller_listener.after(request, store);
 		}
 		return store;
 	}
