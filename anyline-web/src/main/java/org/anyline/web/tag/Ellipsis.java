@@ -26,7 +26,7 @@ import java.io.IOException;
  
 public class Ellipsis extends BaseBodyTag {
 	private static final long serialVersionUID = 1L; 
-	private static final String SINGLE_CHAR = "abcdefghijklmnopqrstuvwxyz0123456789,.?'_-=+!@#$%^&*() "; 
+	private static final String SINGLE_CHAR = "abcdefghijklmnopqrstuvwxyz0123456789:,.?'_-=+!@#$%^&*[]\\/() ";
 	private int length;					// 结果长度
 	private String replace = "...";		// 替换字符
 	private boolean label = true;		// 是否显示label
