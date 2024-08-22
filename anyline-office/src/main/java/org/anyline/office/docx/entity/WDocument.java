@@ -477,6 +477,24 @@ public class WDocument extends Welement{
         return tables;
     }
 
+    /**
+     * 获取body下的table
+     * @param content 根据内容定位
+     * @return tables
+     */
+    public List<Wtable> tables(String content){
+        List<Wtable> all = tables();
+        List<Wtable> list = new ArrayList<>();
+        for(Wtable table:all){
+            String txt = table.getTexts();
+            if(txt.contains(content)){
+                list.add(table);
+            }
+        }
+        return list;
+    }
+
+
     private List<Element> children(Element parent){
         List<Element> result = new ArrayList<>();
         List<Element> items = parent.elements();
