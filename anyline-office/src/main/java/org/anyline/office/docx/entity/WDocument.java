@@ -44,7 +44,7 @@ public class WDocument extends Welement{
     private String charset = "UTF-8";
     private String xml = null;      // document.xml文本
     // word/document.xml
-    private org.dom4j.Document doc = null; 
+    private org.dom4j.Document doc = null;
     public boolean IS_HTML_ESCAPE = false;  //设置文本时是否解析转义符
 
     // word/_rels/document.xml.rels
@@ -738,7 +738,7 @@ public class WDocument extends Welement{
 
     public Element table(Element box, Element after, Element src){
 
-        Element tbl = src.addElement("w:tbl");
+        Element tbl = box.addElement("w:tbl");
         Element tblPr = tbl.addElement("w:tblPr");
 
         Table table = new Table();
