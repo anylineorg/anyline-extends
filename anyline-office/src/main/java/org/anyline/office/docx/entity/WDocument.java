@@ -27,6 +27,7 @@ import org.anyline.handler.Uploader;
 import org.anyline.office.docx.util.DocxUtil;
 import org.anyline.util.*;
 import org.anyline.util.regular.RegularUtil;
+import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Node;
@@ -50,9 +51,11 @@ public class WDocument extends Welement{
     // word/_rels/document.xml.rels
     private String relsXml = null;
     private org.dom4j.Document rels;
+    private LinkedHashMap<String, org.dom4j.Document> footers = new LinkedHashMap<>();
+    private LinkedHashMap<String, org.dom4j.Document> headers = new LinkedHashMap<>();
 
-    private Map<String, Map<String, String>> styles = new HashMap<String, Map<String, String>>();
-    private Map<String, String> replaces = new HashMap<String, String>();
+    private LinkedHashMap<String, Map<String, String>> styles = new LinkedHashMap<>();
+    private LinkedHashMap<String, String> replaces = new LinkedHashMap<>();
     /**
      * word转html时遇到文件需要上传到文件服务器，并返回url
      */
@@ -82,15 +85,7 @@ public class WDocument extends Welement{
 
     private void load(){
         if(null == xml){
-            try {
-                xml = ZipUtil.read(file, "word/document.xml", charset);
-                relsXml = ZipUtil.read(file, "word/_rels/document.xml.rels", charset);
-                doc = DocumentHelper.parseText(xml);
-                rels = DocumentHelper.parseText(relsXml);
-                src = doc.getRootElement().element("body");
-            }catch (Exception e){
-                e.printStackTrace();
-            }
+            reload();
         }
     }
     public void reload(){
@@ -100,6 +95,16 @@ public class WDocument extends Welement{
             doc = DocumentHelper.parseText(xml);
             rels = DocumentHelper.parseText(relsXml);
             src = doc.getRootElement().element("body");
+            List<String> items = ZipUtil.getEntriesNames(file);
+            for(String item:items){
+                if(item.contains("word/footer")){
+                    String name = item.replace("word/", "").replace(".xml", "");
+                    footers.put(name, DocumentHelper.parseText(ZipUtil.read(file, item, charset)));
+                }else if(item.contains("word/header")){
+                    String name = item.replace("word/", "").replace(".xml", "");
+                    headers.put(name, DocumentHelper.parseText(ZipUtil.read(file, item, charset)));
+                }
+            }
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -145,7 +150,7 @@ public class WDocument extends Welement{
         replaces.put(key, content);
     }
     public void replace(String key, File ... words){
-       replace(key, BeanUtil.array2list(words));
+        replace(key, BeanUtil.array2list(words));
     }
     public void replace(String key, List<File> words){
         if(null != words) {
@@ -166,6 +171,18 @@ public class WDocument extends Welement{
             load();
             //执行替换
             replace(src, replaces);
+            for(String name:footers.keySet()){
+                Document doc = footers.get(name);
+                Element element = doc.getRootElement();
+                replace(element, replaces);
+                ZipUtil.replace(file,"word/" + name + ".xml", DomUtil.format(doc), charset);
+            }
+            for(String name:headers.keySet()){
+                Document doc = headers.get(name);
+                Element element = doc.getRootElement();
+                replace(element, replaces);
+                ZipUtil.replace(file,"word/" + name + ".xml", DomUtil.format(doc), charset);
+            }
             //检测内容类型
             checkContentTypes();
             //合并列的表格,如果没有设置宽度,在wps中只占一列,需要在表格中根据总列数添加
@@ -1378,7 +1395,7 @@ public class WDocument extends Welement{
                 String text = node.getText().trim();
                 if(text.length()>0) {
                     empty = false;
-                   Element r = inline(parent, prev, text, styles, copyPrevStyle);
+                    Element r = inline(parent, prev, text, styles, copyPrevStyle);
                     prev = r;
                 }
             }else if(type == 1 ) {//element
