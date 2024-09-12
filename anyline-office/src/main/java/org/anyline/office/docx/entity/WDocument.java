@@ -53,9 +53,11 @@ public class WDocument extends Welement{
     private org.dom4j.Document rels;
     private LinkedHashMap<String, org.dom4j.Document> footers = new LinkedHashMap<>();
     private LinkedHashMap<String, org.dom4j.Document> headers = new LinkedHashMap<>();
+    private LinkedHashMap<String, org.dom4j.Document> charts = new LinkedHashMap<>();
 
     private LinkedHashMap<String, Map<String, String>> styles = new LinkedHashMap<>();
     private LinkedHashMap<String, String> replaces = new LinkedHashMap<>();
+    private boolean autoMergePlaceholder = true;
     /**
      * word转html时遇到文件需要上传到文件服务器，并返回url
      */
@@ -103,6 +105,9 @@ public class WDocument extends Welement{
                 }else if(item.contains("word/header")){
                     String name = item.replace("word/", "").replace(".xml", "");
                     headers.put(name, DocumentHelper.parseText(ZipUtil.read(file, item, charset)));
+                }else if(item.contains("word/charts/chart")){
+                    String name = item.replace("word/charts/", "").replace(".xml", "");
+                    charts.put(name, DocumentHelper.parseText(ZipUtil.read(file, item, charset)));
                 }
             }
         }catch (Exception e){
@@ -169,6 +174,9 @@ public class WDocument extends Welement{
         try {
             //加载文件
             load();
+            if(autoMergePlaceholder){
+                mergePlaceholder();
+            }
             //执行替换
             replace(src, replaces);
             for(String name:footers.keySet()){
@@ -183,6 +191,12 @@ public class WDocument extends Welement{
                 replace(element, replaces);
                 ZipUtil.replace(file,"word/" + name + ".xml", DomUtil.format(doc), charset);
             }
+            for(String name:charts.keySet()){
+                Document doc = charts.get(name);
+                Element element = doc.getRootElement();
+                replace(element, replaces);
+                ZipUtil.replace(file,"word/charts/" + name + ".xml", DomUtil.format(doc), charset);
+            }
             //检测内容类型
             checkContentTypes();
             //合并列的表格,如果没有设置宽度,在wps中只占一列,需要在表格中根据总列数添加
@@ -195,6 +209,95 @@ public class WDocument extends Welement{
         }
     }
 
+    /**
+     * 合并点位符 ${key} 拆分到3个t中的情况
+     * 调用完replace后再调用当前方法，因为需要用到replace里提供的占位符列表
+     */
+    public void mergePlaceholder(){
+        List<String> placeholders = new ArrayList<>();
+        placeholders.addAll(replaces.keySet());
+        mergePlaceholder(placeholders);
+    }
+    /**
+     * 合并点位符 ${key} 拆分到3个t中的情况
+     * @param placeholders 占位符列表 带不还${}都可以 最终会处理掉${}
+     */
+    public void mergePlaceholder(List<String> placeholders){
+        if(null == src){
+            load();
+        }
+        mergePlaceholder(src, placeholders);
+        for(Document footer:footers.values()){
+            mergePlaceholder(footer.getRootElement(), placeholders);
+        }
+        for(Document header:headers.values()){
+            mergePlaceholder(header.getRootElement(), placeholders);
+        }
+    }
+    public void mergePlaceholder(Element box, List<String> placeholders){
+        List<String> list = new ArrayList<>();
+        for(String placeholder:placeholders){
+            list.add(placeholder.replace("${", "").replace("}", ""));
+        }
+        List<Element> ts = DomUtil.elements(box, "t");
+        List<Element> removes = new ArrayList<>();
+        int size = ts.size();
+        for(int i=0; i<size;){
+            Element t = ts.get(i);
+            String txt = t.getTextTrim();
+            if("${".equals(txt)){
+                Element next =getElement(ts, i+1, list);
+                if(null != next){
+                    Element end = getElement(ts, i+2, "}");
+                    if(null != end){
+                        txt = "${" + next.getTextTrim().trim() + "}";
+                        t.setText(txt);
+                        for(int idx = i+1; idx <= ts.indexOf(end); idx++){
+                            removes.add(ts.get(idx));
+                        }
+                    }
+                }
+            }
+            i ++;
+        }
+        for(Element remove:removes){
+            remove.getParent().remove(remove);
+        }
+    }
+
+    /**
+     * 保住指定内容的element
+     * @param elements elements
+     * @param start 开始位置
+     * @param contents contents
+     * @return element
+     */
+    public Element getElement(List<Element> elements, int start, List<String> contents){
+        int size = elements.size();
+        for(int i=start; i<size; i++){
+            Element element = elements.get(i);
+            String text = element.getTextTrim().trim();
+            if(contents.contains(text)){
+                return element;
+            }
+        }
+        return null;
+    }
+    public Element getElement(List<Element> elements, int start, String content){
+        int size = elements.size();
+        for(int i=start; i<size; i++){
+            Element element = elements.get(i);
+            String text = element.getTextTrim().trim();
+            if(BasicUtil.isNotEmpty(text)){
+                if(content.equals(text)){
+                    return element;
+                }else{
+                    return null;
+                }
+            }
+        }
+        return null;
+    }
     /**
      * 执行替换
      * @param box 最外层元素
@@ -1499,9 +1602,10 @@ public class WDocument extends Welement{
     public Element r(Element parent, String text, Map<String, String> styles){
         Element r= null;
         if(null != text && text.trim().length()>0) {
-            r = parent.addElement("w:r");
+            String prefix = parent.getNamespacePrefix();
+            r = parent.addElement(prefix + ":r");
             pr(r, styles);
-            Element t = r.addElement("w:t");
+            Element t = r.addElement(prefix + ":t");
             if(IS_HTML_ESCAPE) {
                 text = HtmlUtil.display(text);
             }
