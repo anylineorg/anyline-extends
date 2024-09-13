@@ -57,6 +57,7 @@ public class WDocument extends Welement{
 
     private LinkedHashMap<String, Map<String, String>> styles = new LinkedHashMap<>();
     private LinkedHashMap<String, String> replaces = new LinkedHashMap<>();
+    private LinkedHashMap<String, String> txt_replaces = new LinkedHashMap<>();
     private boolean autoMergePlaceholder = true;
     /**
      * word转html时遇到文件需要上传到文件服务器，并返回url
@@ -148,25 +149,50 @@ public class WDocument extends Welement{
             this.styles.put(key, map.get(key));
         }
     }
-    public void replace(String key, String content){
+
+    /**
+     * 设置占位符替换值 在调用save时执行替换<br/>
+     * 注意如果不解析的话 不会添加自动${}符号 按原文替换,是替换整个文件的纯文件，包括标签名在内
+     * @param parse 是否解析标签 true:解析HTML标签 false:直接替换文本
+     * @param key 占位符
+     * @param content 替换值
+     */
+    public void replace(boolean parse, String key, String content){
         if(null == key && key.trim().length()==0){
             return;
         }
-        replaces.put(key, content);
+        if(parse) {
+            replaces.put(key, content);
+        }else{
+            txt_replaces.put(key, content);
+        }
+    }
+    public void replace(String key, String content){
+        replace(true, key, content);
+    }
+    public void replace(boolean parse, String key, File ... words){
+        replace(parse, key, BeanUtil.array2list(words));
     }
     public void replace(String key, File ... words){
-        replace(key, BeanUtil.array2list(words));
+        replace(true, key, BeanUtil.array2list(words));
     }
-    public void replace(String key, List<File> words){
+    public void replace(boolean parse, String key, List<File> words){
         if(null != words) {
             StringBuilder content = new StringBuilder();
             for(File word:words) {
                 content.append("<word>").append(word.getAbsolutePath()).append("</word>");
             }
-            replaces.put(key, content.toString());
+            if(parse) {
+                replaces.put(key, content.toString());
+            }else{
+                txt_replaces.put(key, content.toString());
+            }
         }
     }
 
+    public void replace(String key, List<File> words){
+        replace(true, key, words);
+    }
     public void save(){
         save(Charset.forName("UTF-8"));
     }
@@ -183,30 +209,48 @@ public class WDocument extends Welement{
                 Document doc = footers.get(name);
                 Element element = doc.getRootElement();
                 replace(element, replaces);
-                ZipUtil.replace(file,"word/" + name + ".xml", DomUtil.format(doc), charset);
+                String txt = DomUtil.format(doc);
+                txt = replace(txt, txt_replaces);
+                ZipUtil.replace(file,"word/" + name + ".xml", txt, charset);
             }
             for(String name:headers.keySet()){
                 Document doc = headers.get(name);
                 Element element = doc.getRootElement();
                 replace(element, replaces);
-                ZipUtil.replace(file,"word/" + name + ".xml", DomUtil.format(doc), charset);
+                String txt = DomUtil.format(doc);
+                txt = replace(txt, txt_replaces);
+                ZipUtil.replace(file,"word/" + name + ".xml", txt, charset);
             }
             for(String name:charts.keySet()){
                 Document doc = charts.get(name);
                 Element element = doc.getRootElement();
-                replace(element, replaces);
-                ZipUtil.replace(file,"word/charts/" + name + ".xml", DomUtil.format(doc), charset);
+                //replace(element, replaces);
+                String txt = DomUtil.format(doc);
+                txt = replace(txt, txt_replaces);
+                ZipUtil.replace(file,"word/charts/" + name + ".xml", txt, charset);
             }
             //检测内容类型
             checkContentTypes();
             //合并列的表格,如果没有设置宽度,在wps中只占一列,需要在表格中根据总列数添加
             checkMergeCol();
-            ZipUtil.replace(file,"word/document.xml", DomUtil.format(doc), charset);
+            String txt = DomUtil.format(doc);
+            txt = replace(txt, txt_replaces);
+            ZipUtil.replace(file,"word/document.xml", txt, charset);
             ZipUtil.replace(file,"word/_rels/document.xml.rels", DomUtil.format(rels), charset);
-
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+    //直接替换文本不解析
+    public String replace(String text, Map<String, String> replaces){
+        if(null != text){
+            for(String key:replaces.keySet()){
+                String value = replaces.get(key);
+                //原文没有${}的也不要添加
+                text = text.replace(key, value);
+            }
+        }
+        return text;
     }
 
     /**
@@ -232,6 +276,9 @@ public class WDocument extends Welement{
         }
         for(Document header:headers.values()){
             mergePlaceholder(header.getRootElement(), placeholders);
+        }
+        for(Document chart:charts.values()){
+            mergePlaceholder(chart.getRootElement(), placeholders);
         }
     }
     public void mergePlaceholder(Element box, List<String> placeholders){
@@ -319,6 +366,7 @@ public class WDocument extends Welement{
             if(index < elements.size()-1){
                 prev = elements.get(index+1);
             }
+            boolean exists = false;
             for(int i=0; i<flags.size(); i++){
                 String flag = flags.get(i);
                 String content = flag;
@@ -326,17 +374,22 @@ public class WDocument extends Welement{
                 if(flag.startsWith("${") && flag.endsWith("}")) {
                     key = flag.substring(2, flag.length() - 1);
                     content = replaces.get(key);
+                    exists = exists || replaces.containsKey(key);
                     if(null == content){
+                        exists =  exists || replaces.containsKey(flag);
                         content = replaces.get(flag);
                     }
                 }else if(flag.startsWith("{") && flag.endsWith("}")){
                     key = flag.substring(1, flag.length() - 1);
                     content = replaces.get(key);
+                    exists =  exists || replaces.containsKey(key);
                     if(null == content){
                         content = replaces.get(flag);
+                        exists = exists || replaces.containsKey(flag);
                     }
                 }else{
                     content = replaces.get(flag);
+                    exists =  exists || replaces.containsKey(flag);
                 }
                 // boolean isblock = DocxUtil.isBlock(content);
                 // Element p = t.getParent();
@@ -351,7 +404,10 @@ public class WDocument extends Welement{
                     List<Element> list = parseHtml(r, prev, content);
                 }
             }
-            elements.remove(t);
+            //如果存在占位符 删除原内容
+            if(exists) {
+                elements.remove(t);
+            }
         }
         List<Element> bookmarks = DomUtil.elements(box, "bookmarkStart");
         for(Element bookmark:bookmarks){
