@@ -21,8 +21,8 @@ package org.anyline.mail.util;
  
 import org.anyline.util.AnylineConfig;
 import org.anyline.util.BasicUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.anyline.log.Log;
+import org.anyline.log.LogProxy;
 
 import javax.mail.Message;
 import javax.mail.Session;
@@ -33,7 +33,7 @@ import java.util.Hashtable;
 import java.util.Properties;
  
 public class MailUtil {
-	private static final Logger log = LoggerFactory.getLogger(MailUtil.class); 
+	private static final Log log = LogProxy.get(MailUtil.class); 
 	private MailConfig config = null; 
 	private Properties props = new Properties(); 
 	private static Hashtable<String, MailUtil> instances = new Hashtable<String, MailUtil>();

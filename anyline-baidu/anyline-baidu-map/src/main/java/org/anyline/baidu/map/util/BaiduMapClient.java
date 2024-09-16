@@ -31,15 +31,15 @@ import org.anyline.util.AnylineConfig;
 import org.anyline.util.BasicUtil;
 import org.anyline.util.BeanUtil;
 import org.anyline.util.encrypt.MD5Util;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.anyline.log.Log;
+import org.anyline.log.LogProxy;
 
 import java.net.URLEncoder;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 public class BaiduMapClient extends AbstractMapClient implements MapClient {
-    private static Logger log = LoggerFactory.getLogger(BaiduMapClient.class);
+    private static Log log = LogProxy.get(BaiduMapClient.class);
     private static final String HOST = "https://api.map.baidu.com";
 
     public BaiduMapConfig config = null;

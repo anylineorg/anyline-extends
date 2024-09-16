@@ -29,8 +29,8 @@ import org.anyline.util.AnylineConfig;
 import org.anyline.util.BasicUtil;
 import org.anyline.util.BeanUtil;
 import org.anyline.util.DateUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.anyline.log.Log;
+import org.anyline.log.LogProxy;
 
 import java.util.*;
 
@@ -41,7 +41,7 @@ import java.util.*;
  *  
  */ 
 public class SMSUtil {
-	private static final Logger log = LoggerFactory.getLogger(SMSUtil.class); 
+	private static final Log log = LogProxy.get(SMSUtil.class); 
 	private SMSConfig config = null;
 	private Client client;
 	private static Hashtable<String,SMSUtil> instances = new Hashtable<String,SMSUtil>();

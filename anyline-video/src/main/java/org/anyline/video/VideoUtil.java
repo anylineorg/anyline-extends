@@ -28,11 +28,11 @@ import org.anyline.util.DateUtil;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.Java2DFrameConverter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.anyline.log.Log;
+import org.anyline.log.LogProxy;
 
 public class VideoUtil {
-	private static Logger log = LoggerFactory.getLogger(VideoUtil.class);
+	private static Log log = LogProxy.get(VideoUtil.class);
 	/**
 	 * 截取视频获得指定帧的图片并写入输出流
 	 * @param in 视频流(执行结束后将关闭input)

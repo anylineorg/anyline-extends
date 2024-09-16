@@ -26,8 +26,8 @@ import com.alibaba.nacos.api.config.ConfigService;
 import com.alibaba.nacos.api.config.listener.Listener;
 import com.alibaba.nacos.api.exception.NacosException;
 import org.anyline.util.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.anyline.log.Log;
+import org.anyline.log.LogProxy;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -39,7 +39,7 @@ import java.util.concurrent.Executor;
 
 
 public class NacosUtil {
-	private static Logger log = LoggerFactory.getLogger(NacosUtil.class);
+	private static Log log = LogProxy.get(NacosUtil.class);
 	private NacosConfig config = null;
 
 	private static Hashtable<String, NacosUtil> instances = new Hashtable<String, NacosUtil>();

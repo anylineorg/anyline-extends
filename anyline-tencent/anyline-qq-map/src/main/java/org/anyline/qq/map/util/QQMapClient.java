@@ -31,15 +31,15 @@ import org.anyline.util.AnylineConfig;
 import org.anyline.util.BasicUtil;
 import org.anyline.util.BeanUtil;
 import org.anyline.util.encrypt.MD5Util;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.anyline.log.Log;
+import org.anyline.log.LogProxy;
 
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 
 public class QQMapClient extends AbstractMapClient implements MapClient {
-    private static Logger log = LoggerFactory.getLogger(QQMapClient.class);
+    private static Log log = LogProxy.get(QQMapClient.class);
     public QQMapConfig config = null;
     private static Hashtable<String, QQMapClient> instances = new Hashtable<>();
 

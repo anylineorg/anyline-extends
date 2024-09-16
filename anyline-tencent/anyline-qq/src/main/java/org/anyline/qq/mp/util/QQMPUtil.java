@@ -25,14 +25,14 @@ import org.anyline.util.AnylineConfig;
 import org.anyline.util.BasicUtil;
 import org.anyline.util.ConfigTable;
 import org.anyline.util.regular.RegularUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.anyline.log.Log;
+import org.anyline.log.LogProxy;
 
 import java.net.URLEncoder;
 import java.util.Hashtable;
  
 public class QQMPUtil {
-	private static final Logger log = LoggerFactory.getLogger(QQMPUtil.class); 
+	private static final Log log = LogProxy.get(QQMPUtil.class); 
 	private static Hashtable<String,QQMPUtil> instances = new Hashtable<String,QQMPUtil>(); 
 	private QQMPConfig config = null;
 

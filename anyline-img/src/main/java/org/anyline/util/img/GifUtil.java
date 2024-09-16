@@ -25,8 +25,8 @@ import com.sun.imageio.plugins.gif.GIFImageWriter;
 import com.sun.imageio.plugins.gif.GIFImageWriterSpi;
 import org.anyline.util.ConfigTable;
 import org.anyline.util.NumberUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.anyline.log.Log;
+import org.anyline.log.LogProxy;
 
 import javax.imageio.ImageIO;
 import javax.imageio.spi.ImageReaderSpi;
@@ -40,7 +40,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class GifUtil {
-	private static Logger log = LoggerFactory.getLogger(GifUtil.class); 
+	private static Log log = LogProxy.get(GifUtil.class); 
     /** 
      * 拆分gif 
      * @param file  gif文件

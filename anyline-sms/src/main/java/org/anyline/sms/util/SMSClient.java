@@ -24,8 +24,8 @@ import org.anyline.sms.entity.SMSResult;
 import org.anyline.util.BasicUtil;
 import org.anyline.util.BeanUtil;
 import org.anyline.util.ConfigTable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.anyline.log.Log;
+import org.anyline.log.LogProxy;
 
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -39,7 +39,7 @@ import java.util.Map;
  *  
  */ 
 public class SMSClient {
-	private static final Logger log = LoggerFactory.getLogger(SMSClient.class);
+	private static final Log log = LogProxy.get(SMSClient.class);
     private SMSConfig config = null; 
 	private static Hashtable<String,SMSClient> instances = new Hashtable<String,SMSClient>(); 
 

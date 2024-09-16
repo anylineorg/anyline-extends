@@ -29,8 +29,8 @@ import org.anyline.util.BeanUtil;
 import org.anyline.util.ConfigTable;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.StringEntity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.anyline.log.Log;
+import org.anyline.log.LogProxy;
 
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Map;
  
 public class EasemobUtil {
-	private static final Logger log = LoggerFactory.getLogger(EasemobUtil.class); 
+	private static final Log log = LogProxy.get(EasemobUtil.class); 
 	private static Hashtable<String,EasemobUtil> instances = new Hashtable<String,EasemobUtil>(); 
 	private EasemobConfig config = null; 
 	private static long access_token_expires = 0; 

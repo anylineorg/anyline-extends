@@ -24,13 +24,13 @@ import org.anyline.entity.DataRow;
 import org.anyline.util.AnylineConfig;
 import org.anyline.util.BasicUtil;
 import org.anyline.wechat.pay.util.WechatPayConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.anyline.log.Log;
+import org.anyline.log.LogProxy;
 
 import java.util.Hashtable;
 
 public class WechatPayUtil {
-    protected static final Logger log = LoggerFactory.getLogger(WechatPayUtil.class);
+    protected static final Log log = LogProxy.get(WechatPayUtil.class);
 
     private WechatPayConfig config = null;
 

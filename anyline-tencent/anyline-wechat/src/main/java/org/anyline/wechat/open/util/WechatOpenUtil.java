@@ -25,13 +25,13 @@ import org.anyline.util.BasicUtil;
 import org.anyline.wechat.entity.WechatAuthInfo;
 import org.anyline.wechat.entity.WechatUserInfo;
 import org.anyline.wechat.util.WechatUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.anyline.log.Log;
+import org.anyline.log.LogProxy;
 
 import java.util.Hashtable;
  
 public class WechatOpenUtil {
-	private static final Logger log = LoggerFactory.getLogger(WechatOpenUtil.class);
+	private static final Log log = LogProxy.get(WechatOpenUtil.class);
 	private static Hashtable<String, WechatOpenUtil> instances = new Hashtable<>();
 	private WechatOpenConfig config;
 

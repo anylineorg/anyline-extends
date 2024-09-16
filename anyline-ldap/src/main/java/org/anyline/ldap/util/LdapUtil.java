@@ -25,8 +25,8 @@ import org.anyline.entity.DataSet;
 import org.anyline.util.AnylineConfig;
 import org.anyline.util.BasicUtil;
 import org.anyline.util.BeanUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.anyline.log.Log;
+import org.anyline.log.LogProxy;
 
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
@@ -39,7 +39,7 @@ import java.util.List;
 import java.util.Map;
 
 public class LdapUtil {
- 	private static Logger log = LoggerFactory.getLogger(LdapUtil.class);
+ 	private static Log log = LogProxy.get(LdapUtil.class);
 
 	private LdapConfig config = null;
 	private DirContext dc = null;

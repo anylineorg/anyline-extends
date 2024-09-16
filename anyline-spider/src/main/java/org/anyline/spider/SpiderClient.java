@@ -21,8 +21,8 @@ package org.anyline.spider;
 
 import org.anyline.util.BeanUtil;
 import org.anyline.util.FileUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.anyline.log.Log;
+import org.anyline.log.LogProxy;
 
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
@@ -34,7 +34,7 @@ import java.nio.file.Files;
 import java.util.List;
 
 public class SpiderClient {
-    private Logger log = LoggerFactory.getLogger(SpiderClient.class);
+    private Log log = LogProxy.get(SpiderClient.class);
     private static final String JS_ENGINE_NAME= "JavaScript";
     private final ScriptEngineManager manager = new ScriptEngineManager();
     private final ScriptEngine engine = manager.getEngineByName(JS_ENGINE_NAME);

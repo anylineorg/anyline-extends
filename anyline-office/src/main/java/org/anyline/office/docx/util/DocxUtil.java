@@ -25,14 +25,14 @@ import org.anyline.util.StyleParser;
 import org.anyline.util.ZipUtil;
 import org.anyline.util.regular.RegularUtil;
 import org.dom4j.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.anyline.log.Log;
+import org.anyline.log.LogProxy;
 
 import java.io.File;
 import java.util.*;
 
 public class DocxUtil {
-    private static Logger log = LoggerFactory.getLogger(DocxUtil.class);
+    private static Log log = LogProxy.get(DocxUtil.class);
 
     /**
      * 根据关键字查找样式列表ID

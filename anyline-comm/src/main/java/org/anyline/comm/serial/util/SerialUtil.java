@@ -21,8 +21,8 @@ package org.anyline.comm.serial.util;
 
 
 import gnu.io.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.anyline.log.Log;
+import org.anyline.log.LogProxy;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.TooManyListenersException;
 
 public final class SerialUtil {
-    private static Logger log = LoggerFactory.getLogger(SerialUtil.class);
+    private static Log log = LogProxy.get(SerialUtil.class);
 
     /**
      * 获得系统可用的端口名称列表

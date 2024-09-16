@@ -31,8 +31,8 @@ import org.anyline.wechat.entity.WechatAuthInfo;
 import org.anyline.wechat.entity.WechatUserInfo;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.anyline.log.Log;
+import org.anyline.log.LogProxy;
 
 import java.io.File;
 import java.net.InetAddress;
@@ -40,7 +40,7 @@ import java.util.HashMap;
 import java.util.Map;
  
 public class WechatUtil {
-	protected static final Logger log = LoggerFactory.getLogger(WechatUtil.class);
+	protected static final Log log = LogProxy.get(WechatUtil.class);
 	private static DataSet accessTokens = new DataSet();
 	/** 
 	 * 参数签名 

@@ -25,15 +25,15 @@ import io.minio.messages.Bucket;
 import io.minio.messages.Item;
 import org.anyline.util.AnylineConfig;
 import org.anyline.util.BasicUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.anyline.log.Log;
+import org.anyline.log.LogProxy;
 
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class MinioUtil {
-    private static final Logger log = LoggerFactory.getLogger(MinioUtil.class);
+    private static final Log log = LogProxy.get(MinioUtil.class);
 
 
     private MinioClient client;

@@ -30,14 +30,14 @@ import org.anyline.entity.DataRow;
 import org.anyline.util.AnylineConfig;
 import org.anyline.util.BasicUtil;
 import org.anyline.util.BeanUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.anyline.log.Log;
+import org.anyline.log.LogProxy;
 
 import java.net.URLEncoder;
 import java.util.Hashtable;
 
 public class AlipayUtil {
-	private static final Logger log = LoggerFactory.getLogger(AlipayUtil.class);
+	private static final Log log = LogProxy.get(AlipayUtil.class);
 
 	private static Hashtable<String, AlipayUtil> instances = new Hashtable<String, AlipayUtil>();
 

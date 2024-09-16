@@ -24,13 +24,13 @@ import org.anyline.net.HttpUtil;
 import org.anyline.util.AnylineConfig;
 import org.anyline.util.BasicUtil;
 import org.apache.http.entity.StringEntity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.anyline.log.Log;
+import org.anyline.log.LogProxy;
 
 import java.util.*;
 
 public class BingSeoClient {
-    private static Logger log = LoggerFactory.getLogger(BingSeoClient.class);
+    private static Log log = LogProxy.get(BingSeoClient.class);
 
     public BingSeoConfig config = null;
     private static Hashtable<String, BingSeoClient> instances = new Hashtable<>();

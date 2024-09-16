@@ -31,13 +31,13 @@ import org.anyline.util.BasicUtil;
 import org.anyline.util.BeanUtil;
 import org.anyline.util.DateUtil;
 import org.apache.http.entity.StringEntity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.anyline.log.Log;
+import org.anyline.log.LogProxy;
 
 import java.util.*;
 
 public class FeishuUtil {
-	private static final Logger log = LoggerFactory.getLogger(FeishuUtil.class); 
+	private static final Log log = LogProxy.get(FeishuUtil.class); 
 	private static Hashtable<String,FeishuUtil> instances = new Hashtable<String,FeishuUtil>(); 
 	private FeishuConfig config = null;
 	private Client client;

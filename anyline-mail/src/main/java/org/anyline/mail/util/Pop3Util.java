@@ -24,8 +24,8 @@ import org.anyline.util.AnylineConfig;
 import org.anyline.util.BasicUtil;
 import org.anyline.util.DateUtil;
 import org.anyline.util.FileUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.anyline.log.Log;
+import org.anyline.log.LogProxy;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
@@ -39,7 +39,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 public class Pop3Util {
-	private static final Logger log = LoggerFactory.getLogger(Pop3Util.class);
+	private static final Log log = LogProxy.get(Pop3Util.class);
 	private MailConfig config = null;
 	private Properties props = new Properties();
 	private static Hashtable<String, Pop3Util> instances = new Hashtable<String, Pop3Util>();

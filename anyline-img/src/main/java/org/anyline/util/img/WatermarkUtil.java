@@ -22,8 +22,8 @@ package org.anyline.util.img;
 import org.anyline.util.DateUtil;
 import org.anyline.util.ImgUtil;
 import org.anyline.util.NumberUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.anyline.log.Log;
+import org.anyline.log.LogProxy;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -35,7 +35,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public class WatermarkUtil {
-	protected static final Logger log = LoggerFactory.getLogger(WatermarkUtil.class); 
+	protected static final Log log = LogProxy.get(WatermarkUtil.class); 
 	private int degree = 0;								// 旋转角度 
 	private Color color = Color.LIGHT_GRAY;				// 水印颜色 
 	private String fontName = "宋体";						// 字体名称 

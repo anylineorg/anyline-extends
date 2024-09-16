@@ -23,8 +23,8 @@ package org.anyline.nc;
 import org.anyline.util.ConfigTable;
 import org.anyline.util.DateUtil;
 import org.anyline.util.encrypt.MD5Util;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.anyline.log.Log;
+import org.anyline.log.LogProxy;
 import ucar.ma2.Array;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.Variable;
@@ -34,7 +34,7 @@ import java.util.Hashtable;
 import java.util.List;
  
 public class NCUtil {
-	private static Logger log = LoggerFactory.getLogger(NCUtil.class); 
+	private static Log log = LogProxy.get(NCUtil.class); 
 	private String file; 
 	private NetcdfFile nc; 
  

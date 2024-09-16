@@ -28,8 +28,8 @@ import org.anyline.util.*;
 import org.anyline.client.map.AbstractMapClient;
 import org.anyline.client.map.MapClient;
 import org.anyline.util.encrypt.MD5Util;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.anyline.log.Log;
+import org.anyline.log.LogProxy;
 
 import java.net.URLEncoder;
 import java.util.*;
@@ -40,7 +40,7 @@ import java.util.*;
  * 
  */ 
 public class AmapClient extends AbstractMapClient implements MapClient {
-	private static Logger log = LoggerFactory.getLogger(AmapClient.class);
+	private static Log log = LogProxy.get(AmapClient.class);
 	public AmapConfig config = null;
 	private static Hashtable<String, AmapClient> instances = new Hashtable<>();
 

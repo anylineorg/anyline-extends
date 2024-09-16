@@ -25,8 +25,8 @@ import org.anyline.entity.DataSet;
 import org.anyline.util.AnylineConfig;
 import org.anyline.util.BasicUtil;
 import org.anyline.util.BeanUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.anyline.log.Log;
+import org.anyline.log.LogProxy;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -46,7 +46,7 @@ import java.util.*;
 
 public class ThingsBoardClient extends RestClient {
 
-    private static final Logger log = LoggerFactory.getLogger(ThingsBoardClient.class);
+    private static final Log log = LogProxy.get(ThingsBoardClient.class);
     private ThingsBoardConfig config = null;
     private static Hashtable<String,ThingsBoardClient> instances = new Hashtable<String,ThingsBoardClient>();
 

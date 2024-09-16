@@ -24,8 +24,8 @@ import com.aliyun.oss.common.utils.BinaryUtil;
 import com.aliyun.oss.model.*;
 import org.anyline.net.HttpUtil;
 import org.anyline.util.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.anyline.log.Log;
+import org.anyline.log.LogProxy;
 
 import java.io.File;
 import java.io.InputStream;
@@ -33,7 +33,7 @@ import java.net.URL;
 import java.util.*;
 
 public class OSSUtil {
-	private static final Logger log = LoggerFactory.getLogger(OSSUtil.class);
+	private static final Log log = LogProxy.get(OSSUtil.class);
 	private OSSClient client = null;
 	private OSSConfig config = null;
 	private static Hashtable<String, OSSUtil> instances = new Hashtable<String, OSSUtil>();

@@ -27,8 +27,8 @@ import org.anyline.qq.open.entity.QQPayTradeResult;
 import org.anyline.util.*;
 import org.anyline.util.encrypt.MD5Util;
 import org.anyline.util.regular.RegularUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.anyline.log.Log;
+import org.anyline.log.LogProxy;
 
 import javax.crypto.Mac;
 import javax.crypto.SecretKey;
@@ -37,7 +37,7 @@ import java.util.Hashtable;
 import java.util.Map;
  
 public class QQOpenUtil{
-	private static final Logger log = LoggerFactory.getLogger(QQOpenUtil.class); 
+	private static final Log log = LogProxy.get(QQOpenUtil.class); 
 	private static Hashtable<String,QQOpenUtil> instances = new Hashtable<String,QQOpenUtil>(); 
 	private QQOpenConfig config = null;
 

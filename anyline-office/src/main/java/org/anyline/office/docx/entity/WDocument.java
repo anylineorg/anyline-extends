@@ -24,14 +24,15 @@ import org.anyline.entity.html.Td;
 import org.anyline.entity.html.Tr;
 import org.anyline.handler.Downloader;
 import org.anyline.handler.Uploader;
+import org.anyline.log.LogProxy;
 import org.anyline.office.docx.util.DocxUtil;
 import org.anyline.util.*;
 import org.anyline.util.regular.RegularUtil;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Node;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.anyline.log.Log;
+import org.anyline.log.LogProxy;
 
 import java.io.File;
 import java.io.InputStream;
@@ -39,7 +40,7 @@ import java.nio.charset.Charset;
 import java.util.*;
 
 public class WDocument extends Welement{
-    private static Logger log = LoggerFactory.getLogger(WDocument.class);
+    private static Log log = LogProxy.get(WDocument.class);
     private File file;
     private String charset = "UTF-8";
     private String xml = null;      // document.xml文本

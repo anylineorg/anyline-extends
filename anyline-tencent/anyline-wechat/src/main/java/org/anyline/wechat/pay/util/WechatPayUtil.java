@@ -32,8 +32,8 @@ import org.anyline.wechat.entity.*;
 import org.anyline.wechat.util.WechatUtil;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.anyline.log.Log;
+import org.anyline.log.LogProxy;
 
 import java.io.File;
 import java.util.HashMap;
@@ -41,7 +41,7 @@ import java.util.Hashtable;
 import java.util.Map;
 
 public class WechatPayUtil {
-    protected static final Logger log = LoggerFactory.getLogger(WechatPayUtil.class);
+    protected static final Log log = LogProxy.get(WechatPayUtil.class);
 
     private WechatPayConfig config = null;
 
