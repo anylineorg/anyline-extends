@@ -762,7 +762,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 		coordinate.setSuccess(false);
 		DataRow row = null; 
 		String api = "/v3/geocode/regeo";
-		Map<String,Object> params = new HashMap<String,Object>(); 
+		Map<String,Object> params = new HashMap<>();
 		params.put("key", config.KEY); 
 		params.put("location", coordinate.getLng()+","+coordinate.getLat());
 

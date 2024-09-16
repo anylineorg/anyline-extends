@@ -28,6 +28,7 @@ import org.anyline.log.LogProxy;
 import org.anyline.office.docx.util.DocxUtil;
 import org.anyline.util.*;
 import org.anyline.util.regular.RegularUtil;
+import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Node;
@@ -51,9 +52,14 @@ public class WDocument extends Welement{
     // word/_rels/document.xml.rels
     private String relsXml = null;
     private org.dom4j.Document rels;
+    private LinkedHashMap<String, org.dom4j.Document> footers = new LinkedHashMap<>();
+    private LinkedHashMap<String, org.dom4j.Document> headers = new LinkedHashMap<>();
+    private LinkedHashMap<String, org.dom4j.Document> charts = new LinkedHashMap<>();
 
-    private Map<String, Map<String, String>> styles = new HashMap<String, Map<String, String>>();
-    private Map<String, String> replaces = new HashMap<String, String>();
+    private LinkedHashMap<String, Map<String, String>> styles = new LinkedHashMap<>();
+    private LinkedHashMap<String, String> replaces = new LinkedHashMap<>();
+    private LinkedHashMap<String, String> txt_replaces = new LinkedHashMap<>();
+    private boolean autoMergePlaceholder = true;
     /**
      * word转html时遇到文件需要上传到文件服务器，并返回url
      */
@@ -83,15 +89,7 @@ public class WDocument extends Welement{
 
     private void load(){
         if(null == xml){
-            try {
-                xml = ZipUtil.read(file, "word/document.xml", charset);
-                relsXml = ZipUtil.read(file, "word/_rels/document.xml.rels", charset);
-                doc = DocumentHelper.parseText(xml);
-                rels = DocumentHelper.parseText(relsXml);
-                src = doc.getRootElement().element("body");
-            }catch (Exception e){
-                e.printStackTrace();
-            }
+            reload();
         }
     }
     public void reload(){
@@ -101,6 +99,19 @@ public class WDocument extends Welement{
             doc = DocumentHelper.parseText(xml);
             rels = DocumentHelper.parseText(relsXml);
             src = doc.getRootElement().element("body");
+            List<String> items = ZipUtil.getEntriesNames(file);
+            for(String item:items){
+                if(item.contains("word/footer")){
+                    String name = item.replace("word/", "").replace(".xml", "");
+                    footers.put(name, DocumentHelper.parseText(ZipUtil.read(file, item, charset)));
+                }else if(item.contains("word/header")){
+                    String name = item.replace("word/", "").replace(".xml", "");
+                    headers.put(name, DocumentHelper.parseText(ZipUtil.read(file, item, charset)));
+                }else if(item.contains("word/charts/chart")){
+                    String name = item.replace("word/charts/", "").replace(".xml", "");
+                    charts.put(name, DocumentHelper.parseText(ZipUtil.read(file, item, charset)));
+                }
+            }
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -139,25 +150,50 @@ public class WDocument extends Welement{
             this.styles.put(key, map.get(key));
         }
     }
-    public void replace(String key, String content){
+
+    /**
+     * 设置占位符替换值 在调用save时执行替换<br/>
+     * 注意如果不解析的话 不会添加自动${}符号 按原文替换,是替换整个文件的纯文件，包括标签名在内
+     * @param parse 是否解析标签 true:解析HTML标签 false:直接替换文本
+     * @param key 占位符
+     * @param content 替换值
+     */
+    public void replace(boolean parse, String key, String content){
         if(null == key && key.trim().length()==0){
             return;
         }
-        replaces.put(key, content);
+        if(parse) {
+            replaces.put(key, content);
+        }else{
+            txt_replaces.put(key, content);
+        }
+    }
+    public void replace(String key, String content){
+        replace(true, key, content);
+    }
+    public void replace(boolean parse, String key, File ... words){
+        replace(parse, key, BeanUtil.array2list(words));
     }
     public void replace(String key, File ... words){
-       replace(key, BeanUtil.array2list(words));
+        replace(true, key, BeanUtil.array2list(words));
     }
-    public void replace(String key, List<File> words){
+    public void replace(boolean parse, String key, List<File> words){
         if(null != words) {
             StringBuilder content = new StringBuilder();
             for(File word:words) {
                 content.append("<word>").append(word.getAbsolutePath()).append("</word>");
             }
-            replaces.put(key, content.toString());
+            if(parse) {
+                replaces.put(key, content.toString());
+            }else{
+                txt_replaces.put(key, content.toString());
+            }
         }
     }
 
+    public void replace(String key, List<File> words){
+        replace(true, key, words);
+    }
     public void save(){
         save(Charset.forName("UTF-8"));
     }
@@ -165,20 +201,151 @@ public class WDocument extends Welement{
         try {
             //加载文件
             load();
+            if(autoMergePlaceholder){
+                mergePlaceholder();
+            }
             //执行替换
             replace(src, replaces);
+            for(String name:footers.keySet()){
+                Document doc = footers.get(name);
+                Element element = doc.getRootElement();
+                replace(element, replaces);
+                String txt = DomUtil.format(doc);
+                txt = replace(txt, txt_replaces);
+                ZipUtil.replace(file,"word/" + name + ".xml", txt, charset);
+            }
+            for(String name:headers.keySet()){
+                Document doc = headers.get(name);
+                Element element = doc.getRootElement();
+                replace(element, replaces);
+                String txt = DomUtil.format(doc);
+                txt = replace(txt, txt_replaces);
+                ZipUtil.replace(file,"word/" + name + ".xml", txt, charset);
+            }
+            for(String name:charts.keySet()){
+                Document doc = charts.get(name);
+                Element element = doc.getRootElement();
+                //replace(element, replaces);
+                String txt = DomUtil.format(doc);
+                txt = replace(txt, txt_replaces);
+                ZipUtil.replace(file,"word/charts/" + name + ".xml", txt, charset);
+            }
             //检测内容类型
             checkContentTypes();
             //合并列的表格,如果没有设置宽度,在wps中只占一列,需要在表格中根据总列数添加
             checkMergeCol();
-            ZipUtil.replace(file,"word/document.xml", DomUtil.format(doc), charset);
+            String txt = DomUtil.format(doc);
+            txt = replace(txt, txt_replaces);
+            ZipUtil.replace(file,"word/document.xml", txt, charset);
             ZipUtil.replace(file,"word/_rels/document.xml.rels", DomUtil.format(rels), charset);
-
         }catch (Exception e){
             e.printStackTrace();
         }
     }
+    //直接替换文本不解析
+    public String replace(String text, Map<String, String> replaces){
+        if(null != text){
+            for(String key:replaces.keySet()){
+                String value = replaces.get(key);
+                //原文没有${}的也不要添加
+                text = text.replace(key, value);
+            }
+        }
+        return text;
+    }
 
+    /**
+     * 合并点位符 ${key} 拆分到3个t中的情况
+     * 调用完replace后再调用当前方法，因为需要用到replace里提供的占位符列表
+     */
+    public void mergePlaceholder(){
+        List<String> placeholders = new ArrayList<>();
+        placeholders.addAll(replaces.keySet());
+        mergePlaceholder(placeholders);
+    }
+    /**
+     * 合并点位符 ${key} 拆分到3个t中的情况
+     * @param placeholders 占位符列表 带不还${}都可以 最终会处理掉${}
+     */
+    public void mergePlaceholder(List<String> placeholders){
+        if(null == src){
+            load();
+        }
+        mergePlaceholder(src, placeholders);
+        for(Document footer:footers.values()){
+            mergePlaceholder(footer.getRootElement(), placeholders);
+        }
+        for(Document header:headers.values()){
+            mergePlaceholder(header.getRootElement(), placeholders);
+        }
+        for(Document chart:charts.values()){
+            mergePlaceholder(chart.getRootElement(), placeholders);
+        }
+    }
+    public void mergePlaceholder(Element box, List<String> placeholders){
+        List<String> list = new ArrayList<>();
+        for(String placeholder:placeholders){
+            list.add(placeholder.replace("${", "").replace("}", ""));
+        }
+        List<Element> ts = DomUtil.elements(box, "t");
+        List<Element> removes = new ArrayList<>();
+        int size = ts.size();
+        for(int i=0; i<size;){
+            Element t = ts.get(i);
+            String txt = t.getTextTrim();
+            if("${".equals(txt)){
+                Element next =getElement(ts, i+1, list);
+                if(null != next){
+                    Element end = getElement(ts, i+2, "}");
+                    if(null != end){
+                        txt = "${" + next.getTextTrim().trim() + "}";
+                        t.setText(txt);
+                        for(int idx = i+1; idx <= ts.indexOf(end); idx++){
+                            removes.add(ts.get(idx));
+                        }
+                    }
+                }
+            }
+            i ++;
+        }
+        for(Element remove:removes){
+            remove.getParent().remove(remove);
+        }
+    }
+
+    /**
+     * 保住指定内容的element
+     * @param elements elements
+     * @param start 开始位置
+     * @param contents contents
+     * @return element
+     */
+    public Element getElement(List<Element> elements, int start, List<String> contents){
+        int size = elements.size();
+        for(int i=start; i<size; i++){
+            Element element = elements.get(i);
+            String text = element.getTextTrim().trim();
+            if(contents.contains(text)){
+                return element;
+            }
+        }
+        return null;
+    }
+    public Element getElement(List<Element> elements, int start, String content){
+        int size = elements.size();
+        for(int i=start; i<size; i++){
+            Element element = elements.get(i);
+            String text = element.getTextTrim().trim();
+            if(BasicUtil.isNotEmpty(text)){
+                if(content.equals(text)){
+                    return element;
+                }else{
+                    return null;
+                }
+            }
+        }
+        return null;
+    }
     /**
      * 执行替换
      * @param box 最外层元素
@@ -200,6 +367,7 @@ public class WDocument extends Welement{
             if(index < elements.size()-1){
                 prev = elements.get(index+1);
             }
+            boolean exists = false;
             for(int i=0; i<flags.size(); i++){
                 String flag = flags.get(i);
                 String content = flag;
@@ -207,17 +375,22 @@ public class WDocument extends Welement{
                 if(flag.startsWith("${") && flag.endsWith("}")) {
                     key = flag.substring(2, flag.length() - 1);
                     content = replaces.get(key);
+                    exists = exists || replaces.containsKey(key);
                     if(null == content){
+                        exists =  exists || replaces.containsKey(flag);
                         content = replaces.get(flag);
                     }
                 }else if(flag.startsWith("{") && flag.endsWith("}")){
                     key = flag.substring(1, flag.length() - 1);
                     content = replaces.get(key);
+                    exists =  exists || replaces.containsKey(key);
                     if(null == content){
                         content = replaces.get(flag);
+                        exists = exists || replaces.containsKey(flag);
                     }
                 }else{
                     content = replaces.get(flag);
+                    exists =  exists || replaces.containsKey(flag);
                 }
                 // boolean isblock = DocxUtil.isBlock(content);
                 // Element p = t.getParent();
@@ -232,7 +405,10 @@ public class WDocument extends Welement{
                     List<Element> list = parseHtml(r, prev, content);
                 }
             }
-            elements.remove(t);
+            //如果存在占位符 删除原内容
+            if(exists) {
+                elements.remove(t);
+            }
         }
         List<Element> bookmarks = DomUtil.elements(box, "bookmarkStart");
         for(Element bookmark:bookmarks){
@@ -1379,7 +1555,7 @@ public class WDocument extends Welement{
                 String text = node.getText().trim();
                 if(text.length()>0) {
                     empty = false;
-                   Element r = inline(parent, prev, text, styles, copyPrevStyle);
+                    Element r = inline(parent, prev, text, styles, copyPrevStyle);
                     prev = r;
                 }
             }else if(type == 1 ) {//element
@@ -1483,9 +1659,10 @@ public class WDocument extends Welement{
     public Element r(Element parent, String text, Map<String, String> styles){
         Element r= null;
         if(null != text && text.trim().length()>0) {
-            r = parent.addElement("w:r");
+            String prefix = parent.getNamespacePrefix();
+            r = parent.addElement(prefix + ":r");
             pr(r, styles);
-            Element t = r.addElement("w:t");
+            Element t = r.addElement(prefix + ":t");
             if(IS_HTML_ESCAPE) {
                 text = HtmlUtil.display(text);
             }
