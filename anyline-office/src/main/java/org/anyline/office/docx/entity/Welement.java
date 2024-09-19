@@ -41,14 +41,14 @@ public class Welement {
      * @param replaces replaces
      */
     public void replace(Map<String, String> replaces){
-        root.replace(src, replaces);
+        root.replace(getSrc(), replaces);
     }
 
     /**
      * 删除行内文本内容
      */
     public void removeContent(){
-        DocxUtil.removeContent(src);
+        DocxUtil.removeContent(getSrc());
     }
     public WDocument getDoc() {
         return root;
@@ -59,6 +59,9 @@ public class Welement {
     }
 
     public Element getSrc() {
+        if(null == src){
+            reload();
+        }
         return src;
     }
 
@@ -71,7 +74,7 @@ public class Welement {
      * @return list
      */
     public List<Element> bookmarks(){
-        List<Element> bookmarks = DomUtil.elements(src, "bookmarkStart");
+        List<Element> bookmarks = DomUtil.elements(getSrc(), "bookmarkStart");
         return bookmarks;
     }
 
@@ -90,7 +93,7 @@ public class Welement {
     public List<Element> placeholders(boolean element, String regex){
         List<Element> list = new ArrayList<>();
         try {
-            List<Element> ts = DomUtil.elements(src, "t");
+            List<Element> ts = DomUtil.elements(getSrc(), "t");
             for(Element t:ts){
                 String txt = t.getTextTrim();
                 List<String> flags = DocxUtil.splitKey(txt, regex);
@@ -113,7 +116,7 @@ public class Welement {
     public List<String> placeholders(String regex){
         List<String> list = new ArrayList<>();
         try {
-            List<Element> ts = DomUtil.elements(src, "t");
+            List<Element> ts = DomUtil.elements(getSrc(), "t");
             for(Element t:ts){
                 String txt = t.getTextTrim();
                 List<String> flags = DocxUtil.splitKey(txt, regex);
@@ -142,7 +145,7 @@ public class Welement {
      */
     public List<String> getTextList(){
         List<String> texts = new ArrayList<>();
-        List<Element> ts = DomUtil.elements(src, "t");
+        List<Element> ts = DomUtil.elements(getSrc(), "t");
         for(Element t:ts){
             texts.add(t.getTextTrim());
         }
@@ -169,7 +172,7 @@ public class Welement {
      * @return String
      */
     public String getText(){
-        Element t = src.element("t");
+        Element t = getSrc().element("t");
         if(null != t){
             return t.getText();
         }
