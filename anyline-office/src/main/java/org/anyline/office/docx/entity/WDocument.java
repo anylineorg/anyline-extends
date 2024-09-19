@@ -206,13 +206,14 @@ public class WDocument extends Welement{
             }
             //执行替换
             replace(src, replaces);
+            Map<String, String> zip_replaces = new HashMap<>();
             for(String name:footers.keySet()){
                 Document doc = footers.get(name);
                 Element element = doc.getRootElement();
                 replace(element, replaces);
                 String txt = DomUtil.format(doc);
                 txt = replace(txt, txt_replaces);
-                ZipUtil.replace(file,"word/" + name + ".xml", txt, charset);
+                zip_replaces.put("word/" + name + ".xml", txt);
             }
             for(String name:headers.keySet()){
                 Document doc = headers.get(name);
@@ -220,7 +221,7 @@ public class WDocument extends Welement{
                 replace(element, replaces);
                 String txt = DomUtil.format(doc);
                 txt = replace(txt, txt_replaces);
-                ZipUtil.replace(file,"word/" + name + ".xml", txt, charset);
+                zip_replaces.put("word/" + name + ".xml", txt);
             }
             for(String name:charts.keySet()){
                 Document doc = charts.get(name);
@@ -228,7 +229,7 @@ public class WDocument extends Welement{
                 //replace(element, replaces);
                 String txt = DomUtil.format(doc);
                 txt = replace(txt, txt_replaces);
-                ZipUtil.replace(file,"word/charts/" + name + ".xml", txt, charset);
+                zip_replaces.put("word/charts/" + name + ".xml", txt);
             }
             //检测内容类型
             checkContentTypes();
@@ -236,8 +237,9 @@ public class WDocument extends Welement{
             checkMergeCol();
             String txt = DomUtil.format(doc);
             txt = replace(txt, txt_replaces);
-            ZipUtil.replace(file,"word/document.xml", txt, charset);
-            ZipUtil.replace(file,"word/_rels/document.xml.rels", DomUtil.format(rels), charset);
+            zip_replaces.put("word/document.xml", txt);
+            zip_replaces.put("word/_rels/document.xml.rels", DomUtil.format(rels));
+            ZipUtil.replace(file, zip_replaces, charset);
         }catch (Exception e){
             e.printStackTrace();
         }
