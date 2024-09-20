@@ -33,7 +33,6 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Node;
 import org.anyline.log.Log;
-import org.anyline.log.LogProxy;
 
 import java.io.File;
 import java.io.InputStream;
