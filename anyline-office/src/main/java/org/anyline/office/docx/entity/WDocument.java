@@ -205,13 +205,14 @@ public class WDocument extends Welement{
             }
             //执行替换
             replace(src, replaces);
+            Map<String, String> zip_replaces = new HashMap<>();
             for(String name:footers.keySet()){
                 Document doc = footers.get(name);
                 Element element = doc.getRootElement();
                 replace(element, replaces);
                 String txt = DomUtil.format(doc);
                 txt = replace(txt, txt_replaces);
-                ZipUtil.replace(file,"word/" + name + ".xml", txt, charset);
+                zip_replaces.put("word/" + name + ".xml", txt);
             }
             for(String name:headers.keySet()){
                 Document doc = headers.get(name);
@@ -219,7 +220,7 @@ public class WDocument extends Welement{
                 replace(element, replaces);
                 String txt = DomUtil.format(doc);
                 txt = replace(txt, txt_replaces);
-                ZipUtil.replace(file,"word/" + name + ".xml", txt, charset);
+                zip_replaces.put("word/" + name + ".xml", txt);
             }
             for(String name:charts.keySet()){
                 Document doc = charts.get(name);
@@ -227,7 +228,7 @@ public class WDocument extends Welement{
                 //replace(element, replaces);
                 String txt = DomUtil.format(doc);
                 txt = replace(txt, txt_replaces);
-                ZipUtil.replace(file,"word/charts/" + name + ".xml", txt, charset);
+                zip_replaces.put("word/charts/" + name + ".xml", txt);
             }
             //检测内容类型
             checkContentTypes();
@@ -235,8 +236,9 @@ public class WDocument extends Welement{
             checkMergeCol();
             String txt = DomUtil.format(doc);
             txt = replace(txt, txt_replaces);
-            ZipUtil.replace(file,"word/document.xml", txt, charset);
-            ZipUtil.replace(file,"word/_rels/document.xml.rels", DomUtil.format(rels), charset);
+            zip_replaces.put("word/document.xml", txt);
+            zip_replaces.put("word/_rels/document.xml.rels", DomUtil.format(rels));
+            ZipUtil.replace(file, zip_replaces, charset);
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -267,10 +269,7 @@ public class WDocument extends Welement{
      * @param placeholders 占位符列表 带不还${}都可以 最终会处理掉${}
      */
     public void mergePlaceholder(List<String> placeholders){
-        if(null == src){
-            load();
-        }
-        mergePlaceholder(src, placeholders);
+        mergePlaceholder(getSrc(), placeholders);
         for(Document footer:footers.values()){
             mergePlaceholder(footer.getRootElement(), placeholders);
         }
@@ -643,7 +642,7 @@ public class WDocument extends Welement{
         }
         load();
         List<Wtable> tables = new ArrayList<>();
-        List<Element> elements = children(src);
+        List<Element> elements = children(getSrc());
         for(Element element:elements){
             if(element.getName().equals("tbl")){
                 Wtable table = new Wtable(this, element);
@@ -681,9 +680,8 @@ public class WDocument extends Welement{
         return result;
     }
     public List<Wtable> tables(){
-        load();
         List<Wtable> tables = new ArrayList<>();
-        List<Element> elements = src.elements("tbl");
+        List<Element> elements = getSrc().elements("tbl");
         for(Element element:elements){
             Wtable table = new Wtable(this, element);
             tables.add(table);
@@ -692,7 +690,7 @@ public class WDocument extends Welement{
     }
     // 插入排版方向
     public void setOrient(Element prev, String orient, Map<String, String> styles){
-        int index = index(src, prev);
+        int index = index(getSrc(), prev);
         Element p = src.addElement("w:p");
         Element pr = p.addElement("pPr");
 
@@ -709,7 +707,7 @@ public class WDocument extends Welement{
     }
     // 插入换页
     public void insertPageBreak(Element prev){
-        int index = index(src, prev);
+        int index = index(getSrc(), prev);
         Element p = src.addElement("w:p");
 
         p.addElement("w:r").addElement("w:br").addAttribute("w:type","page");
@@ -757,7 +755,7 @@ public class WDocument extends Welement{
      */
     private void replaceBookmark(Element start, Map<String,String> replaces){
         String id = start.attributeValue("id");
-        Element end =  DomUtil.element(src, "bookmarkEnd","id",id);
+        Element end =  DomUtil.element(getSrc(), "bookmarkEnd","id",id);
         String name = start.attributeValue("name");
         String content = replaces.get(name);
         if(null == content){
@@ -1184,9 +1182,9 @@ public class WDocument extends Welement{
         for(Element li:lis){
             String liName = li.getName();
             if(liName.equalsIgnoreCase("ol")) {
-                prev = ol(src, prev, li, styles);
+                prev = ol(getSrc(), prev, li, styles);
             }else{
-                prev = li(src, prev, li, styles);
+                prev = li(getSrc(), prev, li, styles);
             }
         }
         return prev;
@@ -1785,10 +1783,7 @@ public class WDocument extends Welement{
 
     public String html(Uploader uploader, int lvl){
         StringBuilder builder = new StringBuilder();
-        if(null == src){
-            reload();
-        }
-        Iterator<Element> it = src.elementIterator();
+        Iterator<Element> it = getSrc().elementIterator();
         while(it.hasNext()){
             Element item = it.next();
             String tag = item.getName();
