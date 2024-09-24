@@ -29,9 +29,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Xelement {
+public class XElement {
 
-    protected Workbook root;
+    protected XWorkBook root;
     protected Element src;
     public void reload(){
 
@@ -50,11 +50,11 @@ public class Xelement {
     public void removeContent(){
         DocxUtil.removeContent(getSrc());
     }
-    public Workbook getDoc() {
+    public XWorkBook getDoc() {
         return root;
     }
 
-    public void setDoc(Workbook doc) {
+    public void setDoc(XWorkBook doc) {
         this.root = doc;
     }
 

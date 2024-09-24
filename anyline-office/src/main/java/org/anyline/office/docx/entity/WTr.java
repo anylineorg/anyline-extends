@@ -29,11 +29,11 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-public class Wtr extends Welement{
-    private Wtable parent;
-    private List<Wtc> wtcs = new ArrayList<>();
+public class WTr extends WElement {
+    private WTable parent;
+    private List<WTc> wtcs = new ArrayList<>();
     private String widthUnit = "px";     // 默认长度单位 px pt cm/厘米
-    public Wtr(WDocument doc, Wtable parent, Element src){
+    public WTr(WDocument doc, WTable parent, Element src){
         this.root = doc;
         this.src = src;
         this.parent = parent;
@@ -43,43 +43,43 @@ public class Wtr extends Welement{
     public void reload(){
         load();
     }
-    private Wtr load(){
+    private WTr load(){
         wtcs.clear();
         List<Element> items = src.elements("tc");
         for(Element tc:items){
-            Wtc wtc = new Wtc(root, this, tc);
+            WTc wtc = new WTc(root, this, tc);
             wtcs.add(wtc);
         }
         return this;
     }
 
-    public Wtable getParent(){
+    public WTable getParent(){
         return parent;
     }
 
-    public Wtr setHeight(String height){
+    public WTr setHeight(String height){
         int dxa = DocxUtil.dxa(height);
         Element pr = DocxUtil.addElement(src, "trPr");
         DocxUtil.addElement(pr,"trHeight", "val", dxa+"" );
         return this;
     }
-    public Wtr setHeight(int height){
+    public WTr setHeight(int height){
         return setHeight(height+widthUnit);
     }
-    public Wtr setHeight(double height){
+    public WTr setHeight(double height){
         return setHeight(height+widthUnit);
     }
-    public List<Wtc> getWtcs(){
+    public List<WTc> getWtcs(){
         if(wtcs.isEmpty()){
             List<Element> elements = src.elements("tc");
             for(Element element:elements){
-                Wtc tc = new Wtc(root,this, element);
+                WTc tc = new WTc(root,this, element);
                 wtcs.add(tc);
             }
         }
         return wtcs;
     }
-    public Wtc getTc(int index){
+    public WTc getTc(int index){
         return wtcs.get(index);
     }
 
@@ -89,7 +89,7 @@ public class Wtr extends Welement{
 
     public void setWidthUnit(String widthUnit) {
         this.widthUnit = widthUnit;
-        for(Wtc tc:wtcs){
+        for(WTc tc:wtcs){
             tc.setWidthUnit(widthUnit);
         }
     }
@@ -99,17 +99,17 @@ public class Wtr extends Welement{
      * @param bookmark 书签或占位符 包含{和}的按占位符搜索
      * @return wtr
      */
-    public Wtc tc(String bookmark){
-        List<Wtc> tcs = tcs(bookmark);
+    public WTc tc(String bookmark){
+        List<WTc> tcs = tcs(bookmark);
         if(!tcs.isEmpty()){
             return tcs.get(0);
         }
         return null;
     }
-    public List<Wtc> tcs(String bookmark){
-        List<Wtc> list = new ArrayList<>();
+    public List<WTc> tcs(String bookmark){
+        List<WTc> list = new ArrayList<>();
         if(null != bookmark) {
-            for(Wtc item:wtcs){
+            for(WTc item:wtcs){
                 String txt = item.getTexts();
                 if(txt.contains(bookmark)){
                     list.add(item);
@@ -124,9 +124,9 @@ public class Wtr extends Welement{
      * @param prev 如果index位置被合并了,是否返 当前合并组中的第一个单元格
      * @return tc
      */
-    public Wtc getTcWithColspan(int index, boolean prev){
+    public WTc getTcWithColspan(int index, boolean prev){
         int qty = -1;
-        for(Wtc tc:wtcs){
+        for(WTc tc:wtcs){
             qty += tc.getColspan();
             if(qty == index){
                 return tc;
@@ -142,21 +142,21 @@ public class Wtr extends Welement{
         }
         return null;
     }
-    public List<Wtc> getTcs(){
+    public List<WTc> getTcs(){
         return wtcs;
     }
 
 
-    private Wtr removeBorder(){
-        List<Wtc> tcs = getWtcs();
-        for(Wtc tc:tcs){
+    private WTr removeBorder(){
+        List<WTc> tcs = getWtcs();
+        for(WTc tc:tcs){
             tc.removeBorder();
         }
         return this;
     }
-    public Wtr setBorder(){
-        List<Wtc> tcs = getWtcs();
-        for(Wtc tc:tcs){
+    public WTr setBorder(){
+        List<WTc> tcs = getWtcs();
+        for(WTc tc:tcs){
             tc.setBorder();
         }
         return this;
@@ -169,37 +169,37 @@ public class Wtr extends Welement{
      * @param style 样式
      * @return tr
      */
-    public Wtr setBorder(int size, String color, String style){
-        List<Wtc> tcs = getWtcs();
-        for(Wtc tc:tcs){
+    public WTr setBorder(int size, String color, String style){
+        List<WTc> tcs = getWtcs();
+        for(WTc tc:tcs){
             tc.setBorder(size, color, style);
         }
         return this;
     }
-    public Wtr setTopBorder(int size, String color, String style){
-        List<Wtc> tcs = getWtcs();
-        for(Wtc tc:tcs){
+    public WTr setTopBorder(int size, String color, String style){
+        List<WTc> tcs = getWtcs();
+        for(WTc tc:tcs){
             tc.setTopBorder(size, color, style);
         }
         return this;
     }
-    public Wtr removeTopBorder(){
-        List<Wtc> tcs = getWtcs();
-        for(Wtc tc:tcs){
+    public WTr removeTopBorder(){
+        List<WTc> tcs = getWtcs();
+        for(WTc tc:tcs){
             tc.removeTopBorder();
         }
         return this;
     }
-    public Wtr setBottomBorder(int size, String color, String style){
-        List<Wtc> tcs = getWtcs();
-        for(Wtc tc:tcs){
+    public WTr setBottomBorder(int size, String color, String style){
+        List<WTc> tcs = getWtcs();
+        for(WTc tc:tcs){
             tc.setBottomBorder(size, color, style);
         }
         return this;
     }
-    public Wtr removeBottomBorder(){
-        List<Wtc> tcs = getWtcs();
-        for(Wtc tc:tcs){
+    public WTr removeBottomBorder(){
+        List<WTc> tcs = getWtcs();
+        for(WTc tc:tcs){
             tc.removeBottomBorder();
         }
         return this;
@@ -209,9 +209,9 @@ public class Wtr extends Welement{
      * @param color color
      * @return tr
      */
-    public Wtr setColor(String color){
-        List<Wtc> tcs = getWtcs();
-        for(Wtc tc:tcs){
+    public WTr setColor(String color){
+        List<WTc> tcs = getWtcs();
+        for(WTc tc:tcs){
             tc.setColor(color);
         }
         return this;
@@ -225,9 +225,9 @@ public class Wtr extends Welement{
      * @param hint 默认字体
      * @return tr
      */
-    public Wtr setFont(String size, String eastAsia, String ascii, String hint){
-        List<Wtc> tcs = getWtcs();
-        for(Wtc tc:tcs){
+    public WTr setFont(String size, String eastAsia, String ascii, String hint){
+        List<WTc> tcs = getWtcs();
+        for(WTc tc:tcs){
             tc.setFont(size, eastAsia, ascii, hint);
         }
         return this;
@@ -238,9 +238,9 @@ public class Wtr extends Welement{
      * @param size px|pt|cm
      * @return tr
      */
-    public Wtr setFontSize(String size){
-        List<Wtc> tcs = getWtcs();
-        for(Wtc tc:tcs){
+    public WTr setFontSize(String size){
+        List<WTc> tcs = getWtcs();
+        for(WTc tc:tcs){
             tc.setFontSize(size);
         }
         return this;
@@ -251,9 +251,9 @@ public class Wtr extends Welement{
      * @param font 字体
      * @return tr
      */
-    public Wtr setFontFamily(String font){
-        List<Wtc> tcs = getWtcs();
-        for(Wtc tc:tcs){
+    public WTr setFontFamily(String font){
+        List<WTc> tcs = getWtcs();
+        for(WTc tc:tcs){
             tc.setFontFamily(font);
         }
         return this;
@@ -264,9 +264,9 @@ public class Wtr extends Welement{
      * @param align start/left center end/right
      * @return tr
      */
-    public Wtr setAlign(String align){
-        List<Wtc> tcs = getWtcs();
-        for(Wtc tc:tcs){
+    public WTr setAlign(String align){
+        List<WTc> tcs = getWtcs();
+        for(WTc tc:tcs){
             tc.setAlign(align);
         }
         return this;
@@ -277,9 +277,9 @@ public class Wtr extends Welement{
      * @param align top/center/bottom
      * @return Wtr
      */
-    public Wtr setVerticalAlign(String align){
-        List<Wtc> tcs = getWtcs();
-        for(Wtc tc:tcs){
+    public WTr setVerticalAlign(String align){
+        List<WTc> tcs = getWtcs();
+        for(WTc tc:tcs){
             tc.setVerticalAlign(align);
         }
         return this;
@@ -290,46 +290,46 @@ public class Wtr extends Welement{
      * @param color color
      * @return  Wtr
      */
-    public Wtr setBackgroundColor(String color){
-        List<Wtc> tcs = getWtcs();
-        for(Wtc tc:tcs){
+    public WTr setBackgroundColor(String color){
+        List<WTc> tcs = getWtcs();
+        for(WTc tc:tcs){
             tc.setBackgroundColor(color);
         }
         return this;
     }
 
-    public Wtr removeStyle(){
-        for(Wtc tc:wtcs){
+    public WTr removeStyle(){
+        for(WTc tc:wtcs){
             tc.removeStyle();
         }
         return this;
     }
-    public Wtr removeBackgroundColor(){
-        for(Wtc tc:wtcs){
+    public WTr removeBackgroundColor(){
+        for(WTc tc:wtcs){
             tc.removeBackgroundColor();
         }
         return this;
     }
-    public Wtr removeColor(){
-        for(Wtc tc:wtcs){
+    public WTr removeColor(){
+        for(WTc tc:wtcs){
             tc.removeColor();
         }
         return this;
     }
-    public Wtr replace(String src, String tar){
-        for(Wtc tc:wtcs){
+    public WTr replace(String src, String tar){
+        for(WTc tc:wtcs){
             tc.replace(src, tar);
         }
         return this;
     }
-    public Wtr setBold(){
-        for(Wtc tc:wtcs){
+    public WTr setBold(){
+        for(WTc tc:wtcs){
             tc.setBold();
         }
         return this;
     }
-    public Wtr setBold(boolean bold){
-        for(Wtc tc:wtcs){
+    public WTr setBold(boolean bold){
+        for(WTc tc:wtcs){
             tc.setBold(bold);
         }
         return this;
@@ -339,13 +339,13 @@ public class Wtr extends Welement{
      * @param underline 是否
      * @return Wtc
      */
-    public Wtr setUnderline(boolean underline){
-        for(Wtc tc:wtcs){
+    public WTr setUnderline(boolean underline){
+        for(WTc tc:wtcs){
             tc.setUnderline(underline);
         }
         return this;
     }
-    public Wtr setUnderline(){
+    public WTr setUnderline(){
         setUnderline(true);
         return this;
     }
@@ -355,13 +355,13 @@ public class Wtr extends Welement{
      * @param strike 是否
      * @return Wtc
      */
-    public Wtr setStrike(boolean strike){
-        for(Wtc tc:wtcs){
+    public WTr setStrike(boolean strike){
+        for(WTc tc:wtcs){
             tc.setStrike(strike);
         }
         return this;
     }
-    public Wtr setStrike(){
+    public WTr setStrike(){
         setStrike(true);
         return this;
     }
@@ -371,127 +371,127 @@ public class Wtr extends Welement{
      * @param italic 是否
      * @return Wtc
      */
-    public Wtr setItalic(boolean italic){
-        for(Wtc tc:wtcs){
+    public WTr setItalic(boolean italic){
+        for(WTc tc:wtcs){
             tc.setItalic(italic);
         }
         return this;
     }
 
-    public Wtr setItalic(){
+    public WTr setItalic(){
         return setItalic(true);
     }
-    public Wtr setPadding(String side, double padding){
-        for(Wtc tc:wtcs){
+    public WTr setPadding(String side, double padding){
+        for(WTc tc:wtcs){
             tc.setPadding(side, padding);
         }
         return this;
     }
-    public Wtr setPadding(String side, String padding){
-        for(Wtc tc:wtcs){
+    public WTr setPadding(String side, String padding){
+        for(WTc tc:wtcs){
             tc.setPadding(side, padding);
         }
         return this;
     }
-    public Wtr setPadding(String side, int padding){
-        for(Wtc tc:wtcs){
+    public WTr setPadding(String side, int padding){
+        for(WTc tc:wtcs){
             tc.setPadding(side, padding);
         }
         return this;
     }
 
-    public Wtr setLeftPadding(double padding){
-        for(Wtc tc:wtcs){
+    public WTr setLeftPadding(double padding){
+        for(WTc tc:wtcs){
             tc.setLeftPadding(padding);
         }
         return this;
     }
-    public Wtr setLeftPadding(String padding){
-        for(Wtc tc:wtcs){
+    public WTr setLeftPadding(String padding){
+        for(WTc tc:wtcs){
             tc.setLeftPadding(padding);
         }
         return this;
     }
-    public Wtr setLeftPadding(int padding){
-        for(Wtc tc:wtcs){
+    public WTr setLeftPadding(int padding){
+        for(WTc tc:wtcs){
             tc.setLeftPadding(padding);
         }
         return this;
     }
 
-    public Wtr setRightPadding(double padding){
-        for(Wtc tc:wtcs){
+    public WTr setRightPadding(double padding){
+        for(WTc tc:wtcs){
             tc.setRightPadding(padding);
         }
         return this;
     }
-    public Wtr setRightPadding(String padding){
-        for(Wtc tc:wtcs){
+    public WTr setRightPadding(String padding){
+        for(WTc tc:wtcs){
             tc.setRightPadding(padding);
         }
         return this;
     }
-    public Wtr setRightPadding(int padding){
-        for(Wtc tc:wtcs){
+    public WTr setRightPadding(int padding){
+        for(WTc tc:wtcs){
             tc.setRightPadding(padding);
         }
         return this;
     }
 
-    public Wtr setTopPadding(double padding){
-        for(Wtc tc:wtcs){
+    public WTr setTopPadding(double padding){
+        for(WTc tc:wtcs){
             tc.setTopPadding(padding);
         }
         return this;
     }
-    public Wtr setTopPadding(String padding){
-        for(Wtc tc:wtcs){
+    public WTr setTopPadding(String padding){
+        for(WTc tc:wtcs){
             tc.setTopPadding(padding);
         }
         return this;
     }
-    public Wtr setTopPadding(int padding){
-        for(Wtc tc:wtcs){
+    public WTr setTopPadding(int padding){
+        for(WTc tc:wtcs){
             tc.setTopPadding(padding);
         }
         return this;
     }
 
 
-    public Wtr setBottomPadding(double padding){
-        for(Wtc tc:wtcs){
+    public WTr setBottomPadding(double padding){
+        for(WTc tc:wtcs){
             tc.setBottomPadding(padding);
         }
         return this;
     }
-    public Wtr setBottomPadding(String padding){
-        for(Wtc tc:wtcs){
+    public WTr setBottomPadding(String padding){
+        for(WTc tc:wtcs){
             tc.setBottomPadding(padding);
         }
         return this;
     }
-    public Wtr setBottomPadding(int padding){
-        for(Wtc tc:wtcs){
+    public WTr setBottomPadding(int padding){
+        for(WTc tc:wtcs){
             tc.setBottomPadding(padding);
         }
         return this;
     }
 
 
-    public Wtr setPadding(double padding){
-        for(Wtc tc:wtcs){
+    public WTr setPadding(double padding){
+        for(WTc tc:wtcs){
             tc.setPadding(padding);
         }
         return this;
     }
-    public Wtr setPadding(String padding){
-        for(Wtc tc:wtcs){
+    public WTr setPadding(String padding){
+        for(WTc tc:wtcs){
             tc.setPadding(padding);
         }
         return this;
     }
-    public Wtr setPadding(int padding){
-        for(Wtc tc:wtcs){
+    public WTr setPadding(int padding){
+        for(WTc tc:wtcs){
             tc.setPadding(padding);
         }
         return this;
@@ -503,8 +503,8 @@ public class Wtr extends Welement{
      * @param content 是复制空其中内容
      * @return wtr
      */
-    public Wtr clone(boolean content){
-        Wtr tr = new Wtr(root, this.getParent(), this.getSrc().createCopy());
+    public WTr clone(boolean content){
+        WTr tr = new WTr(root, this.getParent(), this.getSrc().createCopy());
         if(!content){
             tr.removeContent();
         }
@@ -536,7 +536,7 @@ public class Wtr extends Welement{
             Element item = items.next();
             String tag = item.getName();if(tag.equalsIgnoreCase("tc")){
                 body.append("\n");
-                body.append(new Wtc(getDoc(), this, item).html(uploader, lvl+1));
+                body.append(new WTc(getDoc(), this, item).html(uploader, lvl+1));
             }
         }
         t(builder, lvl);

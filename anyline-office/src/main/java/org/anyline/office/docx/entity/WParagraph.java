@@ -29,9 +29,9 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-public class Wp extends Welement{
-    private List<Wr> wrs = new ArrayList<>();
-    public Wp(WDocument doc, Element src){
+public class WParagraph extends WElement {
+    private List<WRun> wrs = new ArrayList<>();
+    public WParagraph(WDocument doc, Element src){
         this.root = doc;
         this.src = src;
         load();
@@ -43,21 +43,21 @@ public class Wp extends Welement{
         wrs.clear();
         List<Element> elements = src.elements("r");
         for(Element element:elements){
-            Wr wr = new Wr(root, element);
+            WRun wr = new WRun(root, element);
             wrs.add(wr);
         }
     }
-    public Wp setColor(String color){
-        for(Wr wr:wrs){
+    public WParagraph setColor(String color){
+        for(WRun wr:wrs){
             wr.setColor(color);
         }
         Element pr = DocxUtil.addElement(src, "pPr");
         DocxUtil.addElement(pr, "color","val", color.replace("#",""));
         return this;
     }
-    public Wp setFont(String size, String eastAsia, String ascii, String hint){
+    public WParagraph setFont(String size, String eastAsia, String ascii, String hint){
 
-        for(Wr wr:wrs){
+        for(WRun wr:wrs){
             wr.setFont(size, eastAsia, ascii, hint);
         }
         int pt = DocxUtil.fontSize(size);
@@ -69,8 +69,8 @@ public class Wp extends Welement{
 
         return this;
     }
-    public Wp setFontSize(String size){
-        for(Wr wr:wrs){
+    public WParagraph setFontSize(String size){
+        for(WRun wr:wrs){
             wr.setFontSize(size);
         }
         int pt = DocxUtil.fontSize(size);
@@ -78,8 +78,8 @@ public class Wp extends Welement{
         DocxUtil.addElement(pr, "sz","val", pt+"");
         return this;
     }
-    public Wp setFontFamily(String font){
-        for(Wr wr:wrs){
+    public WParagraph setFontFamily(String font){
+        for(WRun wr:wrs){
             wr.setFontFamily(font);
         }
         Element pr = DocxUtil.addElement(src, "pPr");
@@ -91,23 +91,23 @@ public class Wp extends Welement{
         return this;
     }
 
-    public Wp setAlign(String align){
+    public WParagraph setAlign(String align){
         Element pr = DocxUtil.addElement(src, "pPr");
         DocxUtil.addElement(pr, "jc","val", align);
         return this;
     }
 
-    public Wp setBackgroundColor(String color){
+    public WParagraph setBackgroundColor(String color){
         Element pr = DocxUtil.addElement(src, "pPr");
         color = color.replace("#","");
         DocxUtil.addElement(pr, "highlight", "val", color);
-        for(Wr wr:wrs){
+        for(WRun wr:wrs){
             wr.setBackgroundColor(color);
         }
         return this;
     }
 
-    public Wp setBold(boolean bold){
+    public WParagraph setBold(boolean bold){
         Element pr = DocxUtil.addElement(src, "pPr");
         Element b = pr.element("b");
         if(bold){
@@ -119,12 +119,12 @@ public class Wp extends Welement{
                 pr.remove(b);
             }
         }
-        for(Wr wr:wrs){
+        for(WRun wr:wrs){
             wr.setBold(bold);
         }
         return this;
     }
-    public Wp setUnderline(boolean underline){
+    public WParagraph setUnderline(boolean underline){
         Element pr = DocxUtil.addElement(src, "pPr");
         Element u = pr.element("u");
         if(underline){
@@ -136,12 +136,12 @@ public class Wp extends Welement{
                 pr.remove(u);
             }
         }
-        for(Wr wr:wrs){
+        for(WRun wr:wrs){
             wr.setUnderline(underline);
         }
         return this;
     }
-    public Wp setStrike(boolean strike){
+    public WParagraph setStrike(boolean strike){
         Element pr = DocxUtil.addElement(src, "pPr");
         Element s = pr.element("strike");
         if(strike){
@@ -153,15 +153,15 @@ public class Wp extends Welement{
                 pr.remove(s);
             }
         }
-        for(Wr wr:wrs){
+        for(WRun wr:wrs){
             wr.setStrike(strike);
         }
         return this;
     }
-    public Wp setItalic(boolean italic){
+    public WParagraph setItalic(boolean italic){
         Element pr = DocxUtil.addElement(src, "pPr");
         DocxUtil.addElement(pr, "i","val",italic+"");
-        for(Wr wr:wrs){
+        for(WRun wr:wrs){
             wr.setItalic(italic);
         }
         return this;
@@ -171,12 +171,12 @@ public class Wp extends Welement{
      * 清除样式
      * @return wp
      */
-    public Wp removeStyle(){
+    public WParagraph removeStyle(){
         Element pr = src.element("pPr");
         if(null != pr){
             src.remove(pr);
         }
-        for(Wr wr:wrs){
+        for(WRun wr:wrs){
             wr.removeStyle();
         }
         return this;
@@ -185,7 +185,7 @@ public class Wp extends Welement{
      * 清除背景色
      * @return wp
      */
-    public Wp removeBackgroundColor(){
+    public WParagraph removeBackgroundColor(){
         DocxUtil.removeElement(src,"shd");
         return this;
     }
@@ -193,16 +193,16 @@ public class Wp extends Welement{
      * 清除颜色
      * @return wp
      */
-    public Wp removeColor(){
+    public WParagraph removeColor(){
         DocxUtil.removeElement(src,"color");
         return this;
     }
-    public Wp addWr(Wr wr){
+    public WParagraph addWr(WRun wr){
         wrs.add(wr);
         return this;
     }
-    public Wp replace(String target, String replacement){
-        for(Wr wr:wrs){
+    public WParagraph replace(String target, String replacement){
+        for(WRun wr:wrs){
             wr.replace(target, replacement);
         }
         return this;
@@ -271,10 +271,10 @@ public class Wp extends Welement{
             String tag = item.getName();
            if(tag.equalsIgnoreCase("r")){
                 body.append("\n");
-                body.append(new Wr(getDoc(), item).html(uploader, lvl+1));
+                body.append(new WRun(getDoc(), item).html(uploader, lvl+1));
             } else if(tag.equalsIgnoreCase("tbl")){
                 body.append("\n");
-                body.append(new Wtable(getDoc(), item).html(uploader, lvl+1));
+                body.append(new WTable(getDoc(), item).html(uploader, lvl+1));
             }
         }
         t(builder, lvl);

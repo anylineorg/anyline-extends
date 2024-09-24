@@ -28,18 +28,18 @@ import org.dom4j.Element;
 import java.io.InputStream;
 import java.util.*;
 
-public class Wr extends Welement{
-    public Wr(WDocument doc, Element src){
+public class WRun extends WElement {
+    public WRun(WDocument doc, Element src){
         this.root = doc;
         this.src = src;
     }
 
 
-    public List<Wt> getWts(){
-        List<Wt> wts = new ArrayList<>();
+    public List<WText> getWts(){
+        List<WText> wts = new ArrayList<>();
         List<Element> ts = src.elements("t");
         for(Element t:ts){
-            Wt wt = new Wt(root, t);
+            WText wt = new WText(root, t);
             wts.add(wt);
         }
         return wts;
@@ -49,7 +49,7 @@ public class Wr extends Welement{
      * @param color color
      * @return Wr
      */
-    public Wr setColor(String color){
+    public WRun setColor(String color){
         Element pr = DocxUtil.addElement(src, "rPr");
         DocxUtil.addElement(pr, "color","val", color.replace("#",""));
         return this;
@@ -63,7 +63,7 @@ public class Wr extends Welement{
      * @param hint 默认字体
      * @return Wr
      */
-    public Wr setFont(String size, String eastAsia, String ascii, String hint){
+    public WRun setFont(String size, String eastAsia, String ascii, String hint){
         int pt = DocxUtil.fontSize(size);
         Element pr = DocxUtil.addElement(src, "rPr");
         DocxUtil.addElement(pr, "sz","val", pt+"");
@@ -79,7 +79,7 @@ public class Wr extends Welement{
      * @param size size
      * @return Wr
      */
-    public Wr setFontSize(String size){
+    public WRun setFontSize(String size){
         int pt = DocxUtil.fontSize(size);
         Element pr = DocxUtil.addElement(src, "rPr");
         DocxUtil.addElement(pr, "sz","val", pt+"");
@@ -91,7 +91,7 @@ public class Wr extends Welement{
      * @param font font
      * @return Wr
      */
-    public Wr setFontFamily(String font){
+    public WRun setFontFamily(String font){
         Element pr = DocxUtil.addElement(src, "rPr");
         DocxUtil.addElement(pr, "rFonts","eastAsia", font);
         DocxUtil.addElement(pr, "rFonts","ascii", font);
@@ -106,7 +106,7 @@ public class Wr extends Welement{
      * @param color color
      * @return Wr
      */
-    public Wr setBackgroundColor(String color){
+    public WRun setBackgroundColor(String color){
         Element pr = DocxUtil.addElement(src, "rPr");
         DocxUtil.addElement(pr, "highlight", "val", color.replace("#",""));
         return this;
@@ -117,7 +117,7 @@ public class Wr extends Welement{
      * @param bold 是否
      * @return Wr
      */
-    public Wr setBold(boolean bold){
+    public WRun setBold(boolean bold){
         Element pr = DocxUtil.addElement(src, "rPr");
         Element b = pr.element("b");
         if(bold){
@@ -137,7 +137,7 @@ public class Wr extends Welement{
      * @param underline 是否
      * @return Wr
      */
-    public Wr setUnderline(boolean underline){
+    public WRun setUnderline(boolean underline){
         Element pr = DocxUtil.addElement(src, "rPr");
         Element u = pr.element("u");
         if(underline){
@@ -157,7 +157,7 @@ public class Wr extends Welement{
      * @param strike 是否
      * @return Wr
      */
-    public Wr setStrike(boolean strike){
+    public WRun setStrike(boolean strike){
         Element pr = DocxUtil.addElement(src, "rPr");
         Element s = pr.element("strike");
         if(strike){
@@ -177,12 +177,12 @@ public class Wr extends Welement{
      * @param align 上标:superscript 下标:subscript
      * @return Wr
      */
-    public Wr setVerticalAlign(String align){
+    public WRun setVerticalAlign(String align){
         Element pr = DocxUtil.addElement(src, "rPr");
         DocxUtil.addElement(pr, "vertAlign", "val", align);
         return this;
     }
-    public Wr setItalic(boolean italic){
+    public WRun setItalic(boolean italic){
         Element pr = DocxUtil.addElement(src, "rPr");
         DocxUtil.addElement(pr, "i","val",italic+"");
         return this;
@@ -191,7 +191,7 @@ public class Wr extends Welement{
      * 清除样式
      * @return wr
      */
-    public Wr removeStyle(){
+    public WRun removeStyle(){
         Element pr = src.element("rPr");
         if(null != pr){
             src.remove(pr);
@@ -202,7 +202,7 @@ public class Wr extends Welement{
      * 清除背景色
      * @return wr
      */
-    public Wr removeBackgroundColor(){
+    public WRun removeBackgroundColor(){
         DocxUtil.removeElement(src,"highlight");
         return this;
     }
@@ -211,13 +211,13 @@ public class Wr extends Welement{
      * 清除颜色
      * @return wr
      */
-    public Wr removeColor(){
+    public WRun removeColor(){
         DocxUtil.removeElement(src,"color");
         return this;
     }
-    public Wr replace(String target, String replacement){
-        List<Wt> wts = getWts();
-        for(Wt wt:wts){
+    public WRun replace(String target, String replacement){
+        List<WText> wts = getWts();
+        for(WText wt:wts){
             String text = wt.getText();
             text = text.replace(target, replacement);
             if(this.root.IS_HTML_ESCAPE) {

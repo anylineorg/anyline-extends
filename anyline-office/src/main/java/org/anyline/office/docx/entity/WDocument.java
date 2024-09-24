@@ -39,7 +39,7 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.*;
 
-public class WDocument extends Welement{
+public class WDocument extends WElement {
     private static Log log = LogProxy.get(WDocument.class);
     private File file;
     private String charset = "UTF-8";
@@ -57,6 +57,9 @@ public class WDocument extends Welement{
 
     private LinkedHashMap<String, Map<String, String>> styles = new LinkedHashMap<>();
     private LinkedHashMap<String, String> replaces = new LinkedHashMap<>();
+    /**
+     * 文本原样替换，不解析原文没有${}的也不要添加
+     */
     private LinkedHashMap<String, String> txt_replaces = new LinkedHashMap<>();
     private boolean autoMergePlaceholder = true;
     /**
@@ -524,7 +527,7 @@ public class WDocument extends Welement{
         return element;
     }
 
-    public Element before(Element point, Wtable table){
+    public Element before(Element point, WTable table){
         Element src = table.getSrc();
         before(point, src);
         return src;
@@ -541,7 +544,7 @@ public class WDocument extends Welement{
         return element;
     }
 
-    public Element after(Element point, Wtable table){
+    public Element after(Element point, WTable table){
         Element src = table.getSrc();
         after(point, src);
         return src;
@@ -587,7 +590,7 @@ public class WDocument extends Welement{
         parent.elements().add(element);
         return element;
     }
-    public Element insert(Element parent, Wtable table){
+    public Element insert(Element parent, WTable table){
         Element src = table.getSrc();
         insert(parent, src);
         return src;
@@ -597,7 +600,7 @@ public class WDocument extends Welement{
         elements.add(index, element);
         return element;
     }
-    public Element insert(int index, Element parent,  Wtable table){
+    public Element insert(int index, Element parent,  WTable table){
         Element src = table.getSrc();
         insert(index, parent, src);
         return src;
@@ -623,10 +626,10 @@ public class WDocument extends Welement{
      * @param bookmark 书签
      * @return docx table
      */
-    public Wtable table(String bookmark){
+    public WTable table(String bookmark){
         Element src = parent(bookmark, "tbl");
         if(null != src) {
-            return new Wtable(this, src);
+            return new WTable(this, src);
         }
         return null;
     }
@@ -636,16 +639,16 @@ public class WDocument extends Welement{
      * @param recursion 是否递归获取所有级别的table,正常情况下不需要,word中的tbl一般在src下的最顶级,除非有表格嵌套
      * @return tables
      */
-    public List<Wtable> tables(boolean recursion){
+    public List<WTable> tables(boolean recursion){
         if(!recursion){
             return tables();
         }
         load();
-        List<Wtable> tables = new ArrayList<>();
+        List<WTable> tables = new ArrayList<>();
         List<Element> elements = children(getSrc());
         for(Element element:elements){
             if(element.getName().equals("tbl")){
-                Wtable table = new Wtable(this, element);
+                WTable table = new WTable(this, element);
                 tables.add(table);
             }
         }
@@ -657,10 +660,10 @@ public class WDocument extends Welement{
      * @param content 根据内容定位
      * @return tables
      */
-    public List<Wtable> tables(String content){
-        List<Wtable> all = tables();
-        List<Wtable> list = new ArrayList<>();
-        for(Wtable table:all){
+    public List<WTable> tables(String content){
+        List<WTable> all = tables();
+        List<WTable> list = new ArrayList<>();
+        for(WTable table:all){
             String txt = table.getTexts();
             if(txt.contains(content)){
                 list.add(table);
@@ -679,11 +682,11 @@ public class WDocument extends Welement{
         }
         return result;
     }
-    public List<Wtable> tables(){
-        List<Wtable> tables = new ArrayList<>();
+    public List<WTable> tables(){
+        List<WTable> tables = new ArrayList<>();
         List<Element> elements = getSrc().elements("tbl");
         for(Element element:elements){
-            Wtable table = new Wtable(this, element);
+            WTable table = new WTable(this, element);
             tables.add(table);
         }
         return tables;
@@ -1633,7 +1636,7 @@ public class WDocument extends Welement{
         reload();
         return this;
     }
-    public WDocument remove(Wtable table){
+    public WDocument remove(WTable table){
         Element element = table.getSrc();
         element.getParent().remove(element);
         reload();
@@ -1788,9 +1791,9 @@ public class WDocument extends Welement{
             Element item = it.next();
             String tag = item.getName();
             if(tag.equalsIgnoreCase("p")){
-                builder.append(new Wp(this, item).html(uploader, lvl+1));
+                builder.append(new WParagraph(this, item).html(uploader, lvl+1));
             }else if(tag.equalsIgnoreCase("tbl")){
-                builder.append(new Wtable(this, item).html(uploader, lvl+1));
+                builder.append(new WTable(this, item).html(uploader, lvl+1));
             }
         }
         return builder.toString();

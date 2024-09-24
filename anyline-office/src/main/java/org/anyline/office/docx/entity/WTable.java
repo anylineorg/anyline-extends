@@ -28,17 +28,17 @@ import org.dom4j.Element;
 
 import java.util.*;
 
-public class Wtable extends Welement{
+public class WTable extends WElement {
     private String widthUnit = "px";     // 默认长度单位 px pt cm/厘米
-    private List<Wtr> wtrs = new ArrayList<>();
+    private List<WTr> wtrs = new ArrayList<>();
     //是否自动同步(根据word源码重新构造 wtable wtr wtc)
     //在大批量操作时需要关掉自动同步,在操作完成后调用一次 reload()
     private boolean isAutoLoad = true;
-    public Wtable(WDocument doc){
+    public WTable(WDocument doc){
         this.root = doc;
         load();
     }
-    public Wtable(WDocument doc, Element src){
+    public WTable(WDocument doc, Element src){
         this.root = doc;
         this.src = src;
         load();
@@ -50,7 +50,7 @@ public class Wtable extends Welement{
         wtrs.clear();
         List<Element> elements = src.elements("tr");
         for(Element element:elements){
-            Wtr tr = new Wtr(root, this, element);
+            WTr tr = new WTr(root, this, element);
             wtrs.add(tr);
         }
     }
@@ -60,18 +60,18 @@ public class Wtable extends Welement{
      * @param bookmark 书签或占位符 包含{和}的按占位符搜索
      * @return wtr
      */
-    public Wtr tr(String bookmark){
-        List<Wtr> trs = trs(bookmark);
+    public WTr tr(String bookmark){
+        List<WTr> trs = trs(bookmark);
         if(!trs.isEmpty()){
             return trs.get(0);
         }
         return null;
     }
-    public List<Wtr> trs(String bookmark){
-        List<Wtr> list = new ArrayList<>();
+    public List<WTr> trs(String bookmark){
+        List<WTr> list = new ArrayList<>();
         if(null != bookmark) {
             if(bookmark.contains("{") && bookmark.contains("}")){
-                for(Wtr item:wtrs){
+                for(WTr item:wtrs){
                     String txt = item.getTexts();
                     if(txt.contains(bookmark)){
                         list.add(item);
@@ -79,7 +79,7 @@ public class Wtable extends Welement{
                 }
             }else {
                 Element src = parent(bookmark, "tr");
-                Wtr tr = new Wtr(root, this, src);
+                WTr tr = new WTr(root, this, src);
                 list.add(tr);
             }
         }
@@ -91,17 +91,17 @@ public class Wtable extends Welement{
      * @param bookmark 书签或占位符 包含{和}的按占位符搜索
      * @return wtr
      */
-    public Wtc tc(String bookmark){
-        List<Wtc> tcs = tcs(bookmark);
+    public WTc tc(String bookmark){
+        List<WTc> tcs = tcs(bookmark);
         if(!tcs.isEmpty()){
             return tcs.get(0);
         }
         return null;
     }
-    public List<Wtc> tcs(String bookmark){
-        List<Wtc> list = new ArrayList<>();
+    public List<WTc> tcs(String bookmark){
+        List<WTc> list = new ArrayList<>();
         if(null != bookmark) {
-            for(Wtr item:wtrs){
+            for(WTr item:wtrs){
                 list.addAll(item.tcs(bookmark));
             }
         }
@@ -119,12 +119,12 @@ public class Wtable extends Welement{
      * @param src 根据src创建(html标签)
      * @return tr
      */
-    private Wtr tr(Wtr template, Element src){
-        Wtr tr = new Wtr(root, this, template.getSrc().createCopy());
+    private WTr tr(WTr template, Element src){
+        WTr tr = new WTr(root, this, template.getSrc().createCopy());
         tr.removeContent();
         List<Element> tds = src.elements("td");
         for(int i=0; i<tds.size(); i++){
-            Wtc wtc = tr.getTc(i);
+            WTc wtc = tr.getTc(i);
             Element td = tds.get(i);
             Map<String, String> styles = StyleParser.parse(td.attributeValue("style"));
             wtc.setHtml(td);
@@ -139,13 +139,13 @@ public class Wtable extends Welement{
         }
         return tr;
     }
-    private Wtr tr(Element src){
+    private WTr tr(Element src){
         Element tr = this.src.addElement("w:tr");
-        Wtr wtr = new Wtr(this.root, this, tr);
+        WTr wtr = new WTr(this.root, this, tr);
         List<Element> tds = src.elements("td");
         for(int i=0; i<tds.size(); i++){
             Element tc = tr.addElement("w:tc");
-            Wtc wtc = new Wtc(root, wtr, tc);
+            WTc wtc = new WTc(root, wtr, tc);
             Element td = tds.get(i);
             wtc.setHtml(td);
         }
@@ -157,8 +157,8 @@ public class Wtable extends Welement{
      * @param index 插入位置下标 负数表示倒数第index行 插入 null表示从最后追加与append效果一致
      * @return Wtr
      */
-    public Wtr template(Integer index){
-        Wtr template = null;
+    public WTr template(Integer index){
+        WTr template = null;
         int size = wtrs.size();
         if(size>0){
             if(null == index){
@@ -189,12 +189,12 @@ public class Wtable extends Welement{
      */
     public void insert(Object data, String ... cols){
         Integer index = null;
-        Wtr template = template(index);
+        WTr template = template(index);
         insert(index, template, data, cols);
     }
     public void append(Object data, String ... cols){
         Integer index = null;
-        Wtr template = template(index);
+        WTr template = template(index);
         insert(index, template, data, cols);
     }
 
@@ -206,7 +206,7 @@ public class Wtable extends Welement{
      * @param cols data的属性
      */
     public void insert(Integer index, Object data, String ... cols){
-        Wtr template = template(index);
+        WTr template = template(index);
         insert(index, template, data, cols);
     }
 
@@ -216,14 +216,14 @@ public class Wtable extends Welement{
      * @param data 数据可以是一个实体也可以是一个集合
      * @param fields 指定从数据中提取的数据的属性或key
      */
-    public void insert(Wtr template, Object data, String ... fields){
+    public void insert(WTr template, Object data, String ... fields){
         insert(null, template, data, fields);
     }
-    public void append(Wtr template, Object data, String ... fields){
+    public void append(WTr template, Object data, String ... fields){
         insert(null, template, data, fields);
     }
 
-    public void insert(Integer index, Wtr tr){
+    public void insert(Integer index, WTr tr){
         List<Element> trs = src.elements("tr");
         index = index(index, wtrs.size());
         if(index > 0){
@@ -234,7 +234,7 @@ public class Wtable extends Welement{
             trs.add(tr.getSrc());
         }
     }
-    public void add(Wtr tr){
+    public void add(WTr tr){
         List<Element> trs = src.elements("tr");
         wtrs.add(tr);
         trs.add(tr.getSrc());
@@ -246,7 +246,7 @@ public class Wtable extends Welement{
      * @param data 数据可以是一个实体也可以是一个集合
      * @param fields 指定从数据中提取的数据的属性或key
      */
-    public void insert(Integer index, Wtr template, Object data, String ... fields){
+    public void insert(Integer index, WTr template, Object data, String ... fields){
         Collection datas = null;
         if(data instanceof Collection){
             datas = (Collection)data;
@@ -315,7 +315,7 @@ public class Wtable extends Welement{
      * @param qty 插入数量
      * @return Wtable
      */
-    public Wtable insert(Integer index, Wtr template, int qty){
+    public WTable insert(Integer index, WTr template, int qty){
         List<Element> trs = src.elements("tr");
         int idx = index(index, trs.size());
         for(int i=0; i<qty; i++) {
@@ -330,7 +330,7 @@ public class Wtable extends Welement{
         reload();
         return this;
     }
-    public Wtable append(Wtr template, int qty){
+    public WTable append(WTr template, int qty){
         return insert(null, template, qty);
     }
     /**
@@ -339,10 +339,10 @@ public class Wtable extends Welement{
      * @param qty 插入数量
      * @return Wtable
      */
-    public Wtable insert(Integer index, int qty){
+    public WTable insert(Integer index, int qty){
         int size = wtrs.size();
         if(size > 0){
-            Wtr template = template(index);
+            WTr template = template(index);
             return insert(index, template, qty);
         }
         return this;
@@ -352,10 +352,10 @@ public class Wtable extends Welement{
      * @param qty 插入数量
      * @return Wtable
      */
-    public Wtable insert(int qty){
+    public WTable insert(int qty){
         return insert(null, qty);
     }
-    public Wtable append(int qty){
+    public WTable append(int qty){
         return insert(null, qty);
     }
 
@@ -366,7 +366,7 @@ public class Wtable extends Welement{
      */
     public void insert(Integer index, String html){
         List<Element> trs = src.elements("tr");
-        Wtr template = template(index); //取原来在当前位置的一行作模板
+        WTr template = template(index); //取原来在当前位置的一行作模板
         insert(index, template, html);
     }
     public void append(String html){
@@ -379,7 +379,7 @@ public class Wtable extends Welement{
      * @param template 模板
      * @param html html.tr源码
      */
-    public void insert(Wtr template, String html){
+    public void insert(WTr template, String html){
         Integer index = null;
         if(null != template) {
             List<Element> trs = src.elements("tr");
@@ -387,7 +387,7 @@ public class Wtable extends Welement{
         }
         insert(index, template,  html);
     }
-    public void append(Wtr template, String html){
+    public void append(WTr template, String html){
         insert(template, html);
     }
 
@@ -397,7 +397,7 @@ public class Wtable extends Welement{
      * @param template 模版行
      * @param html html片段 片段中应该有多个tr,不需要上级标签table
      */
-    public void insert(Integer index, Wtr template, String html){
+    public void insert(Integer index, WTr template, String html){
         List<Element> trs = src.elements("tr");
         int idx = index(index, trs.size());
 
@@ -452,7 +452,7 @@ public class Wtable extends Welement{
             reload();
         }
     }
-    public void remove(Wtr tr){
+    public void remove(WTr tr){
         List<Element> trs = src.elements("tr");
         trs.remove(tr.getSrc());
         if(isAutoLoad) {
@@ -483,7 +483,7 @@ public class Wtable extends Welement{
      * @param text 内容 不支持html标签 如果需要html标签 调用setHtml()
      * @return wtable
      */
-    public Wtable setText(int row, int col, String text){
+    public WTable setText(int row, int col, String text){
         return setText(row, col, text, null);
     }
     /**
@@ -493,7 +493,7 @@ public class Wtable extends Welement{
      * @param text 内容 不支持html标签 如果需要html标签 调用setHtml()
      * @return wtable
      */
-    public Wtc addText(int row, int col, String text){
+    public WTc addText(int row, int col, String text){
         return getTc(row, col).addText(text);
     }
 
@@ -506,8 +506,8 @@ public class Wtable extends Welement{
      * @param styles css样式
      * @return wtable
      */
-    public Wtable setText(int row, int col, String text, Map<String, String> styles){
-        Wtc tc = getTc(row, col);
+    public WTable setText(int row, int col, String text, Map<String, String> styles){
+        WTc tc = getTc(row, col);
         if(null != tc){
             if(root.IS_HTML_ESCAPE) {
                 text = HtmlUtil.display(text);
@@ -523,8 +523,8 @@ public class Wtable extends Welement{
      * @param html 内容
      * @return wtable
      */
-    public Wtable setHtml(int row, int col, String html){
-        Wtc tc = getTc(row, col);
+    public WTable setHtml(int row, int col, String html){
+        WTc tc = getTc(row, col);
         if(null != tc) {
             tc.setHtml(html);
         }
@@ -536,7 +536,7 @@ public class Wtable extends Welement{
      * @param qty 追加数量
      * @return table table
      */
-    public Wtable addColumns(int qty){
+    public WTable addColumns(int qty){
         insertColumns(-1, qty);
         return this;
     }
@@ -549,7 +549,7 @@ public class Wtable extends Welement{
      * @param qty 数量
      * @return table table
      */
-    public Wtable insertColumns(int col, int qty){
+    public WTable insertColumns(int col, int qty){
         List<Element> trs = src.elements("tr");
         for(Element tr:trs){
             List<Element> tcs = tr.elements("tc");
@@ -590,7 +590,7 @@ public class Wtable extends Welement{
      * @param qty 追加数量
      * @return table table
      */
-    public Wtable insertRows(Integer index, int qty){
+    public WTable insertRows(Integer index, int qty){
         if(wtrs.size()>0){
             insertRows(template(index), index, qty);
         }
@@ -604,7 +604,7 @@ public class Wtable extends Welement{
      * @param qty 插入数量
      * @return wtable
      */
-    public Wtable insertRows(Wtr template, Integer index, int qty){
+    public WTable insertRows(WTr template, Integer index, int qty){
         List<Element> trs = src.elements("tr");
         int idx = index(index, trs.size());
         if(trs.size()>0){
@@ -629,7 +629,7 @@ public class Wtable extends Welement{
      * @param qty 行数
      * @return tables
      */
-    public Wtable addRows(int qty){
+    public WTable addRows(int qty){
         return insertRows(null, qty);
     }
 
@@ -640,7 +640,7 @@ public class Wtable extends Welement{
      * @param qty 追加数量
      * @return table table
      */
-    public Wtable addRows(int index, int qty){
+    public WTable addRows(int index, int qty){
         return insertRows(index, qty);
     }
 
@@ -651,7 +651,7 @@ public class Wtable extends Welement{
     public int getTrSize(){
         return src.elements("tr").size();
     }
-    public Wtable setWidth(String width){
+    public WTable setWidth(String width){
         Element pr = DocxUtil.addElement(src, "tblPr");
         DocxUtil.addElement(pr, "tcW","w", DocxUtil.dxa(width)+"");
         DocxUtil.addElement(pr, "tcW","type", DocxUtil.widthType(width));
@@ -663,7 +663,7 @@ public class Wtable extends Welement{
      * @param width 宽度
      * @return wtable
      */
-    public Wtable setWidth(int width){
+    public WTable setWidth(int width){
         return setWidth(width+widthUnit);
     }
     /**
@@ -671,7 +671,7 @@ public class Wtable extends Welement{
      * @param width 宽度
      * @return wtable
      */
-    public Wtable setWidth(double width){
+    public WTable setWidth(double width){
         return setWidth(width+widthUnit);
     }
 
@@ -683,11 +683,11 @@ public class Wtable extends Welement{
      * @param colspan 合并列数量
      * @return wtable
      */
-    public Wtable merge(int row, int col, int rowspan, int colspan){
+    public WTable merge(int row, int col, int rowspan, int colspan){
         reload();
         for(int r=row; r<row+rowspan; r++){
             for(int c=col; c<col+colspan; c++){
-                Wtc tc = getTc(r, c);
+                WTc tc = getTc(r, c);
                 Element pr = DocxUtil.addElement(tc.getSrc(), "tcPr");
                 if(rowspan > 1){
                     if(r==row){
@@ -708,10 +708,10 @@ public class Wtable extends Welement{
         reload();
         return this;
     }
-    public List<Wtr> getTrs(){
+    public List<WTr> getTrs(){
         return wtrs;
     }
-    public Wtr tr(int index){
+    public WTr tr(int index){
         index = index(index, wtrs.size());
         return wtrs.get(index);
     }
@@ -721,15 +721,15 @@ public class Wtable extends Welement{
      * @param col 列
      * @return wtc
      */
-    public Wtc getTc(int row, int col){
-        Wtr wtr = tr(row);
+    public WTc getTc(int row, int col){
+        WTr wtr = tr(row);
         if(null == wtr){
             return null;
         }
         return wtr.getTc(col);
     }
 
-    public Wtable removeBorder(){
+    public WTable removeBorder(){
         removeTopBorder();
         removeBottomBorder();
         removeLeftBorder();
@@ -746,7 +746,7 @@ public class Wtable extends Welement{
      * 清除表格上边框
      * @return wtable
      */
-    public Wtable removeTopBorder(){
+    public WTable removeTopBorder(){
         removeBorder(src, "top");
         return this;
     }
@@ -754,7 +754,7 @@ public class Wtable extends Welement{
      * 清除表格左边框
      * @return wtable
      */
-    public Wtable removeLeftBorder(){
+    public WTable removeLeftBorder(){
         removeBorder(src, "left");
         return this;
     }
@@ -762,7 +762,7 @@ public class Wtable extends Welement{
      * 清除表格右边框
      * @return wtable
      */
-    public Wtable removeRightBorder(){
+    public WTable removeRightBorder(){
         removeBorder(src, "right");
         return this;
     }
@@ -770,7 +770,7 @@ public class Wtable extends Welement{
      * 清除表格下边框
      * @return wtable
      */
-    public Wtable removeBottomBorder(){
+    public WTable removeBottomBorder(){
         removeBorder(src, "bottom");
         return this;
     }
@@ -778,15 +778,15 @@ public class Wtable extends Welement{
      * 清除表格垂直边框
      * @return wtable
      */
-    public Wtable removeInsideVBorder(){
+    public WTable removeInsideVBorder(){
         removeBorder(src, "insideV");
         return this;
     }
-    public Wtable removeTl2brBorder(){
+    public WTable removeTl2brBorder(){
         removeBorder(src, "tl2br");
         return this;
     }
-    public Wtable removeTr2blBorder(){
+    public WTable removeTr2blBorder(){
         removeBorder(src, "tr2bl");
         return this;
     }
@@ -795,7 +795,7 @@ public class Wtable extends Welement{
      * 清除表格水平边框
      * @return wtable
      */
-    public Wtable removeInsideHBorder(){
+    public WTable removeInsideHBorder(){
         removeBorder(src, "insideH");
         return this;
     }
@@ -803,10 +803,10 @@ public class Wtable extends Welement{
      * 清除所有单元格边框
      * @return wtable
      */
-    public Wtable removeTcBorder(){
-        for(Wtr tr:wtrs){
-            List<Wtc> tcs = tr.getTcs();
-            for(Wtc tc:tcs){
+    public WTable removeTcBorder(){
+        for(WTr tr:wtrs){
+            List<WTc> tcs = tr.getTcs();
+            for(WTc tc:tcs){
                 tc.removeBorder();
             }
         }
@@ -817,10 +817,10 @@ public class Wtable extends Welement{
      * 清除所有单元格颜色
      * @return wtable
      */
-    public Wtable removeTcColor(){
-        for(Wtr tr:wtrs){
-            List<Wtc> tcs = tr.getTcs();
-            for(Wtc tc:tcs){
+    public WTable removeTcColor(){
+        for(WTr tr:wtrs){
+            List<WTc> tcs = tr.getTcs();
+            for(WTc tc:tcs){
                 tc.removeColor();
             }
         }
@@ -831,10 +831,10 @@ public class Wtable extends Welement{
      * 清除所有单元格背景色
      * @return wtable
      */
-    public Wtable removeTcBackgroundColor(){
-        for(Wtr tr:wtrs){
-            List<Wtc> tcs = tr.getTcs();
-            for(Wtc tc:tcs){
+    public WTable removeTcBackgroundColor(){
+        for(WTr tr:wtrs){
+            List<WTc> tcs = tr.getTcs();
+            for(WTc tc:tcs){
                 tc.removeBackgroundColor();
             }
         }
@@ -857,10 +857,10 @@ public class Wtable extends Welement{
      * @param row 行
      * @return Wtr
      */
-    public Wtr removeTopBorder(int row){
-        Wtr tr = tr(row);
-        List<Wtc> tcs = tr.getTcs();
-        for(Wtc tc:tcs){
+    public WTr removeTopBorder(int row){
+        WTr tr = tr(row);
+        List<WTc> tcs = tr.getTcs();
+        for(WTc tc:tcs){
             tc.removeTopBorder();
         }
         return tr;
@@ -871,8 +871,8 @@ public class Wtable extends Welement{
      * @param row 行
      * @return wtr
      */
-    public Wtr removeBottomBorder(int row){
-        Wtr tr = tr(row);
+    public WTr removeBottomBorder(int row){
+        WTr tr = tr(row);
         tr.removeBottomBorder();
         return tr;
     }
@@ -882,9 +882,9 @@ public class Wtable extends Welement{
      * @param col 列
      * @return Wtable
      */
-    public Wtable removeLeftBorder(int col){
-        for(Wtr tr: wtrs){
-            Wtc tc = tr.getTcWithColspan(col, true);
+    public WTable removeLeftBorder(int col){
+        for(WTr tr: wtrs){
+            WTc tc = tr.getTcWithColspan(col, true);
             if(null != tc){
                 tc.removeLeftBorder();
             }
@@ -897,9 +897,9 @@ public class Wtable extends Welement{
      * @param col 列
      * @return Wtable
      */
-    public Wtable removeRightBorder(int col){
-        for(Wtr tr: wtrs){
-            Wtc tc = tr.getTcWithColspan(col, false);
+    public WTable removeRightBorder(int col){
+        for(WTr tr: wtrs){
+            WTc tc = tr.getTcWithColspan(col, false);
             if(null != tc){
                 tc.removeRightBorder();
             }
@@ -914,7 +914,7 @@ public class Wtable extends Welement{
      * @param col 列
      * @return Wtc
      */
-    public Wtc removeLeftBorder(int row, int col){
+    public WTc removeLeftBorder(int row, int col){
         return getTc(row, col).removeLeftBorder();
     }
     /**
@@ -923,7 +923,7 @@ public class Wtable extends Welement{
      * @param col 列
      * @return Wtc
      */
-    public Wtc removeRightBorder(int row, int col){
+    public WTc removeRightBorder(int row, int col){
         return getTc(row, col).removeRightBorder();
     }
     /**
@@ -932,7 +932,7 @@ public class Wtable extends Welement{
      * @param col 列
      * @return Wtc
      */
-    public Wtc removeTopBorder(int row, int col){
+    public WTc removeTopBorder(int row, int col){
         return getTc(row, col).removeTopBorder();
     }
     /**
@@ -941,7 +941,7 @@ public class Wtable extends Welement{
      * @param col 列
      * @return Wtc
      */
-    public Wtc removeBottomBorder(int row, int col){
+    public WTc removeBottomBorder(int row, int col){
         return getTc(row, col).removeBottomBorder();
     }
     /**
@@ -950,7 +950,7 @@ public class Wtable extends Welement{
      * @param col 列
      * @return wtable
      */
-    public Wtc removeTl2brBorder(int row, int col){
+    public WTc removeTl2brBorder(int row, int col){
         return getTc(row, col).removeTl2brBorder();
     }
     /**
@@ -959,7 +959,7 @@ public class Wtable extends Welement{
      * @param col 列
      * @return wtable
      */
-    public Wtc removeTr2blBorder(int row, int col){
+    public WTc removeTr2blBorder(int row, int col){
         return getTc(row, col).removeBorder();
     }
 
@@ -969,7 +969,7 @@ public class Wtable extends Welement{
      * @param col 列
      * @return wtable
      */
-    public Wtc removeBorder(int row, int col){
+    public WTc removeBorder(int row, int col){
         return getTc(row, col)
                 .removeLeftBorder()
                 .removeRightBorder()
@@ -979,8 +979,8 @@ public class Wtable extends Welement{
                 .removeTr2blBorder();
     }
 
-    public Wtr setBorder(int row){
-        Wtr tr = tr(row);
+    public WTr setBorder(int row){
+        WTr tr = tr(row);
         tr.setBorder();
         return tr;
     }
@@ -989,8 +989,8 @@ public class Wtable extends Welement{
      * 设置所有单元格默认边框
      * @return table table
      */
-    public Wtable setCellBorder(){
-        for(Wtr tr:wtrs){
+    public WTable setCellBorder(){
+        for(WTr tr:wtrs){
             tr.setBorder();
         }
         return this;
@@ -1001,7 +1001,7 @@ public class Wtable extends Welement{
      * @param col 列
      * @return  Wtc
      */
-    public Wtc setBorder(int row, int col){
+    public WTc setBorder(int row, int col){
         return getTc(row, col)
         .setLeftBorder()
         .setRightBorder()
@@ -1010,51 +1010,51 @@ public class Wtable extends Welement{
         .setTl2brBorder()
         .setTr2blBorder();
     }
-    public Wtc setBorder(int row, int col, int size, String color, String style){
+    public WTc setBorder(int row, int col, int size, String color, String style){
         return getTc(row, col).setBorder(size, color, style);
     }
-    public Wtc setLeftBorder(int row, int col){
+    public WTc setLeftBorder(int row, int col){
         return getTc(row, col).setLeftBorder();
     }
-    public Wtc setRightBorder(int row, int col){
+    public WTc setRightBorder(int row, int col){
         return getTc(row, col).setRightBorder();
     }
-    public Wtc setTopBorder(int row, int col){
+    public WTc setTopBorder(int row, int col){
         return getTc(row, col).setTopBorder();
     }
-    public Wtc setBottomBorder(int row, int col){
+    public WTc setBottomBorder(int row, int col){
         return getTc(row, col).setBottomBorder();
     }
-    public Wtc setTl2brBorder(int row, int col){
+    public WTc setTl2brBorder(int row, int col){
         return getTc(row, col).setTl2brBorder();
     }
-    public Wtc setTl2brBorder(int row, int col, String top, String bottom){
+    public WTc setTl2brBorder(int row, int col, String top, String bottom){
         return getTc(row, col).setTl2brBorder(top, bottom);
     }
-    public Wtc setTr2blBorder(int row, int col){
+    public WTc setTr2blBorder(int row, int col){
         return getTc(row, col).setTr2blBorder();
     }
 
-    public Wtc setTr2blBorder(int row, int col, String top, String bottom){
+    public WTc setTr2blBorder(int row, int col, String top, String bottom){
         return getTc(row, col).setTr2blBorder(top, bottom);
     }
 
-    public Wtc setLeftBorder(int row, int col, int size, String color, String style){
+    public WTc setLeftBorder(int row, int col, int size, String color, String style){
         return getTc(row, col).setLeftBorder(size, color, style);
     }
-    public Wtc setRightBorder(int row, int col, int size, String color, String style){
+    public WTc setRightBorder(int row, int col, int size, String color, String style){
         return getTc(row, col).setRightBorder(size, color, style);
     }
-    public Wtc setTopBorder(int row, int col, int size, String color, String style){
+    public WTc setTopBorder(int row, int col, int size, String color, String style){
         return getTc(row, col).setTopBorder(size, color, style);
     }
-    public Wtc setBottomBorder(int row, int col, int size, String color, String style){
+    public WTc setBottomBorder(int row, int col, int size, String color, String style){
         return getTc(row, col).setBottomBorder(size, color, style);
     }
-    public Wtc setTl2brBorder(int row, int col, int size, String color, String style){
+    public WTc setTl2brBorder(int row, int col, int size, String color, String style){
         return getTc(row, col).setTl2brBorder(size, color, style);
     }
-    public Wtc setTr2blBorder(int row, int col, int size, String color, String style){
+    public WTc setTr2blBorder(int row, int col, int size, String color, String style){
         return getTc(row, col).setTr2blBorder(size, color, style);
     }
 
@@ -1067,8 +1067,8 @@ public class Wtable extends Welement{
      * @param style 样式
      * @return table table
      */
-    public Wtable setLeftBorder(int cols, int size, String color, String style){
-        for(Wtr tr:wtrs){
+    public WTable setLeftBorder(int cols, int size, String color, String style){
+        for(WTr tr:wtrs){
             tr.getTc(cols).setLeftBorder(size, color, style);
         }
         return this;
@@ -1081,8 +1081,8 @@ public class Wtable extends Welement{
      * @param style 样式
      * @return table table
      */
-    public Wtable setRightBorder(int cols, int size, String color, String style){
-        for(Wtr tr:wtrs){
+    public WTable setRightBorder(int cols, int size, String color, String style){
+        for(WTr tr:wtrs){
             tr.getTc(cols).setRightBorder(size, color, style);
         }
         return this;
@@ -1096,7 +1096,7 @@ public class Wtable extends Welement{
      * @param style 样式
      * @return tr
      */
-    public Wtr setTopBorder(int rows, int size, String color, String style){
+    public WTr setTopBorder(int rows, int size, String color, String style){
         return tr(rows).setTopBorder(size, color, style);
     }
     /**
@@ -1107,7 +1107,7 @@ public class Wtable extends Welement{
      * @param style 样式
      * @return tr
      */
-    public Wtr setBottomBorder(int rows,int size, String color, String style){
+    public WTr setBottomBorder(int rows, int size, String color, String style){
         return tr(rows).setBottomBorder(size, color, style);
     }
 
@@ -1119,7 +1119,7 @@ public class Wtable extends Welement{
      * @param style 样式(默认single)
      * @return wtc
      */
-    public Wtable setLeftBorder(int size, String color, String style){
+    public WTable setLeftBorder(int size, String color, String style){
         setBorder("left", size, color, style);
         return this;
     }
@@ -1130,7 +1130,7 @@ public class Wtable extends Welement{
      * @param style 样式(默认single)
      * @return wtc
      */
-    public Wtable setRightBorder(int size, String color, String style){
+    public WTable setRightBorder(int size, String color, String style){
         setBorder("right", size, color, style);
         return this;
     }
@@ -1141,7 +1141,7 @@ public class Wtable extends Welement{
      * @param style 样式(默认single)
      * @return wtc
      */
-    public Wtable setTopBorder(int size, String color, String style){
+    public WTable setTopBorder(int size, String color, String style){
         setBorder("top", size, color, style);
         return this;
     }
@@ -1152,7 +1152,7 @@ public class Wtable extends Welement{
      * @param style 样式(默认single)
      * @return wtc
      */
-    public Wtable setBottomBorder(int size, String color, String style){
+    public WTable setBottomBorder(int size, String color, String style){
         setBorder("bottom", size, color, style);
         return this;
     }
@@ -1163,7 +1163,7 @@ public class Wtable extends Welement{
      * @param style 样式(默认single)
      * @return wtc
      */
-    public Wtable setBorder(int size, String color, String style){
+    public WTable setBorder(int size, String color, String style){
         setBorder("left", size, color, style);
         setBorder("top", size, color, style);
         setBorder("right", size, color, style);
@@ -1193,7 +1193,7 @@ public class Wtable extends Welement{
     }
 
 
-    public Wtc setColor(int row, int col, String color){
+    public WTc setColor(int row, int col, String color){
         return getTc(row, col).setColor(color);
     }
 
@@ -1203,8 +1203,8 @@ public class Wtable extends Welement{
      * @param color 颜色
      * @return wtr
      */
-    public Wtr setColor(int rows, String color){
-        Wtr tr = tr(rows);
+    public WTr setColor(int rows, String color){
+        WTr tr = tr(rows);
         tr.setColor(color);
         return tr;
     }
@@ -1218,7 +1218,7 @@ public class Wtable extends Welement{
      * @param hint 默认字体
      * @return wtc
      */
-    public Wtc setFont(int row, int col, String size, String eastAsia, String ascii, String hint){
+    public WTc setFont(int row, int col, String size, String eastAsia, String ascii, String hint){
         return getTc(row, col).setFont(size, eastAsia, ascii, hint);
     }
 
@@ -1231,8 +1231,8 @@ public class Wtable extends Welement{
      * @param hint 默认字体
      * @return wtr
      */
-    public Wtr setFont(int row, String size, String eastAsia, String ascii, String hint){
-        Wtr tr = tr(row);
+    public WTr setFont(int row, String size, String eastAsia, String ascii, String hint){
+        WTr tr = tr(row);
         tr.setFont(size, eastAsia, ascii, hint);
         return tr;
     }
@@ -1244,7 +1244,7 @@ public class Wtable extends Welement{
      * @param size 字号
      * @return wtc
      */
-    public Wtc setFontSize(int row, int col, String size){
+    public WTc setFontSize(int row, int col, String size){
         return getTc(row, col).setFontSize(size);
     }
     /**
@@ -1253,8 +1253,8 @@ public class Wtable extends Welement{
      * @param size 字号
      * @return wtr
      */
-    public Wtr setFontSize(int rows, String size){
-        Wtr tr = tr(rows);
+    public WTr setFontSize(int rows, String size){
+        WTr tr = tr(rows);
         tr.setFontSize(size);
         return tr;
     }
@@ -1266,7 +1266,7 @@ public class Wtable extends Welement{
      * @param font 字体
      * @return wtc
      */
-    public Wtc setFontFamily(int row, int col, String font){
+    public WTc setFontFamily(int row, int col, String font){
         return getTc(row, col).setFontFamily(font);
     }
 
@@ -1276,19 +1276,19 @@ public class Wtable extends Welement{
      * @param font 字体
      * @return wtr
      */
-    public Wtr setFontFamily(int rows, String font){
-        Wtr tr = tr(rows);
+    public WTr setFontFamily(int rows, String font){
+        WTr tr = tr(rows);
         tr.setFontFamily(font);
         return tr;
     }
-    public Wtc setWidth(int row, int col, String width){
+    public WTc setWidth(int row, int col, String width){
         return getTc(row, col).setWidth(width);
     }
-    public Wtc setWidth(int row, int col, int width){
+    public WTc setWidth(int row, int col, int width){
         return getTc(row, col).setWidth(width);
     }
 
-    public Wtc setWidth(int row, int col, double width){
+    public WTc setWidth(int row, int col, double width){
         return getTc(row, col).setWidth(width);
     }
 
@@ -1298,34 +1298,34 @@ public class Wtable extends Welement{
      * @param width 宽度
      * @return table table
      */
-    public Wtable setWidth(int cols, String width){
-        for(Wtr tr:wtrs){
+    public WTable setWidth(int cols, String width){
+        for(WTr tr:wtrs){
             tr.getTc(cols).setWidth(width);
         }
         return this;
     }
-    public Wtable setWidth(int cols, int width){
-        for(Wtr tr:wtrs){
+    public WTable setWidth(int cols, int width){
+        for(WTr tr:wtrs){
             tr.getTc(cols).setWidth(width);
         }
         return this;
     }
-    public Wtable setWidth(int cols, double width){
-        for(Wtr tr:wtrs){
+    public WTable setWidth(int cols, double width){
+        for(WTr tr:wtrs){
             tr.getTc(cols).setWidth(width);
         }
         return this;
     }
-    public Wtr setHeight(int rows, String height){
-        Wtr tr = tr(rows);
+    public WTr setHeight(int rows, String height){
+        WTr tr = tr(rows);
         tr.setHeight(height);
         return tr;
     }
 
-    public Wtr setHeight(int rows, int height){
+    public WTr setHeight(int rows, int height){
         return setHeight(rows, height+widthUnit);
     }
-    public Wtr setHeight(int rows, double height){
+    public WTr setHeight(int rows, double height){
         return setHeight(rows, height+widthUnit);
     }
 
@@ -1336,7 +1336,7 @@ public class Wtable extends Welement{
      * @param align 对齐方式
      * @return wtc
      */
-    public Wtc setAlign(int row, int col, String align){
+    public WTc setAlign(int row, int col, String align){
         return getTc(row, col).setAlign(align);
     }
     /**
@@ -1345,8 +1345,8 @@ public class Wtable extends Welement{
      * @param align 对齐方式
      * @return wtcr
      */
-    public Wtr setAlign(int rows, String align){
-        Wtr tr = tr(rows);
+    public WTr setAlign(int rows, String align){
+        WTr tr = tr(rows);
         tr.setAlign(align);
         return tr;
     }
@@ -1356,8 +1356,8 @@ public class Wtable extends Welement{
      * @param align 对齐方式
      * @return wtable
      */
-    public Wtable setAlign(String align){
-        for(Wtr tr:wtrs) {
+    public WTable setAlign(String align){
+        for(WTr tr:wtrs) {
             tr.setAlign(align);
         }
         return this;
@@ -1369,7 +1369,7 @@ public class Wtable extends Welement{
      * @param align 对齐方式
      * @return wtc
      */
-    public Wtc setVerticalAlign(int row, int col, String align){
+    public WTc setVerticalAlign(int row, int col, String align){
         return getTc(row, col).setVerticalAlign(align);
     }
 
@@ -1379,8 +1379,8 @@ public class Wtable extends Welement{
      * @param align 对齐方式
      * @return wtr
      */
-    public Wtr setVerticalAlign(int rows, String align){
-        Wtr tr = tr(rows);
+    public WTr setVerticalAlign(int rows, String align){
+        WTr tr = tr(rows);
         tr.setVerticalAlign(align);
         return tr;
     }
@@ -1390,8 +1390,8 @@ public class Wtable extends Welement{
      * @param align 对齐方式
      * @return wtable
      */
-    public Wtable setVerticalAlign(String align){
-        for(Wtr tr:wtrs) {
+    public WTable setVerticalAlign(String align){
+        for(WTr tr:wtrs) {
             tr.setVerticalAlign(align);
         }
         return this;
@@ -1403,7 +1403,7 @@ public class Wtable extends Welement{
      * @param padding 边距 可以指定单位,如:10px
      * @return wtc
      */
-    public Wtc setBottomPadding(int row, int col, String padding){
+    public WTc setBottomPadding(int row, int col, String padding){
         return getTc(row, col).setBottomPadding(padding);
     }
     /**
@@ -1413,10 +1413,10 @@ public class Wtable extends Welement{
      * @param padding 边距 默认单位dxa
      * @return wtc
      */
-    public Wtc setBottomPadding(int row, int col, int padding){
+    public WTc setBottomPadding(int row, int col, int padding){
         return getTc(row, col).setBottomPadding(padding);
     }
-    public Wtc setBottomPadding(int row, int col, double padding){
+    public WTc setBottomPadding(int row, int col, double padding){
         return getTc(row, col).setBottomPadding(padding);
     }
 
@@ -1427,18 +1427,18 @@ public class Wtable extends Welement{
      * @param padding 边距 可以指定单位,如:10px
      * @return wtr
      */
-    public Wtr setBottomPadding(int rows, String padding){
-        Wtr tr = tr(rows);
+    public WTr setBottomPadding(int rows, String padding){
+        WTr tr = tr(rows);
         tr.setBottomPadding(padding);
         return tr;
     }
-    public Wtr setBottomPadding(int rows, int padding){
-        Wtr tr = tr(rows);
+    public WTr setBottomPadding(int rows, int padding){
+        WTr tr = tr(rows);
         tr.setBottomPadding(padding);
         return tr;
     }
-    public Wtr setBottomPadding(int rows, double padding){
-        Wtr tr = tr(rows);
+    public WTr setBottomPadding(int rows, double padding){
+        WTr tr = tr(rows);
         tr.setBottomPadding(padding);
         return tr;
     }
@@ -1447,153 +1447,153 @@ public class Wtable extends Welement{
      * @param padding 边距 可以指定单位,如:10px
      * @return wtable
      */
-    public Wtable setBottomPadding(String padding){
-        for(Wtr tr:wtrs){
+    public WTable setBottomPadding(String padding){
+        for(WTr tr:wtrs){
             tr.setBottomPadding(padding);
         }
         return this;
     }
-    public Wtable setBottomPadding(int padding){
-        for(Wtr tr:wtrs){
+    public WTable setBottomPadding(int padding){
+        for(WTr tr:wtrs){
             tr.setBottomPadding(padding);
         }
         return this;
     }
-    public Wtable setBottomPadding(double padding){
-        for(Wtr tr:wtrs){
+    public WTable setBottomPadding(double padding){
+        for(WTr tr:wtrs){
             tr.setBottomPadding(padding);
         }
         return this;
     }
 
-    public Wtc setTopPadding(int row, int col, String padding){
+    public WTc setTopPadding(int row, int col, String padding){
         return getTc(row, col).setTopPadding(padding);
     }
-    public Wtc setTopPadding(int row, int col, int padding){
+    public WTc setTopPadding(int row, int col, int padding){
         return getTc(row, col).setTopPadding(padding);
     }
-    public Wtc setTopPadding(int row, int col, double padding){
+    public WTc setTopPadding(int row, int col, double padding){
         return getTc(row, col).setTopPadding(padding);
     }
 
-    public Wtr setTopPadding(int rows, String padding){
-        Wtr tr = tr(rows);
+    public WTr setTopPadding(int rows, String padding){
+        WTr tr = tr(rows);
         tr.setTopPadding(padding);
         return tr;
     }
-    public Wtr setTopPadding(int rows, int padding){
-        Wtr tr = tr(rows);
+    public WTr setTopPadding(int rows, int padding){
+        WTr tr = tr(rows);
         tr.setTopPadding(padding);
         return tr;
     }
-    public Wtr setTopPadding(int rows, double padding){
-        Wtr tr = tr(rows);
+    public WTr setTopPadding(int rows, double padding){
+        WTr tr = tr(rows);
         tr.setTopPadding(padding);
         return tr;
     }
-    public Wtable setTopPadding(String padding){
-        for(Wtr tr:wtrs){
+    public WTable setTopPadding(String padding){
+        for(WTr tr:wtrs){
             tr.setTopPadding(padding);
         }
         return this;
     }
-    public Wtable setTopPadding(int padding){
-        for(Wtr tr:wtrs){
+    public WTable setTopPadding(int padding){
+        for(WTr tr:wtrs){
             tr.setTopPadding(padding);
         }
         return this;
     }
-    public Wtable setTopPadding(double padding){
-        for(Wtr tr:wtrs){
+    public WTable setTopPadding(double padding){
+        for(WTr tr:wtrs){
             tr.setTopPadding(padding);
         }
         return this;
     }
-    public Wtc setRightPadding(int row, int col, String padding){
+    public WTc setRightPadding(int row, int col, String padding){
         return getTc(row, col).setRightPadding(padding);
     }
-    public Wtc setRightPadding(int row, int col, int padding){
+    public WTc setRightPadding(int row, int col, int padding){
         return getTc(row, col).setRightPadding(padding);
     }
-    public Wtc setRightPadding(int row, int col, double padding){
+    public WTc setRightPadding(int row, int col, double padding){
         return getTc(row, col).setRightPadding(padding);
     }
 
-    public Wtr setRightPadding(int rows, String padding){
-        Wtr tr = tr(rows);
+    public WTr setRightPadding(int rows, String padding){
+        WTr tr = tr(rows);
         tr.setRightPadding(padding);
         return tr;
     }
-    public Wtr setRightPadding(int rows, int padding){
-        Wtr tr = tr(rows);
+    public WTr setRightPadding(int rows, int padding){
+        WTr tr = tr(rows);
         tr.setRightPadding(padding);
         return tr;
     }
-    public Wtr setRightPadding(int rows, double padding){
-        Wtr tr = tr(rows);
+    public WTr setRightPadding(int rows, double padding){
+        WTr tr = tr(rows);
         tr.setRightPadding(padding);
         return tr;
     }
-    public Wtable setRightPadding(String padding){
-        for(Wtr tr:wtrs){
+    public WTable setRightPadding(String padding){
+        for(WTr tr:wtrs){
             tr.setRightPadding(padding);
         }
         return this;
     }
-    public Wtable setRightPadding(int padding){
-        for(Wtr tr:wtrs){
+    public WTable setRightPadding(int padding){
+        for(WTr tr:wtrs){
             tr.setRightPadding(padding);
         }
         return this;
     }
-    public Wtable setRightPadding(double padding){
-        for(Wtr tr:wtrs){
+    public WTable setRightPadding(double padding){
+        for(WTr tr:wtrs){
             tr.setRightPadding(padding);
         }
         return this;
     }
 
 
-    public Wtc setLeftPadding(int row, int col, String padding){
+    public WTc setLeftPadding(int row, int col, String padding){
         return getTc(row, col).setLeftPadding(padding);
     }
-    public Wtc setLeftPadding(int row, int col, int padding){
+    public WTc setLeftPadding(int row, int col, int padding){
         return getTc(row, col).setLeftPadding(padding);
     }
-    public Wtc setLeftPadding(int row, int col, double padding){
+    public WTc setLeftPadding(int row, int col, double padding){
         return getTc(row, col).setLeftPadding(padding);
     }
 
-    public Wtr setLeftPadding(int rows, String padding){
-        Wtr tr = tr(rows);
+    public WTr setLeftPadding(int rows, String padding){
+        WTr tr = tr(rows);
         tr.setLeftPadding(padding);
         return tr;
     }
-    public Wtr setLeftPadding(int rows, int padding){
-        Wtr tr = tr(rows);
+    public WTr setLeftPadding(int rows, int padding){
+        WTr tr = tr(rows);
         tr.setLeftPadding(padding);
         return tr;
     }
-    public Wtr setLeftPadding(int rows, double padding){
-        Wtr tr = tr(rows);
+    public WTr setLeftPadding(int rows, double padding){
+        WTr tr = tr(rows);
         tr.setLeftPadding(padding);
         return tr;
     }
 
-    public Wtable setLeftPadding(String padding){
-        for(Wtr tr:wtrs){
+    public WTable setLeftPadding(String padding){
+        for(WTr tr:wtrs){
             tr.setLeftPadding(padding);
         }
         return this;
     }
-    public Wtable setLeftPadding(int padding){
-        for(Wtr tr:wtrs){
+    public WTable setLeftPadding(int padding){
+        for(WTr tr:wtrs){
             tr.setLeftPadding(padding);
         }
         return this;
     }
-    public Wtable setLeftPadding(double padding){
-        for(Wtr tr:wtrs){
+    public WTable setLeftPadding(double padding){
+        for(WTr tr:wtrs){
             tr.setLeftPadding(padding);
         }
         return this;
@@ -1601,46 +1601,46 @@ public class Wtable extends Welement{
 
 
 
-    public Wtc setPadding(int row, int col, String side, String padding){
+    public WTc setPadding(int row, int col, String side, String padding){
         return getTc(row, col).setPadding(side, padding);
     }
-    public Wtc setPadding(int row, int col, String side, int padding){
+    public WTc setPadding(int row, int col, String side, int padding){
         return getTc(row, col).setPadding(side, padding);
     }
-    public Wtc setPadding(int row, int col, String side, double padding){
+    public WTc setPadding(int row, int col, String side, double padding){
         return getTc(row, col).setPadding(side, padding);
     }
-    public Wtr setPadding(int rows, String side, String padding){
-        Wtr tr = tr(rows);
+    public WTr setPadding(int rows, String side, String padding){
+        WTr tr = tr(rows);
         tr.setPadding(side, padding);
         return tr;
     }
-    public Wtr setPadding(int rows, String side, int padding){
-        Wtr tr = tr(rows);
+    public WTr setPadding(int rows, String side, int padding){
+        WTr tr = tr(rows);
         tr.setPadding(side, padding);
         return tr;
     }
-    public Wtr setPadding(int rows, String side, double padding){
-        Wtr tr = tr(rows);
+    public WTr setPadding(int rows, String side, double padding){
+        WTr tr = tr(rows);
         tr.setPadding(side, padding);
         return tr;
     }
-    public Wtable setPadding(String side, String padding){
-        for(Wtr tr:wtrs){
+    public WTable setPadding(String side, String padding){
+        for(WTr tr:wtrs){
             tr.setPadding(side, padding);
         }
         return this;
     }
 
-    public Wtable setPadding(String side, int padding){
-        for(Wtr tr:wtrs){
+    public WTable setPadding(String side, int padding){
+        for(WTr tr:wtrs){
             tr.setPadding(side, padding);
         }
         return this;
     }
 
-    public Wtable setPadding(String side, double padding){
-        for(Wtr tr:wtrs){
+    public WTable setPadding(String side, double padding){
+        for(WTr tr:wtrs){
             tr.setPadding(side, padding);
         }
         return this;
@@ -1648,46 +1648,46 @@ public class Wtable extends Welement{
 
 
 
-    public Wtc setPadding(int row, int col, String padding){
+    public WTc setPadding(int row, int col, String padding){
         return getTc(row, col).setPadding(padding);
     }
-    public Wtc setPadding(int row, int col, int padding){
+    public WTc setPadding(int row, int col, int padding){
         return getTc(row, col).setPadding(padding);
     }
-    public Wtc setPadding(int row, int col, double padding){
+    public WTc setPadding(int row, int col, double padding){
         return getTc(row, col).setPadding(padding);
     }
-    public Wtr setPadding(int rows, String padding){
-        Wtr tr = tr(rows);
+    public WTr setPadding(int rows, String padding){
+        WTr tr = tr(rows);
         tr.setPadding(padding);
         return tr;
     }
-    public Wtr setPadding(int rows, int padding){
-        Wtr tr = tr(rows);
+    public WTr setPadding(int rows, int padding){
+        WTr tr = tr(rows);
         tr.setPadding(padding);
         return tr;
     }
-    public Wtr setPadding(int rows, double padding){
-        Wtr tr = tr(rows);
+    public WTr setPadding(int rows, double padding){
+        WTr tr = tr(rows);
         tr.setPadding(padding);
         return tr;
     }
-    public Wtable setPadding(String padding){
-        for(Wtr tr:wtrs){
+    public WTable setPadding(String padding){
+        for(WTr tr:wtrs){
             tr.setPadding(padding);
         }
         return this;
     }
 
-    public Wtable setPadding(int padding){
-        for(Wtr tr:wtrs){
+    public WTable setPadding(int padding){
+        for(WTr tr:wtrs){
             tr.setPadding(padding);
         }
         return this;
     }
 
-    public Wtable setPadding(double padding){
-        for(Wtr tr:wtrs){
+    public WTable setPadding(double padding){
+        for(WTr tr:wtrs){
             tr.setPadding(padding);
         }
         return this;
@@ -1701,7 +1701,7 @@ public class Wtable extends Welement{
      * @param color 颜色
      * @return Wtc
      */
-    public Wtc setBackgroundColor(int row, int col, String color){
+    public WTc setBackgroundColor(int row, int col, String color){
         return getTc(row, col).setBackgroundColor(color);
     }
 
@@ -1711,14 +1711,14 @@ public class Wtable extends Welement{
      * @param color 颜色
      * @return Wtr
      */
-    public Wtr setBackgroundColor(int row, String color){
-        Wtr tr = tr(row);
+    public WTr setBackgroundColor(int row, String color){
+        WTr tr = tr(row);
         tr.setBackgroundColor(color);
         return tr;
     }
 
-    public Wtable setBackgroundColor(String color){
-        for(Wtr tr:wtrs){
+    public WTable setBackgroundColor(String color){
+        for(WTr tr:wtrs){
             tr.setBackgroundColor(color);
         }
         return this;
@@ -1730,7 +1730,7 @@ public class Wtable extends Welement{
      * @param col 列
      * @return Wtc
      */
-    public Wtc removeStyle(int row, int col){
+    public WTc removeStyle(int row, int col){
         return getTc(row, col).removeStyle();
     }
     /**
@@ -1738,13 +1738,13 @@ public class Wtable extends Welement{
      * @param row 行
      * @return Wtr
      */
-    public Wtr removeStyle(int row){
-        Wtr tr = tr(row);
+    public WTr removeStyle(int row){
+        WTr tr = tr(row);
         tr.removeContent();
         return tr;
     }
-    public Wtable removeStyle(){
-        for(Wtr tr:wtrs){
+    public WTable removeStyle(){
+        for(WTr tr:wtrs){
             tr.removeStyle();
         }
         return this;
@@ -1755,7 +1755,7 @@ public class Wtable extends Welement{
      * @param col 列
      * @return Wtc
      */
-    public Wtc removeBackgroundColor(int row, int col){
+    public WTc removeBackgroundColor(int row, int col){
         return getTc(row, col).removeBackgroundColor();
     }
 
@@ -1764,13 +1764,13 @@ public class Wtable extends Welement{
      * @param row 行
      * @return Wtr
      */
-    public Wtr removeBackgroundColor(int row){
-        Wtr tr = tr(row);
+    public WTr removeBackgroundColor(int row){
+        WTr tr = tr(row);
         tr.removeBackgroundColor();
         return tr;
     }
-    public Wtable removeBackgroundColor(){
-        for(Wtr tr:wtrs){
+    public WTable removeBackgroundColor(){
+        for(WTr tr:wtrs){
             tr.removeBackgroundColor();
         }
         return this;
@@ -1782,7 +1782,7 @@ public class Wtable extends Welement{
      * @param col 列
      * @return Wtc
      */
-    public Wtc removeColor(int row, int col){
+    public WTc removeColor(int row, int col){
         return getTc(row, col).removeColor();
     }
     /**
@@ -1790,13 +1790,13 @@ public class Wtable extends Welement{
      * @param row 行
      * @return Wtr
      */
-    public Wtr removeColor(int row){
-        Wtr tr = tr(row);
+    public WTr removeColor(int row){
+        WTr tr = tr(row);
         tr.removeColor();
         return tr;
     }
-    public Wtable removeColor(){
-        for(Wtr tr:wtrs){
+    public WTable removeColor(){
+        for(WTr tr:wtrs){
             tr.removeColor();
         }
         return this;
@@ -1808,27 +1808,27 @@ public class Wtable extends Welement{
      * @param bold 是否
      * @return Wtc
      */
-    public Wtc setBold(int row, int col, boolean bold){
+    public WTc setBold(int row, int col, boolean bold){
         return getTc(row, col).setBold(bold);
     }
-    public Wtc setBold(int row, int col){
+    public WTc setBold(int row, int col){
         return setBold(row, col, true);
     }
-    public Wtr setBold(int rows){
+    public WTr setBold(int rows){
         return setBold(rows, true);
     }
-    public Wtr setBold(int rows, boolean bold){
-        Wtr tr = tr(rows);
+    public WTr setBold(int rows, boolean bold){
+        WTr tr = tr(rows);
         tr.setBold(bold);
         return tr;
     }
-    public Wtable setBold(boolean bold){
-        for(Wtr tr:wtrs){
+    public WTable setBold(boolean bold){
+        for(WTr tr:wtrs){
             tr.setBold(bold);
         }
         return this;
     }
-    public Wtable setBold(){
+    public WTable setBold(){
         return setBold(true);
     }
 
@@ -1839,10 +1839,10 @@ public class Wtable extends Welement{
      * @param underline 是否
      * @return Wtc
      */
-    public Wtc setUnderline(int row, int col, boolean underline){
+    public WTc setUnderline(int row, int col, boolean underline){
         return getTc(row, col).setUnderline(underline);
     }
-    public Wtc setUnderline(int row, int col){
+    public WTc setUnderline(int row, int col){
         return setUnderline(row, col, true);
     }
 
@@ -1853,24 +1853,24 @@ public class Wtable extends Welement{
      * @param strike 是否
      * @return Wtc
      */
-    public Wtc setStrike(int row, int col, boolean strike){
+    public WTc setStrike(int row, int col, boolean strike){
         return getTc(row, col).setStrike(strike);
     }
-    public Wtc setStrike(int row, int col){
+    public WTc setStrike(int row, int col){
         return setStrike(row, col, true);
     }
-    public Wtr setStrike(int rows, boolean strike){
-        Wtr tr = tr(rows);
+    public WTr setStrike(int rows, boolean strike){
+        WTr tr = tr(rows);
         tr.setStrike(strike);
         return tr;
     }
-    public Wtable setStrike(boolean strike){
-        for(Wtr tr:wtrs){
+    public WTable setStrike(boolean strike){
+        for(WTr tr:wtrs){
             tr.setStrike(strike);
         }
         return this;
     }
-    public Wtable setStrike(){
+    public WTable setStrike(){
         return setStrike(true);
     }
 
@@ -1881,11 +1881,11 @@ public class Wtable extends Welement{
      * @param italic 是否
      * @return Wtc
      */
-    public Wtc setItalic(int row, int col, boolean italic){
+    public WTc setItalic(int row, int col, boolean italic){
         return getTc(row, col).setItalic(italic);
     }
 
-    public Wtc setItalic(int row, int col){
+    public WTc setItalic(int row, int col){
         return setItalic(row, col, true);
     }
 
@@ -1895,18 +1895,18 @@ public class Wtable extends Welement{
      * @param italic 是否斜体
      * @return wtr
      */
-    public Wtr setItalic(int rows,  boolean italic){
-        Wtr tr = tr(rows);
+    public WTr setItalic(int rows, boolean italic){
+        WTr tr = tr(rows);
         tr.setItalic(italic);
         return tr;
     }
-    public Wtable setItalic(boolean italic){
-        for(Wtr tr:wtrs){
+    public WTable setItalic(boolean italic){
+        for(WTr tr:wtrs){
             tr.setItalic(italic);
         }
         return this;
     }
-    public Wtable setItalic(){
+    public WTable setItalic(){
         return setItalic(true);
     }
 
@@ -1918,7 +1918,7 @@ public class Wtable extends Welement{
      * @param tar tar
      * @return wtc
      */
-    public Wtc replace(int row, int col, String src, String tar){
+    public WTc replace(int row, int col, String src, String tar){
         return getTc(row, col).replace(src, tar);
     }
 
@@ -1930,13 +1930,13 @@ public class Wtable extends Welement{
      * @param tar tar
      * @return wtr
      */
-    public Wtr replace(int rows, String src, String tar){
-        Wtr tr = tr(rows);
+    public WTr replace(int rows, String src, String tar){
+        WTr tr = tr(rows);
         tr.replace(src, tar);
         return tr;
     }
-    public Wtable replace(String src, String tar){
-        for(Wtr tr:wtrs){
+    public WTable replace(String src, String tar){
+        for(WTr tr:wtrs){
             tr.replace(src, tar);
         }
         return this;
@@ -1949,7 +1949,7 @@ public class Wtable extends Welement{
 
     public void setWidthUnit(String widthUnit) {
         this.widthUnit = widthUnit;
-        for(Wtr tr:wtrs){
+        for(WTr tr:wtrs){
             tr.setWidthUnit(widthUnit);
         }
     }
@@ -1994,13 +1994,13 @@ public class Wtable extends Welement{
         spans_set.clear();
         int rows = wtrs.size();
         for(int row=0; row<rows; row++){
-            Wtr tr = wtrs.get(row);
+            WTr tr = wtrs.get(row);
             List<Spans> spans_row = new ArrayList<>();
             spans_set.add(spans_row);
-            List<Wtc> tcs = tr.getTcs();
+            List<WTc> tcs = tr.getTcs();
             int cols = tcs.size();
             for(int col=0; col<cols; col++){
-                Wtc tc = tcs.get(col);
+                WTc tc = tcs.get(col);
                 //合并列
                 int colspan = tc.parseColspan();
                 if(colspan == -1){
@@ -2046,15 +2046,15 @@ public class Wtable extends Welement{
         StringBuilder builder = new StringBuilder();
         StringBuilder body = new StringBuilder();
         int rows = 0;
-        for(Wtr tr:wtrs){
+        for(WTr tr:wtrs){
             body.append("\n");
             t(body, lvl+1);
             body.append("<tr");
             tr.styles(body);
             body.append(">\n");
-            List<Wtc> tcs = tr.getTcs();
+            List<WTc> tcs = tr.getTcs();
             int cols = 0;
-            for(Wtc tc:tcs){
+            for(WTc tc:tcs){
                 Spans spans = spans(rows, cols);
                 int rowspan = spans.getRowspan();
                 int colspan = spans.getColspan();
@@ -2085,9 +2085,9 @@ public class Wtable extends Welement{
     }
 
 
-    public Wtable clone(boolean content){
+    public WTable clone(boolean content){
         Element src = this.src.createCopy();
-        Wtable wtable = new Wtable(root, src);
+        WTable wtable = new WTable(root, src);
         if(!content){
             wtable.removeContent();
         }

@@ -14,7 +14,27 @@
  * limitations under the License.
  */
 
-package org.anyline.office.xlsx.entity;
 
-public class Row {
+
+
+package org.anyline.office.docx.entity;
+
+import org.anyline.util.HtmlUtil;
+import org.dom4j.Element;
+
+public class WText extends WElement {
+    public WText(WDocument doc, Element src){
+        this.root = doc;
+        this.src = src;
+    }
+    public WText setText(String text){
+        if(root.IS_HTML_ESCAPE) {
+            text = HtmlUtil.display(text);
+        }
+        src.setText(text);
+        return this;
+    }
+    public String getText(){
+        return src.getText();
+    }
 }

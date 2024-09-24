@@ -31,13 +31,13 @@ import org.dom4j.Element;
 
 import java.util.*;
 
-public class Wtc extends Welement{
-    private Wtr parent;
-    private List<Wp> wps = new ArrayList<>();
+public class WTc extends WElement {
+    private WTr parent;
+    private List<WParagraph> wps = new ArrayList<>();
     private String widthUnit = "px";     // 默认长度单位 px pt cm/厘米
     private int colspan = -1; //-1:未设置  1:不合并  0:被合并  >1:合并其他单元格
     private int rowspan = -1;
-    public Wtc(WDocument doc, Wtr parent, Element src){
+    public WTc(WDocument doc, WTr parent, Element src){
         this.root = doc;
         this.src = src;
         this.parent = parent;
@@ -46,11 +46,11 @@ public class Wtc extends Welement{
     public void reload(){
         load();
     }
-    private Wtc load(){
+    private WTc load(){
         wps.clear();
         List<Element> ps = src.elements("p");
         for(Element p:ps){
-            Wp wp = new Wp(root, p);
+            WParagraph wp = new WParagraph(root, p);
             wps.add(wp);
         }
         return this;
@@ -80,7 +80,7 @@ public class Wtc extends Welement{
         }
         return null;
     }
-    public Wtc setBorder(String side, String style){
+    public WTc setBorder(String side, String style){
         return this;
     }
 
@@ -163,9 +163,9 @@ public class Wtc extends Welement{
      * 当前单元格 左侧单元格
      * @return wtc
      */
-    public Wtc left(){
-        Wtc left = null;
-        List<Wtc> tcs = parent.getTcs();
+    public WTc left(){
+        WTc left = null;
+        List<WTc> tcs = parent.getTcs();
         int index = tcs.indexOf(this);
         if(index > 0){
             left = tcs.get(index-1);
@@ -176,9 +176,9 @@ public class Wtc extends Welement{
      * 当前单元格 右侧单元格
      * @return wtc
      */
-    public Wtc right(){
-        Wtc right = null;
-        List<Wtc> tcs = parent.getTcs();
+    public WTc right(){
+        WTc right = null;
+        List<WTc> tcs = parent.getTcs();
         int index = tcs.indexOf(this);
         if(index < tcs.size()-1){
             right = tcs.get(index+1);
@@ -190,13 +190,13 @@ public class Wtc extends Welement{
      * 当前单元格 下方单元格
      * @return wtc
      */
-    public Wtc bottom(){
-        Wtc bottom = null;
-        Wtable table = parent.getParent();
-        List<Wtr> trs = table.getTrs();
+    public WTc bottom(){
+        WTc bottom = null;
+        WTable table = parent.getParent();
+        List<WTr> trs = table.getTrs();
         int y = trs.indexOf(parent);
         if(y < trs.size()-1){
-            Wtr tr = trs.get(y+1);
+            WTr tr = trs.get(y+1);
             int x = parent.getTcs().indexOf(this);
             bottom = tr.getTc(x);
         }
@@ -206,13 +206,13 @@ public class Wtc extends Welement{
      * 当前单元格 上方单元格
      * @return wtc
      */
-    public Wtc top(){
-        Wtc top = null;
-        Wtable table = parent.getParent();
-        List<Wtr> trs = table.getTrs();
+    public WTc top(){
+        WTc top = null;
+        WTable table = parent.getParent();
+        List<WTr> trs = table.getTrs();
         int y = trs.indexOf(parent);
         if(y < trs.size()-1 && y>0){
-            Wtr tr = trs.get(y-1);
+            WTr tr = trs.get(y-1);
             int x = parent.getTcs().indexOf(this);
             top = tr.getTc(x);
         }
@@ -222,9 +222,9 @@ public class Wtc extends Welement{
      * 删除左边框
      * @return wtc
      */
-    public Wtc removeLeftBorder(){
+    public WTc removeLeftBorder(){
         removeBorder(src, "left");
-        Wtc left = left();
+        WTc left = left();
         if(null != left) {
             removeBorder(left.getSrc(), "right");
         }
@@ -234,9 +234,9 @@ public class Wtc extends Welement{
      * 删除右边框
      * @return wtc
      */
-    public Wtc removeRightBorder(){
+    public WTc removeRightBorder(){
         removeBorder(src, "right");
-        Wtc right = right();
+        WTc right = right();
         if(null != right) {
             removeBorder(right.getSrc(), "left");
         }
@@ -246,9 +246,9 @@ public class Wtc extends Welement{
      * 删除上边框
      * @return wtc
      */
-    public Wtc removeTopBorder(){
+    public WTc removeTopBorder(){
         removeBorder(src, "top");
-        Wtc top = top();
+        WTc top = top();
         if(null != top) {
             removeBorder(top.getSrc(), "bottom");
         }
@@ -258,9 +258,9 @@ public class Wtc extends Welement{
      * 删除下边框
      * @return wtc
      */
-    public Wtc removeBottomBorder(){
+    public WTc removeBottomBorder(){
         removeBorder(src, "bottom");
-        Wtc bottom = bottom();
+        WTc bottom = bottom();
         if(null != bottom) {
             removeBorder(bottom.getSrc(), "top");
         }
@@ -271,7 +271,7 @@ public class Wtc extends Welement{
      * 删除左上至右下分隔线
      * @return wtc
      */
-    public Wtc removeTl2brBorder(){
+    public WTc removeTl2brBorder(){
         removeBorder(src, "tl2br");
         return this;
     }
@@ -279,7 +279,7 @@ public class Wtc extends Welement{
      * 删除右上至左下分隔线
      * @return wtc
      */
-    public Wtc removeTr2blBorder(){
+    public WTc removeTr2blBorder(){
         removeBorder(src, "tr2bl");
         return this;
     }
@@ -302,7 +302,7 @@ public class Wtc extends Welement{
      * 删除所有
      * @return wtc
      */
-    public Wtc removeBorder(){
+    public WTc removeBorder(){
         removeLeftBorder();
         removeRightBorder();
         removeTopBorder();
@@ -315,7 +315,7 @@ public class Wtc extends Welement{
      * 设置上下左右默认边框
      * @return wtc
      */
-    public Wtc setBorder(){
+    public WTc setBorder(){
         setLeftBorder();
         setRightBorder();
         setTopBorder();
@@ -330,7 +330,7 @@ public class Wtc extends Welement{
      * @param style 样式(默认single)
      * @return wtc
      */
-    public Wtc setBorder(int size, String color, String style){
+    public WTc setBorder(int size, String color, String style){
         setLeftBorder(size, color, style);
         setRightBorder(size, color, style);
         setTopBorder(size, color, style);
@@ -343,7 +343,7 @@ public class Wtc extends Welement{
      * 设置左默认边框
      * @return wtc
      */
-    public Wtc setLeftBorder(){
+    public WTc setLeftBorder(){
         setBorder(src, "left", 4, "auto", "single");
         return this;
     }
@@ -351,7 +351,7 @@ public class Wtc extends Welement{
      * 设置右默认边框
      * @return wtc
      */
-    public Wtc setRightBorder(){
+    public WTc setRightBorder(){
         setBorder(src, "right", 4, "auto", "single");
         return this;
     }
@@ -359,7 +359,7 @@ public class Wtc extends Welement{
      * 设置上默认边框
      * @return wtc
      */
-    public Wtc setTopBorder(){
+    public WTc setTopBorder(){
         setBorder(src, "top", 4, "auto", "single");
         return this;
     }
@@ -367,7 +367,7 @@ public class Wtc extends Welement{
      * 设置下默认边框
      * @return wtc
      */
-    public Wtc setBottomBorder(){
+    public WTc setBottomBorder(){
         setBorder(src, "bottom", 4, "auto", "single");
         return this;
     }
@@ -375,7 +375,7 @@ public class Wtc extends Welement{
      * 设置左上至右下默认边框
      * @return wtc
      */
-    public Wtc setTl2brBorder(){
+    public WTc setTl2brBorder(){
         setBorder(src, "tl2br", 4, "auto", "single");
         return this;
     }
@@ -386,7 +386,7 @@ public class Wtc extends Welement{
      * @param bottom 左下内容
      * @return wtc
      */
-    public Wtc setTl2brBorder(String top, String bottom){
+    public WTc setTl2brBorder(String top, String bottom){
         setBorder(src, "tl2br", 4, "auto", "single");
         String html = "<div style='text-align:right;'>"+top+"</div><div style='text-align:left;'>"+bottom+"</div>";
         setHtml(html);
@@ -396,7 +396,7 @@ public class Wtc extends Welement{
      * 设置 左上 至 右下默认样式分隔线
      * @return wtc
      */
-    public Wtc setTr2blBorder(){
+    public WTc setTr2blBorder(){
         setBorder(src, "tr2bl", 4, "auto", "single");
         return this;
     }
@@ -406,7 +406,7 @@ public class Wtc extends Welement{
      * @param bottom 右下内容
      * @return wtc
      */
-    public Wtc setTr2blBorder(String top, String bottom){
+    public WTc setTr2blBorder(String top, String bottom){
         setBorder(src, "tr2bl", 4, "auto", "single");
         String html = "<div style='text-align:left;'>"+top+"</div><div style='text-align:right;'>"+bottom+"</div>";
         setHtml(html);
@@ -420,7 +420,7 @@ public class Wtc extends Welement{
      * @param style 样式(默认single)
      * @return wtc
      */
-    public Wtc setLeftBorder(int size, String color, String style){
+    public WTc setLeftBorder(int size, String color, String style){
         setBorder(src, "left", size, color, style);
         return this;
     }
@@ -431,7 +431,7 @@ public class Wtc extends Welement{
      * @param style 样式(默认single)
      * @return wtc
      */
-    public Wtc setRightBorder(int size, String color, String style){
+    public WTc setRightBorder(int size, String color, String style){
         setBorder(src, "right", size, color, style);
         return this;
     }
@@ -442,7 +442,7 @@ public class Wtc extends Welement{
      * @param style 样式(默认single)
      * @return wtc
      */
-    public Wtc setTopBorder(int size, String color, String style){
+    public WTc setTopBorder(int size, String color, String style){
         setBorder(src, "top", size, color, style);
         return this;
     }
@@ -453,7 +453,7 @@ public class Wtc extends Welement{
      * @param style 样式(默认single)
      * @return wtc
      */
-    public Wtc setBottomBorder(int size, String color, String style){
+    public WTc setBottomBorder(int size, String color, String style){
         setBorder(src, "bottom", size, color, style);
         return this;
     }
@@ -464,7 +464,7 @@ public class Wtc extends Welement{
      * @param style 样式(默认single)
      * @return wtc
      */
-    public Wtc setTl2brBorder(int size, String color, String style){
+    public WTc setTl2brBorder(int size, String color, String style){
         setBorder(src, "tl2br", size, color, style);
         return this;
     }
@@ -475,7 +475,7 @@ public class Wtc extends Welement{
      * @param style 样式(默认single)
      * @return wtc
      */
-    public Wtc setTr2blBorder(int size, String color, String style){
+    public WTc setTr2blBorder(int size, String color, String style){
         setBorder(src, "tr2bl", size, color, style);
         return this;
     }
@@ -499,7 +499,7 @@ public class Wtc extends Welement{
      * @param padding 边距
      * @return wtc
      */
-    public Wtc setBottomPadding(String padding){
+    public WTc setBottomPadding(String padding){
         return setPadding(src, "bottom", padding);
     }
     /**
@@ -507,7 +507,7 @@ public class Wtc extends Welement{
      * @param padding 边距
      * @return wtc
      */
-    public Wtc setBottomPadding(int padding){
+    public WTc setBottomPadding(int padding){
         return setPadding(src, "bottom", padding);
     }
 
@@ -516,7 +516,7 @@ public class Wtc extends Welement{
      * @param padding 边距
      * @return wtc
      */
-    public Wtc setBottomPadding(double padding){
+    public WTc setBottomPadding(double padding){
         return setPadding(src, "bottom", padding);
     }
 
@@ -525,7 +525,7 @@ public class Wtc extends Welement{
      * @param padding 边距
      * @return wtc
      */
-    public Wtc setTopPadding(String padding){
+    public WTc setTopPadding(String padding){
         return setPadding(src, "top", padding);
     }
     /**
@@ -533,7 +533,7 @@ public class Wtc extends Welement{
      * @param padding 边距
      * @return wtc
      */
-    public Wtc setTopPadding(int padding){
+    public WTc setTopPadding(int padding){
         return setPadding(src, "top", padding);
     }
     /**
@@ -541,7 +541,7 @@ public class Wtc extends Welement{
      * @param padding 边距
      * @return wtc
      */
-    public Wtc setTopPadding(double padding){
+    public WTc setTopPadding(double padding){
         return setPadding(src, "top", padding);
     }
 
@@ -550,7 +550,7 @@ public class Wtc extends Welement{
      * @param padding 边距
      * @return wtc
      */
-    public Wtc setRightPadding(String padding){
+    public WTc setRightPadding(String padding){
         return setPadding(src, "right", padding);
     }
     /**
@@ -558,7 +558,7 @@ public class Wtc extends Welement{
      * @param padding 边距
      * @return wtc
      */
-    public Wtc setRightPadding(int padding){
+    public WTc setRightPadding(int padding){
         return setPadding(src, "right", padding);
     }
     /**
@@ -566,7 +566,7 @@ public class Wtc extends Welement{
      * @param padding 边距
      * @return wtc
      */
-    public Wtc setRightPadding(double padding){
+    public WTc setRightPadding(double padding){
         return setPadding(src, "right", padding);
     }
 
@@ -575,7 +575,7 @@ public class Wtc extends Welement{
      * @param padding 边距
      * @return wtc
      */
-    public Wtc setLeftPadding(String padding){
+    public WTc setLeftPadding(String padding){
         return setPadding(src, "left", padding);
     }
     /**
@@ -583,7 +583,7 @@ public class Wtc extends Welement{
      * @param padding 边距
      * @return wtc
      */
-    public Wtc setLeftPadding(int padding){
+    public WTc setLeftPadding(int padding){
         return setPadding(src, "left", padding);
     }
     /**
@@ -591,97 +591,97 @@ public class Wtc extends Welement{
      * @param padding 边距
      * @return wtc
      */
-    public Wtc setLeftPadding(double padding){
+    public WTc setLeftPadding(double padding){
         return setPadding(src, "left", padding);
     }
 
 
-    public Wtc setPadding(String side, String padding){
+    public WTc setPadding(String side, String padding){
         return setPadding(src, side, padding);
     }
-    public Wtc setPadding(String side, int padding){
+    public WTc setPadding(String side, int padding){
         return setPadding(src, side, padding);
     }
-    public Wtc setPadding(String side, double padding){
+    public WTc setPadding(String side, double padding){
         return setPadding(src, side, padding);
     }
 
 
-    public Wtc setPadding(String padding){
+    public WTc setPadding(String padding){
         setPadding(src, "top", padding);
         setPadding(src, "bottom", padding);
         setPadding(src, "right", padding);
         setPadding(src, "left", padding);
         return this;
     }
-    public Wtc setPadding(int padding){
+    public WTc setPadding(int padding){
         return setPadding(padding+widthUnit);
     }
-    public Wtc setPadding(double padding){
+    public WTc setPadding(double padding){
         return setPadding(padding+widthUnit);
     }
 
 
-    private Wtc setPadding(Element tc, String side, int padding){
+    private WTc setPadding(Element tc, String side, int padding){
         return setPadding(tc, side, padding+widthUnit);
     }
-    private Wtc setPadding(Element tc, String side, double padding){
+    private WTc setPadding(Element tc, String side, double padding){
         return setPadding(tc, side, padding+widthUnit);
     }
-    private Wtc setPadding(Element tc, String side, String padding){
+    private WTc setPadding(Element tc, String side, String padding){
         Element pr = DocxUtil.addElement(tc, "tcPr");
         Element mar = DocxUtil.addElement(pr,"tcMar");
         DocxUtil.addElement(mar,side,"w",DocxUtil.dxa(padding)+"");
         DocxUtil.addElement(mar,side,"type","dxa");
         return this;
     }
-    public Wtc setColor(String color){
-        for(Wp wp:wps){
+    public WTc setColor(String color){
+        for(WParagraph wp:wps){
             wp.setColor(color);
         }
         return this;
     }
-    public Wtc setFont(String size, String eastAsia, String ascii, String hint){
-        for(Wp wp:wps){
+    public WTc setFont(String size, String eastAsia, String ascii, String hint){
+        for(WParagraph wp:wps){
             wp.setFont(size, eastAsia, ascii, hint);
         }
         return this;
     }
-    public Wtc setFontSize(String size){
-        for(Wp wp:wps){
+    public WTc setFontSize(String size){
+        for(WParagraph wp:wps){
             wp.setFontSize(size);
         }
         return this;
     }
-    public Wtc setFontFamily(String font){
-        for(Wp wp:wps){
+    public WTc setFontFamily(String font){
+        for(WParagraph wp:wps){
             wp.setFontFamily(font);
         }
         return this;
     }
 
-    public Wtc setWidth(String width){
+    public WTc setWidth(String width){
         Element pr = DocxUtil.addElement(src, "tcPr");
         DocxUtil.addElement(pr, "tcW","w", DocxUtil.dxa(width)+"");
         DocxUtil.addElement(pr, "tcW","type", DocxUtil.widthType(width));
         return this;
     }
-    public Wtc setWidth(int width){
+    public WTc setWidth(int width){
         return setWidth(widthUnit+widthUnit);
     }
-    public Wtc setWidth(double width){
+    public WTc setWidth(double width){
         return setWidth(widthUnit+widthUnit);
     }
 
-    public Wtc setAlign(String align){
+    public WTc setAlign(String align){
         Element pr = DocxUtil.addElement(src, "tcPr");
         DocxUtil.addElement(pr, "jc","val", align);
-        for(Wp wp:wps){
+        for(WParagraph wp:wps){
             wp.setAlign(align);
         }
         return this;
     }
-    public Wtc setVerticalAlign(String align){
+    public WTc setVerticalAlign(String align){
         Element pr = DocxUtil.addElement(src, "tcPr");
         if(align.equals("middle")){
             align = "center";
@@ -695,12 +695,12 @@ public class Wtc extends Welement{
      * @param color 颜色
      * @return Wtc
      */
-    public Wtc setBackgroundColor(String color){
+    public WTc setBackgroundColor(String color){
         Element pr = DocxUtil.addElement(src, "tcPr");
         DocxUtil.addElement(pr, "shd", "color","auto");
         DocxUtil.addElement(pr, "shd", "val","clear");
         DocxUtil.addElement(pr, "shd", "fill",color.replace("#",""));
-        for(Wp wp:wps){
+        for(WParagraph wp:wps){
             // wp.setBackgroundColor(color);
         }
         return this;
@@ -710,12 +710,12 @@ public class Wtc extends Welement{
      * 清除样式
      * @return Wtc
      */
-    public Wtc removeStyle(){
+    public WTc removeStyle(){
         Element pr = src.element("tcPr");
         if(null != pr){
             src.remove(pr);
         }
-        for(Wp wp:wps){
+        for(WParagraph wp:wps){
             wp.removeStyle();
         }
         return this;
@@ -724,7 +724,7 @@ public class Wtc extends Welement{
      * 清除背景色
      * @return Wtc
      */
-    public Wtc removeBackgroundColor(){
+    public WTc removeBackgroundColor(){
         DocxUtil.removeElement(src,"shd");
         return this;
     }
@@ -733,7 +733,7 @@ public class Wtc extends Welement{
      * 清除颜色
      * @return wtc
      */
-    public Wtc removeColor(){
+    public WTc removeColor(){
         DocxUtil.removeElement(src,"color");
         return this;
     }
@@ -742,13 +742,13 @@ public class Wtc extends Welement{
      * @param bold 是否
      * @return Wtc
      */
-    public Wtc setBold(boolean bold){
-        for(Wp wp:wps){
+    public WTc setBold(boolean bold){
+        for(WParagraph wp:wps){
             wp.setBold(bold);
         }
         return this;
     }
-    public Wtc setBold(){
+    public WTc setBold(){
         setBold(true);
         return this;
     }
@@ -758,13 +758,13 @@ public class Wtc extends Welement{
      * @param underline 是否
      * @return Wtc
      */
-    public Wtc setUnderline(boolean underline){
-        for(Wp wp:wps){
+    public WTc setUnderline(boolean underline){
+        for(WParagraph wp:wps){
             wp.setUnderline(underline);
         }
         return this;
     }
-    public Wtc setUnderline(){
+    public WTc setUnderline(){
         setUnderline(true);
         return this;
     }
@@ -774,13 +774,13 @@ public class Wtc extends Welement{
      * @param strike 是否
      * @return Wtc
      */
-    public Wtc setStrike(boolean strike){
-        for(Wp wp:wps){
+    public WTc setStrike(boolean strike){
+        for(WParagraph wp:wps){
             wp.setStrike(strike);
         }
         return this;
     }
-    public Wtc setStrike(){
+    public WTc setStrike(){
         setStrike(true);
         return this;
     }
@@ -790,20 +790,20 @@ public class Wtc extends Welement{
      * @param italic 是否
      * @return Wtc
      */
-    public Wtc setItalic(boolean italic){
-        for(Wp wp:wps){
+    public WTc setItalic(boolean italic){
+        for(WParagraph wp:wps){
             wp.setItalic(italic);
         }
         return this;
     }
 
-    public Wtc setItalic(){
+    public WTc setItalic(){
         return setItalic(true);
     }
-    public List<Wp> getWps(){
+    public List<WParagraph> getWps(){
         return wps;
     }
-    public Wtc setHtml(String html){
+    public WTc setHtml(String html){
 
         DocxUtil.removeContent(src);
         try {
@@ -818,7 +818,7 @@ public class Wtc extends Welement{
         }
         return this;
     }
-    public Wtc setHtml(Element html){
+    public WTc setHtml(Element html){
         String tag = html.getName();
         DocxUtil.removeContent(src);
         List<Element> elements = html.elements();
@@ -833,11 +833,11 @@ public class Wtc extends Welement{
         src.getParent().remove(src);
         parent.getTcs().remove(this);
     }
-    public Wtc setText(String text){
+    public WTc setText(String text){
         setText(text, null);
         return this;
     }
-    public Wtc setText(String text, Map<String, String> styles){
+    public WTc setText(String text, Map<String, String> styles){
         DocxUtil.removeContent(src);
         Element p = DocxUtil.addElement(src, "p");
         Element r = DocxUtil.addElement(p, "r");
@@ -849,7 +849,7 @@ public class Wtc extends Welement{
         t.setText(text);
         return this;
     }
-    public Wtc addText(String text){
+    public WTc addText(String text){
         Element p = DocxUtil.addElement(src, "p");
         Element r = DocxUtil.addElement(p, "r");
         Element t = r.addElement("w:t");
@@ -867,8 +867,8 @@ public class Wtc extends Welement{
      * @param replacement 替换成replacement
      * @return Wtc
      */
-    public Wtc replace(String target, String replacement){
-        for(Wp wp:wps){
+    public WTc replace(String target, String replacement){
+        for(WParagraph wp:wps){
             wp.replace(target, replacement);
         }
         return this;
@@ -928,13 +928,13 @@ public class Wtc extends Welement{
             String tag = item.getName();
             if(tag.equalsIgnoreCase("p")){
                 body.append("\n");
-                body.append(new Wp(getDoc(),  item).html(uploader, lvl+1));
+                body.append(new WParagraph(getDoc(),  item).html(uploader, lvl+1));
             }else if(tag.equalsIgnoreCase("r")){
                 body.append("\n");
-                body.append(new Wr(getDoc(),  item).html(uploader, lvl+1));
+                body.append(new WRun(getDoc(),  item).html(uploader, lvl+1));
             }else if(tag.equalsIgnoreCase("tbl")){
                 body.append("\n");
-                body.append(new Wtable(getDoc(),  item).html(uploader, lvl+1));
+                body.append(new WTable(getDoc(),  item).html(uploader, lvl+1));
             }else if(tag.equalsIgnoreCase("t")){
                 body.append("\n");
                 t(builder, lvl+1);
@@ -962,8 +962,8 @@ public class Wtc extends Welement{
      * @param content 是复制空其中内容
      * @return wtr
      */
-    public Wtc clone(boolean content){
-        Wtc tc = new Wtc(root, parent, this.getSrc().createCopy());
+    public WTc clone(boolean content){
+        WTc tc = new WTc(root, parent, this.getSrc().createCopy());
         if(!content){
             tc.removeContent();
         }

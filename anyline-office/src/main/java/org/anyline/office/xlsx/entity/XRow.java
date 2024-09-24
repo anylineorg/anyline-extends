@@ -16,9 +16,25 @@
 
 package org.anyline.office.xlsx.entity;
 
+import org.dom4j.Element;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class Sheet {
-    private List<Row> rows = new ArrayList<>();
+public class XRow {
+    private Element src;
+    private List<XCol> cols = new ArrayList<>();
+    public XRow(Element src){
+        this.src = src;
+    }
+    public void load(){
+        if(null == src){
+            return;
+        }
+        List<Element> cols = src.elements("c");
+        for(Element col:cols){
+            this.cols.add(new XCol(this, col));
+        }
+    }
+
 }

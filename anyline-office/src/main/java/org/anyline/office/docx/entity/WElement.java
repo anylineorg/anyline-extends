@@ -29,7 +29,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Welement {
+public class WElement {
 
     protected WDocument root;
     protected Element src;
