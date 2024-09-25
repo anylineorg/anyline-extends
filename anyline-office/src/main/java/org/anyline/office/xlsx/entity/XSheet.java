@@ -20,6 +20,7 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public class XSheet {
@@ -45,4 +46,22 @@ public class XSheet {
             this.rows.add(xr);
         }
     }
+
+    /**
+     * 解析标签
+     * 注意有跨行的情况
+     */
+    public void parseTag(){
+        //行解析跨行
+        //再解析行内
+        for(XRow row:rows){
+            row.parseTag();
+        }
+    }
+    public void replace(LinkedHashMap<String, String> replaces){
+        for(XRow row:rows){
+            row.replace(replaces);
+        }
+    }
+
 }

@@ -18,15 +18,18 @@ package org.anyline.office.xlsx.entity;
 
 import org.anyline.log.Log;
 import org.anyline.log.LogProxy;
+import org.anyline.util.BeanUtil;
 import org.anyline.util.ZipUtil;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
 import java.io.File;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class XWorkBook {
 
@@ -35,7 +38,12 @@ public class XWorkBook {
     private String charset = "UTF-8";
     private String xml = null;      // workbook.xml文本
     private org.dom4j.Document doc = null;
+    private LinkedHashMap<String, String> replaces = new LinkedHashMap<>();
+    /**
+     * 文本原样替换，不解析原文没有${}的也不要添加
+     */
     private LinkedHashMap<String, String> txt_replaces = new LinkedHashMap<>();
+    private boolean autoMergePlaceholder = true;
     private List<ShareString> shares = new ArrayList<>();
     LinkedHashMap<String, XSheet> sheets = new LinkedHashMap<>();
 
@@ -72,6 +80,107 @@ public class XWorkBook {
             e.printStackTrace();
         }
     }
+
+
+    /**
+     * 解析标签
+     */
+    public void parseTag(){
+        for(XSheet sheet:sheets.values()){
+            sheet.parseTag();
+        }
+    }
+    /**
+     * 设置占位符替换值 在调用save时执行替换<br/>
+     * 注意如果不解析的话 不会添加自动${}符号 按原文替换,是替换整个文件的纯文件，包括标签名在内
+     * @param parse 是否解析标签 true:解析HTML标签 false:直接替换文本
+     * @param key 占位符
+     * @param content 替换值
+     */
+    public void replace(boolean parse, String key, String content){
+        if(null == key && key.trim().length()==0){
+            return;
+        }
+        if(parse) {
+            replaces.put(key, content);
+        }else{
+            txt_replaces.put(key, content);
+        }
+    }
+    public void replace(String key, String content){
+        replace(true, key, content);
+    }
+    public void replace(boolean parse, String key, File ... words){
+        replace(parse, key, BeanUtil.array2list(words));
+    }
+    public void replace(String key, File ... words){
+        replace(true, key, BeanUtil.array2list(words));
+    }
+    public void replace(boolean parse, String key, List<File> words){
+        if(null != words) {
+            StringBuilder content = new StringBuilder();
+            for(File word:words) {
+                content.append("<word>").append(word.getAbsolutePath()).append("</word>");
+            }
+            if(parse) {
+                replaces.put(key, content.toString());
+            }else{
+                txt_replaces.put(key, content.toString());
+            }
+        }
+    }
+
+    public void replace(String key, List<File> words){
+        replace(true, key, words);
+    }
+    public void save(){
+        save(Charset.forName("UTF-8"));
+    }
+    public void save(Charset charset){
+        try {
+            //加载文件
+            load();
+            if(autoMergePlaceholder){
+                mergePlaceholder();
+            }
+            for(XSheet sheet:sheets.values()){
+                sheet.replace(replaces);
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    //直接替换文本不解析
+    public String replace(String text, Map<String, String> replaces){
+        if(null != text){
+            for(String key:replaces.keySet()){
+                String value = replaces.get(key);
+                //原文没有${}的也不要添加
+                text = text.replace(key, value);
+            }
+        }
+        return text;
+    }
+
+    /**
+     * 合并点位符 ${key} 拆分到3个t中的情况
+     * 调用完replace后再调用当前方法，因为需要用到replace里提供的占位符列表
+     */
+    public void mergePlaceholder(){
+        List<String> placeholders = new ArrayList<>();
+        placeholders.addAll(replaces.keySet());
+        mergePlaceholder(placeholders);
+    }
+    /**
+     * 合并点位符 ${key} 拆分到3个t中的情况
+     * @param placeholders 占位符列表 带不还${}都可以 最终会处理掉${}
+     */
+    public void mergePlaceholder(List<String> placeholders){
+    }
+    public void mergePlaceholder(Element box, List<String> placeholders){
+    }
+
     public void shares(String xml) throws Exception{
        Document doc = DocumentHelper.parseText(xml);
        Element root = doc.getRootElement();
@@ -92,4 +201,5 @@ public class XWorkBook {
            }
        }
     }
+
 }

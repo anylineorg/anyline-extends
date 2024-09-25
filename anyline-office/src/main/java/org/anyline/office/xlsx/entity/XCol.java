@@ -17,6 +17,9 @@
 package org.anyline.office.xlsx.entity;
 
 import org.dom4j.Element;
+
+import java.util.LinkedHashMap;
+
 /**
  * 参考 https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.cell?view=openxml-3.0.1
  * 说明 http://office.anyline.org/v/86_14141
@@ -40,6 +43,15 @@ public class XCol {
             return;
         }
         type = src.attributeValue("s");
+    }
+
+    /**
+     * 解析标签
+     */
+    public void parseTag(){
+    }
+    public void replace(LinkedHashMap<String, String> replaces){
+
     }
 }
 /*

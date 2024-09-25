@@ -214,7 +214,7 @@ public class WDocument extends WElement {
                 Element element = doc.getRootElement();
                 replace(element, replaces);
                 String txt = DomUtil.format(doc);
-                txt = replace(txt, txt_replaces);
+                txt = BasicUtil.replace(txt, txt_replaces);
                 zip_replaces.put("word/" + name + ".xml", txt);
             }
             for(String name:headers.keySet()){
@@ -222,7 +222,7 @@ public class WDocument extends WElement {
                 Element element = doc.getRootElement();
                 replace(element, replaces);
                 String txt = DomUtil.format(doc);
-                txt = replace(txt, txt_replaces);
+                txt = BasicUtil.replace(txt, txt_replaces);
                 zip_replaces.put("word/" + name + ".xml", txt);
             }
             for(String name:charts.keySet()){
@@ -230,7 +230,7 @@ public class WDocument extends WElement {
                 Element element = doc.getRootElement();
                 //replace(element, replaces);
                 String txt = DomUtil.format(doc);
-                txt = replace(txt, txt_replaces);
+                txt = BasicUtil.replace(txt, txt_replaces);
                 zip_replaces.put("word/charts/" + name + ".xml", txt);
             }
             //检测内容类型
@@ -238,24 +238,13 @@ public class WDocument extends WElement {
             //合并列的表格,如果没有设置宽度,在wps中只占一列,需要在表格中根据总列数添加
             checkMergeCol();
             String txt = DomUtil.format(doc);
-            txt = replace(txt, txt_replaces);
+            txt = BasicUtil.replace(txt, txt_replaces);
             zip_replaces.put("word/document.xml", txt);
             zip_replaces.put("word/_rels/document.xml.rels", DomUtil.format(rels));
             ZipUtil.replace(file, zip_replaces, charset);
         }catch (Exception e){
             e.printStackTrace();
         }
-    }
-    //直接替换文本不解析
-    public String replace(String text, Map<String, String> replaces){
-        if(null != text){
-            for(String key:replaces.keySet()){
-                String value = replaces.get(key);
-                //原文没有${}的也不要添加
-                text = text.replace(key, value);
-            }
-        }
-        return text;
     }
 
     /**

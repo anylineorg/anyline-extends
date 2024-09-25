@@ -19,6 +19,7 @@ package org.anyline.office.xlsx.entity;
 import org.dom4j.Element;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public class XRow {
@@ -37,4 +38,20 @@ public class XRow {
         }
     }
 
+    /**
+     * 解析标签
+     * 注意有跨单元格的情况
+     */
+    public void parseTag(){
+        //行解析跨单元格
+        //再解析单元格内
+        for(XCol col:cols){
+            col.parseTag();
+        }
+    }
+    public void replace(LinkedHashMap<String, String> replaces){
+        for(XCol col:cols){
+            col.replace(replaces);
+        }
+    }
 }
