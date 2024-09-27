@@ -22,22 +22,32 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-public class XRow {
-    private Element src;
+public class XRow extends XElement{
+    private int index;
     private List<XCol> cols = new ArrayList<>();
-    public XRow(Element src){
+    public XRow(XWorkBook book, XSheet sheet, Element src, int index){
+        this.book = book;
+        this.sheet = sheet;
         this.src = src;
+        this.index = index;
     }
     public void load(){
         if(null == src){
             return;
         }
         List<Element> cols = src.elements("c");
+        int index = 0;
         for(Element col:cols){
-            this.cols.add(new XCol(this, col));
+            this.cols.add(new XCol(book, sheet, this, col, index));
         }
     }
-
+    public int index(){
+        return index;
+    }
+    public XRow index(int index){
+        this.index = index;
+        return this;
+    }
     /**
      * 解析标签
      * 注意有跨单元格的情况
@@ -49,9 +59,9 @@ public class XRow {
             col.parseTag();
         }
     }
-    public void replace(LinkedHashMap<String, String> replaces){
+    public void replace(boolean parse, LinkedHashMap<String, String> replaces){
         for(XCol col:cols){
-            col.replace(replaces);
+            col.replace(parse, replaces);
         }
     }
 }

@@ -18,7 +18,6 @@ package org.anyline.office.xlsx.entity;
 
 import org.anyline.log.Log;
 import org.anyline.log.LogProxy;
-import org.anyline.util.BeanUtil;
 import org.anyline.util.ZipUtil;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
@@ -47,6 +46,11 @@ public class XWorkBook {
     private List<ShareString> shares = new ArrayList<>();
     LinkedHashMap<String, XSheet> sheets = new LinkedHashMap<>();
 
+    public static void main(String[] args) {
+        XWorkBook book = new XWorkBook(new File("E:\\template\\excel\\a.xlsx"));
+        book.load();
+    }
+
     public XWorkBook(File file){
         this.file = file;
     }
@@ -72,7 +76,7 @@ public class XWorkBook {
                 if(item.contains("xl/worksheets")){
                     String name = item.replace("xl/worksheets", "").replace(".xml", "");
                     Document doc = DocumentHelper.parseText(ZipUtil.read(file, item, charset));
-                    XSheet sheet = new XSheet(doc);
+                    XSheet sheet = new XSheet(this, doc, name);
                     sheets.put(name, sheet);
                 }
             }
@@ -110,29 +114,7 @@ public class XWorkBook {
     public void replace(String key, String content){
         replace(true, key, content);
     }
-    public void replace(boolean parse, String key, File ... words){
-        replace(parse, key, BeanUtil.array2list(words));
-    }
-    public void replace(String key, File ... words){
-        replace(true, key, BeanUtil.array2list(words));
-    }
-    public void replace(boolean parse, String key, List<File> words){
-        if(null != words) {
-            StringBuilder content = new StringBuilder();
-            for(File word:words) {
-                content.append("<word>").append(word.getAbsolutePath()).append("</word>");
-            }
-            if(parse) {
-                replaces.put(key, content.toString());
-            }else{
-                txt_replaces.put(key, content.toString());
-            }
-        }
-    }
 
-    public void replace(String key, List<File> words){
-        replace(true, key, words);
-    }
     public void save(){
         save(Charset.forName("UTF-8"));
     }
@@ -144,7 +126,8 @@ public class XWorkBook {
                 mergePlaceholder();
             }
             for(XSheet sheet:sheets.values()){
-                sheet.replace(replaces);
+                sheet.replace(true, replaces);
+                sheet.replace(false, txt_replaces);
             }
 
         }catch (Exception e){
@@ -185,21 +168,21 @@ public class XWorkBook {
        Document doc = DocumentHelper.parseText(xml);
        Element root = doc.getRootElement();
        List<Element> list = root.elements();
+       int index = 0;
        for(Element item:list){
-           List<Element> runs = item.elements("r");
-           for(Element run:runs){
-               XRun xr = new XRun();
-               Element property = run.element("rPr");
-               if(null != property){
-                   XProperty xp = new XProperty(property);
-                   xr.setProperty(xp);
-               }
-               Element text = run.element("t");
-               if(null != text){
-                   xr.setText(text.getTextTrim());
-               }
-           }
+           ShareString share = new ShareString(item, index ++);
+           shares.add(share);
        }
+    }
+    public List<ShareString> shares(){
+        return this.shares;
+    }
+    public ShareString share(int index){
+        ShareString share = null;
+        if(index>=0 && shares.size() < index){
+            share = shares.get(index);
+        }
+        return share;
     }
 
 }

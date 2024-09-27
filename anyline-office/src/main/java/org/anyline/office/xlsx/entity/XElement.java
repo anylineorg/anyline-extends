@@ -30,18 +30,11 @@ import java.util.List;
 import java.util.Map;
 
 public class XElement {
-
-    protected XWorkBook root;
+    protected XWorkBook book;
+    protected XSheet sheet;
     protected Element src;
     public void reload(){
 
-    }
-    /**
-     * 替换限制范围内占位符
-     * @param replaces replaces
-     */
-    public void replace(Map<String, String> replaces){
-        //root.replace(getSrc(), replaces);
     }
 
     /**
@@ -50,12 +43,20 @@ public class XElement {
     public void removeContent(){
         DocxUtil.removeContent(getSrc());
     }
-    public XWorkBook getDoc() {
-        return root;
+    public XWorkBook getBook() {
+        return book;
     }
 
-    public void setDoc(XWorkBook doc) {
-        this.root = doc;
+    public XSheet getSheet() {
+        return sheet;
+    }
+
+    public void setSheet(XSheet sheet) {
+        this.sheet = sheet;
+    }
+
+    public void setBook(XWorkBook book) {
+        this.book = book;
     }
 
     public Element getSrc() {

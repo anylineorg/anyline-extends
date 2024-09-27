@@ -20,19 +20,55 @@ public class XRun {
     private String text;
     private XProperty property;
 
-    public String getText() {
+    public String text() {
         return text;
     }
 
-    public void setText(String text) {
+    public XRun text(String text) {
         this.text = text;
+        return this;
     }
 
-    public XProperty getProperty() {
+    public XProperty property() {
         return property;
     }
 
-    public void setProperty(XProperty property) {
+    public XRun property(XProperty property) {
         this.property = property;
+        return this;
     }
 }
+/*
+	<si>
+		<t>${a.b_.bc.d}</t>
+		<phoneticPr fontId="1" type="noConversion"/>
+	</si>
+	<si>
+		<r>
+			<t>${a+</t>
+		</r>
+		<r>
+			<rPr>
+				<sz val="11"/>
+				<color rgb="FFFF0000"/>
+				<rFont val="宋体"/>
+				<family val="3"/>
+				<charset val="134"/>
+				<scheme val="minor"/>
+			</rPr>
+			<t>c</t>
+		</r>
+		<r>
+			<rPr>
+				<sz val="11"/>
+				<color theme="1"/>
+				<rFont val="宋体"/>
+				<family val="2"/>
+				<charset val="134"/>
+				<scheme val="minor"/>
+			</rPr>
+			<t>}</t>
+		</r>
+		<phoneticPr fontId="1" type="noConversion"/>
+	</si>
+* */

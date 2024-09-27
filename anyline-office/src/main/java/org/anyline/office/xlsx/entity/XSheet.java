@@ -24,11 +24,15 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 public class XSheet {
+    private XWorkBook book;
     private Document doc;
     private Element root;
+    private String name;
     private List<XRow> rows = new ArrayList<>();
     public XSheet(){}
-    public XSheet(Document doc){
+    public XSheet(XWorkBook book, Document doc, String name){
+        this.name = name;
+        this.book = book;
         this.doc = doc;
     }
     public void load(){
@@ -41,12 +45,19 @@ public class XSheet {
             return;
         }
         List<Element> rows = data.elements("row");
+        int index = 0;
         for(Element row:rows){
-            XRow xr = new XRow(row);
+            XRow xr = new XRow(book, this, row, index++);
             this.rows.add(xr);
         }
     }
-
+    public XWorkBook book(){
+        return book;
+    }
+    public XSheet book(XWorkBook book){
+        this.book = book;
+        return this;
+    }
     /**
      * 解析标签
      * 注意有跨行的情况
@@ -58,9 +69,9 @@ public class XSheet {
             row.parseTag();
         }
     }
-    public void replace(LinkedHashMap<String, String> replaces){
+    public void replace(boolean parse, LinkedHashMap<String, String> replaces){
         for(XRow row:rows){
-            row.replace(replaces);
+            row.replace(parse, replaces);
         }
     }
 
