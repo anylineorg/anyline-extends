@@ -96,7 +96,7 @@ public class MailUtil {
 	 * @return boolean
 	 */ 
 	public boolean send(String fr, String to, String title, String content) {
-		log.warn("[send email][fr:{}][to:{}][title:{}][content:{}]", fr,to,title,content);
+		log.warn("[send email][from:{}({})][to:{}][title:{}][content:{}]",config.ACCOUNT, fr,to,title,content);
 		try {
 			Session mailSession = Session.getDefaultInstance(props); 
 			Message msg = new MimeMessage(mailSession); 
