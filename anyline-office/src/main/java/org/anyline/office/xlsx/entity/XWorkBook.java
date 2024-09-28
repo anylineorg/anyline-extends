@@ -18,6 +18,7 @@ package org.anyline.office.xlsx.entity;
 
 import org.anyline.log.Log;
 import org.anyline.log.LogProxy;
+import org.anyline.util.DomUtil;
 import org.anyline.util.ZipUtil;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
@@ -25,10 +26,7 @@ import org.dom4j.Element;
 
 import java.io.File;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class XWorkBook {
 
@@ -44,12 +42,9 @@ public class XWorkBook {
     private LinkedHashMap<String, String> txt_replaces = new LinkedHashMap<>();
     private boolean autoMergePlaceholder = true;
     private List<ShareString> shares = new ArrayList<>();
+    private LinkedHashMap<String, ShareString> shares_map = new LinkedHashMap<>();
+    private org.dom4j.Document sharedDoc = null;
     LinkedHashMap<String, XSheet> sheets = new LinkedHashMap<>();
-
-    public static void main(String[] args) {
-        XWorkBook book = new XWorkBook(new File("E:\\template\\excel\\a.xlsx"));
-        book.load();
-    }
 
     public XWorkBook(File file){
         this.file = file;
@@ -64,6 +59,22 @@ public class XWorkBook {
             reload();
         }
     }
+    public XSheet sheet(String key){
+        return sheets.get(key);
+    }
+    public XSheet sheet(int index){
+        int i = 0;
+        for(XSheet sheet:sheets.values()){
+            if(i == index){
+                return sheet;
+            }
+            i ++;
+        }
+        return null;
+    }
+    public XSheet sheet(){
+        return sheet(0);
+    }
 
     public void reload(){
         try {
@@ -73,8 +84,8 @@ public class XWorkBook {
             String shares = ZipUtil.read(file, "xl/sharedStrings.xml", charset);
             shares(shares);
             for(String item:items){
-                if(item.contains("xl/worksheets")){
-                    String name = item.replace("xl/worksheets", "").replace(".xml", "");
+                if(item.contains("xl/worksheets") && item.endsWith(".xml")){
+                    String name = item.replace("xl/worksheets/", "").replace(".xml", "");
                     Document doc = DocumentHelper.parseText(ZipUtil.read(file, item, charset));
                     XSheet sheet = new XSheet(this, doc, name);
                     sheets.put(name, sheet);
@@ -125,11 +136,14 @@ public class XWorkBook {
             if(autoMergePlaceholder){
                 mergePlaceholder();
             }
+            Map<String, String> zip_replaces = new HashMap<>();
             for(XSheet sheet:sheets.values()){
                 sheet.replace(true, replaces);
                 sheet.replace(false, txt_replaces);
+                zip_replaces.put("xl/worksheets/"+sheet.name()+".xml", DomUtil.format(sheet.doc()));
             }
-
+            zip_replaces.put("xl/sharedStrings.xml", DomUtil.format(sharedDoc));
+            ZipUtil.replace(file, zip_replaces, charset);
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -165,13 +179,17 @@ public class XWorkBook {
     }
 
     public void shares(String xml) throws Exception{
-       Document doc = DocumentHelper.parseText(xml);
-       Element root = doc.getRootElement();
+       sharedDoc = DocumentHelper.parseText(xml);
+       Element root = sharedDoc.getRootElement();
        List<Element> list = root.elements();
        int index = 0;
        for(Element item:list){
            ShareString share = new ShareString(item, index ++);
            shares.add(share);
+           String text = share.text();
+           if(null != text) {
+               shares_map.put(text, share);
+           }
        }
     }
     public List<ShareString> shares(){
@@ -179,10 +197,28 @@ public class XWorkBook {
     }
     public ShareString share(int index){
         ShareString share = null;
-        if(index>=0 && shares.size() < index){
+        if(index>=0 && index < shares.size()){
             share = shares.get(index);
         }
         return share;
+    }
+    public int share(String text){
+        ShareString share = shares_map.get(text);
+        if(null != share){
+            return share.index();
+        }
+        Element root = sharedDoc.getRootElement();
+        Element si = root.addElement("si");
+        Element t = si.addElement("t");
+        t.setText(text);
+        int index = root.elements("si").indexOf(si);
+        share = new ShareString(si,  index);
+        shares.add(share);
+        shares_map.put(text, share);
+        int size = shares.size();
+        root.attribute("count").setValue(size+"");
+        root.attribute("uniqueCount").setValue(size+"");
+        return index;
     }
 
 }

@@ -17,6 +17,7 @@
 package org.anyline.office.xlsx.entity;
 
 import org.anyline.office.docx.util.DocxUtil;
+import org.anyline.util.BasicUtil;
 import org.dom4j.Element;
 
 import java.util.Collections;
@@ -30,11 +31,14 @@ import java.util.Map;
  */
 public class XCol extends XElement{
     private XRow row;
+    private String r        ;
     private String type     ; // t属性
     private String style    ; // s属性
     private String value    ; // ShareString.id或text t="s"时 value=ShareString
     private String text     ; // 最终文本
     private String formula  ; // 公式
+    private int x = 0       ; // 行号从1开始
+    private String y        ; // 列行从A开始
     private int index;
 
     public XCol(XWorkBook book, XSheet sheet, XRow row, Element src, int index){
@@ -43,13 +47,42 @@ public class XCol extends XElement{
         this.row = row;
         this.src = src;
         this.index = index;
+        this.x = row.index()+1;
+        load();
     }
     public void load(){
         if(null == src){
             return;
         }
-        type = src.attributeValue("s");
+        type = src.attributeValue("t");
+        style = src.attributeValue("s");
+        Element ev = src.element("v");
+        if(null != ev){
+            value = ev.getTextTrim();
+        }
+        r = src.attributeValue("r");
     }
+    public String r(){
+        return r;
+    }
+
+    /**
+     * 计算列号
+     * @param index 下标从0开始 0=A 25=Z 26=AA
+     * @return String
+     */
+    public static String y(int index){
+        StringBuilder builder = new StringBuilder();
+        int remainder = index + 1; // Excel列是从1开始的，因此需要+1
+        while (remainder > 0) {
+            remainder--; // 转换为从0开始的索引，方便计算
+            int modulo = remainder % 26;
+            builder.insert(0, (char)('A' + modulo));
+            remainder /= 26;
+        }
+        return builder.toString();
+    }
+
 
     public int index(){
         return index;
@@ -57,6 +90,25 @@ public class XCol extends XElement{
     public XCol index(int index){
         this.index = index;
         return this;
+    }
+    public static XCol build(XWorkBook book, XSheet sheet, XRow xr, XCol template, Object value, int x, int y){
+        Element row = xr.getSrc();
+        Element c = row.addElement("c");
+        int r = xr.r(); //行号
+        c.addAttribute("s", template.style);
+        c.addAttribute("r", y(y)+r);
+        Element v = c.addElement("v");
+        if(BasicUtil.isNotEmpty(value)){
+            if(BasicUtil.isNumber(value)){
+                v.setText(value.toString());
+            }else{
+                int share = book.share(value.toString());
+                c.addAttribute("t","s");
+                v.setText(share+"");
+            }
+        }
+        XCol xc = new XCol(book, sheet, xr, c, y);
+        return xc;
     }
     /**
      * 解析标签
@@ -68,7 +120,29 @@ public class XCol extends XElement{
             //文本类型
             int idx = Integer.parseInt(value);
             ShareString ss = book.share(idx);
-            String txt = ss.text();
+            if(null != ss) {
+                String txt = ss.text();
+                if(null != txt) {
+                    String result = replace(parse, txt, replaces);
+                    if(!txt.equals(result)) {
+                        Element v = src.element("v");
+                        if(BasicUtil.isEmpty(result)){
+                            //没有内容的清空v标签
+                            if(null != v){
+                                src.remove(v);
+                            }
+                        }else{
+                            int index = book.share(result);
+                            //添加新ShareString并引用
+                            if(null == v){
+                                v = src.addElement("v");
+                            }
+                            v.setText(index+"");
+                            value = index+"";
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -104,24 +178,11 @@ public class XCol extends XElement{
                 content = replaces.get(flag);
                 exists =  exists || replaces.containsKey(flag);
             }
+            if(null == content){
+                content = "";
+            }
             txt = txt.replace(flag, content);
         }
         return txt;
     }
 }
-/*
-<c r="A1" s="20" t="s">
-    <v>48</v>
-</c>
-<c r="C6" s="1" vm="15">
-  <f>CUBEVALUE("xlextdat9 Adventure Works",C$5,$A6)</f>
-  <v>2838512.355</v>
-</c>
-
-<row r="1" spans="1:1">
-  <c r="A1" t="inlineStr">
-    <is><t>This is inline string example</t></is>
-  </c>
-</row>
-
-* */

@@ -27,6 +27,9 @@ public class ShareString {
     private List<XRun> runs = new ArrayList<>();
 
     public ShareString(){}
+    public ShareString(String text){
+        this.text = text;
+    }
     public ShareString(Element element, int index) {
         this.index = index;
         parse(element);
@@ -51,6 +54,12 @@ public class ShareString {
             text(txt.getTextTrim());
         }
     }
+
+    public ShareString text(String text) {
+        this.text = text;
+        return this;
+    }
+
     public String text() {
         return text;
     }
@@ -66,11 +75,14 @@ public class ShareString {
         }
     }
 
-    public ShareString text(String text) {
-        this.text = text;
+    public ShareString index(int index) {
+        this.index = index;
         return this;
     }
 
+    public int index() {
+        return index;
+    }
     public List<XRun> runs() {
         return runs;
     }
