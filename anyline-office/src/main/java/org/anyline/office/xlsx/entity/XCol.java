@@ -30,11 +30,11 @@ import java.util.Map;
  */
 public class XCol extends XElement{
     private XRow row;
-    private String type; //t属性
-    private String style; //s属性
-    private String value; //ShareString.id或text t="s"时 value=ShareString
-    private String text; //最终文本
-    private String formula;
+    private String type     ; // t属性
+    private String style    ; // s属性
+    private String value    ; // ShareString.id或text t="s"时 value=ShareString
+    private String text     ; // 最终文本
+    private String formula  ; // 公式
     private int index;
 
     public XCol(XWorkBook book, XSheet sheet, XRow row, Element src, int index){
