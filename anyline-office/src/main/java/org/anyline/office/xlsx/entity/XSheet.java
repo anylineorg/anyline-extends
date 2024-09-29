@@ -89,19 +89,48 @@ public class XSheet {
     }
 
     /**
-     * 追加行
-     * @param values
+     * 插入行 注意插入行后 index 之后所有行与单元格需要重新计算r属性 如果插入量大 应该在插入完成后一次生调整
+     * @param index 插入位置 下标从0开始 如果index<0 index=rows.size+index -1:表示最后一行
+     * @param values 行内数据
+     * @param template 模板行 如果null则以最后index上一行作模板(如果index是0则以index行作模板)
      * @return XRow
      */
-    public XRow append(List<Object> values){
+    public XRow insert(int index, XRow template, List<Object> values){
         int size = values.size();
         if(size == 0){
             return null;
         }
-        XRow template = rows.get(rows.size()-1);
-        XRow row = XRow.build(book, this, template, values);
-        rows.add(row);
+        XRow row = XRow.build(index, book, this, template, values);
         return row;
+    }
+
+    /**
+     * 插入行 以上一行为模板
+     * @param index 插入位置 下标从0开始 如果index<0 index=rows.size+index -1:表示最后一行
+     * @param values 行内数据
+     * @return XRow
+     */
+    public XRow insert(int index, List<Object> values){
+        return insert(index, null, values);
+    }
+    /**
+     * 追加行
+     * @param template 模板行 如果null则以最后一行作模板
+     * @param values 行内数据
+     * @return XRow
+     */
+    public XRow append(XRow template, List<Object> values){
+        return insert(-1, template, values);
+    }
+
+    /**
+     * 追加行，以最后一行作模板
+     * @param values 行内数据
+     * @return XRow
+     */
+    public XRow append(List<Object> values){
+        XRow template = rows.get(rows.size()-1);
+        return append(template, values);
     }
     public void replace(boolean parse, LinkedHashMap<String, String> replaces){
         for(XRow row:rows){

@@ -48,14 +48,39 @@ public class XRow extends XElement{
             this.cols.add(new XCol(book, sheet, this, col, index));
         }
     }
-    public static XRow build(XWorkBook book, XSheet sheet, XRow template, List<Object> values){
+
+    /**
+     * 创建并插入行(index<0时 index = rows.size+index)
+     * @param index 插入位置 下标从0开始 如果index<0 index=rows.size+index -1:表示最后一行
+     * @param book XWorkBook
+     * @param sheet XSheet
+     * @param template 模板行 如果null则以最后一行作模板
+     * @param values 行内数据
+     * @return 插入的新行
+     */
+    public static XRow build(int index, XWorkBook book, XSheet sheet, XRow template, List<Object> values){
         if(null == values || values.isEmpty()){
             return null;
         }
         Element datas = sheet.doc().getRootElement().element("sheetData");
         Element row = datas.addElement("row");
-        int rows = sheet.rows().size();
-        int x = rows + 1;
+        List<XRow> all = sheet.rows();
+        boolean append = index == -1;
+        if(!append) {
+            index = BasicUtil.index(index, all.size());
+        }
+        if(null == template) {
+            if(index == 0){
+                template = all.get(index);
+            }else {
+                template = all.get(index - 1);
+            }
+        }
+
+        int x = index + 1;
+        if(append){
+            x = all.size()+1;
+        }
         int cols = values.size();
         String spans = "1:"+cols;
         row.addAttribute("r",x+"");
@@ -71,6 +96,28 @@ public class XRow extends XElement{
                 xr.add(col);
             }
             cols ++;
+        }
+        if(append){
+            //最后一行 追加
+            all.add(xr);
+        } else {
+            all.add(index, xr);
+            datas.elements().remove(row);
+            datas.elements().add(index,  row);
+            //如果是插入的 插入行后 index 之后所有行与单元格需要重新计算r属性
+            //如果插入量大 应该在插入完成后一次生调整
+
+            for(int i=index; i<all.size(); i++){
+                XRow item = all.get(i);
+                int r = i+1;
+                item.r = r;
+                Element item_src = item.src;
+                item_src.attribute("r").setValue(r+"");
+                for(XCol col:item.cols){
+                    col.x(r);
+                    col.r(col.y()+r);
+                }
+            }
         }
         return xr;
     }

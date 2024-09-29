@@ -63,6 +63,9 @@ public class XWorkBook {
         return sheets.get(key);
     }
     public XSheet sheet(int index){
+        if(sheets.isEmpty()){
+            load();
+        }
         int i = 0;
         for(XSheet sheet:sheets.values()){
             if(i == index){
@@ -74,6 +77,10 @@ public class XWorkBook {
     }
     public XSheet sheet(){
         return sheet(0);
+    }
+
+    public LinkedHashMap<String, XSheet> sheets(){
+        return sheets;
     }
 
     public void reload(){

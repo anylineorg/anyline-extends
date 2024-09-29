@@ -31,7 +31,7 @@ import java.util.Map;
  */
 public class XCol extends XElement{
     private XRow row;
-    private String r        ;
+    private String r        ; // A1
     private String type     ; // t属性
     private String style    ; // s属性
     private String value    ; // ShareString.id或text t="s"时 value=ShareString
@@ -39,7 +39,7 @@ public class XCol extends XElement{
     private String formula  ; // 公式
     private int x = 0       ; // 行号从1开始
     private String y        ; // 列行从A开始
-    private int index;
+    private int index       ; //第几列 从0开始
 
     public XCol(XWorkBook book, XSheet sheet, XRow row, Element src, int index){
         this.book = book;
@@ -47,7 +47,7 @@ public class XCol extends XElement{
         this.row = row;
         this.src = src;
         this.index = index;
-        this.x = row.index()+1;
+        this.x = row.r();
         load();
     }
     public void load(){
@@ -61,9 +61,30 @@ public class XCol extends XElement{
             value = ev.getTextTrim();
         }
         r = src.attributeValue("r");
+        y = r.replaceAll("\\d+", "");
     }
     public String r(){
         return r;
+    }
+    public XCol r(String r){
+        this.r = r;
+        src.attribute("r").setValue(r);
+        return this;
+    }
+    public int x(){
+        return x;
+    }
+    public XCol x(int x){
+        this.x = x;
+        return this;
+    }
+
+    public String y(){
+        return y;
+    }
+    public XCol y(String y){
+        this.x = x;
+        return this;
     }
 
     /**
