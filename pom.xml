@@ -7,7 +7,6 @@
 	<packaging>pom</packaging>
 	<name>anyline-extends</name>
     <modules>
-		<module>anyline-office</module>
 		<module>anyline-poi</module>
 		<module>anyline-alipay</module>
 		<module>anyline-aliyun/anyline-aliyun-oss</module>
