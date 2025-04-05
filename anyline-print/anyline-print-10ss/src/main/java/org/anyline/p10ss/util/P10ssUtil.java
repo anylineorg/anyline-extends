@@ -223,6 +223,21 @@ public class P10ssUtil {
     public void addPrinter(String code, String secret) throws Exception{
         addPrinter(code, secret, null, null);
     }
+    /**
+     * 自用模式 添加打印机
+     * @param code 打印机编号
+     * @throws Exception 异常 添加失败时异常
+     */
+    public void deletePrinter(String code) throws Exception{
+        Map<String,Object> params = new HashMap<String,Object>();
+        params.put("machine_code", code);
+        DataRow token = getAccessToken();
+        params.put("access_token", token.getString("access_token"));
+        DataRow row = api(P10ssConfig.URL.DELETE_PRINTER, params);
+        if(!row.getBoolean("success",false)){
+            throw new Exception(row.getString("error"));
+        }
+    }
 
     /**
      * 文本打印
