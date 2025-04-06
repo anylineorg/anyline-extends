@@ -36,7 +36,7 @@ public class OSSUtil {
 	private static final Log log = LogProxy.get(OSSUtil.class);
 	private OSSClient client = null;
 	private OSSConfig config = null;
-	private static Hashtable<String, OSSUtil> instances = new Hashtable<String, OSSUtil>();
+	private static Hashtable<String, OSSUtil> instances = new Hashtable<>();
 
 
 	static {
