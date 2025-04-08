@@ -28,10 +28,10 @@ import org.springframework.stereotype.Component;
 @Component("anyline.tencent.cos.load.bean")
 public class COSBean implements InitializingBean {
 
-    @Value("${anyline.tencent.cos.accessId:}")
-    public String ACCESS_ID					; // 
-    @Value("${anyline.tencent.cos.accessSecret :}")
-    public String ACCESS_SECRET 			; // 
+    @Value("${anyline.tencent.cos.secretId:}")
+    public String SECRET_ID					; //
+    @Value("${anyline.tencent.cos.secretKey :}")
+    public String SECRET_KEY 			; //
     @Value("${anyline.tencent.cos.endpoint:}")
     public String ENDPOINT					; // 
     @Value("${anyline.tencent.cos.bucket:}")
@@ -43,13 +43,13 @@ public class COSBean implements InitializingBean {
 
     @Override
     public void afterPropertiesSet()  {
-        ACCESS_ID = BasicUtil.evl(ACCESS_ID, COSConfig.DEFAULT_ACCESS_ID);
-        if(BasicUtil.isEmpty(ACCESS_ID)){
+        SECRET_ID = BasicUtil.evl(SECRET_ID, COSConfig.DEFAULT_SECRET_ID);
+        if(BasicUtil.isEmpty(SECRET_ID)){
             return;
         }
         DataRow row = new DataRow();
-        row.put("ACCESS_ID", BasicUtil.evl(ACCESS_ID, COSConfig.DEFAULT_ACCESS_ID));
-        row.put("ACCESS_SECRET", BasicUtil.evl(ACCESS_SECRET, COSConfig.DEFAULT_ACCESS_SECRET));
+        row.put("ACCESS_ID", BasicUtil.evl(SECRET_ID, COSConfig.DEFAULT_SECRET_ID));
+        row.put("ACCESS_SECRET", BasicUtil.evl(SECRET_KEY, COSConfig.DEFAULT_SECRET_KEY));
         row.put("ENDPOINT", BasicUtil.evl(ENDPOINT, COSConfig.DEFAULT_ENDPOINT));
         row.put("BUCKET", BasicUtil.evl(BUCKET, COSConfig.DEFAULT_BUCKET));
         row.put("DIR", BasicUtil.evl(DIR, COSConfig.DEFAULT_DIR));

@@ -31,16 +31,16 @@ public class COSConfig extends AnylineConfig{
 	private static Hashtable<String,AnylineConfig> instances = new Hashtable<>(); 
 	private static File configDir;
 
-	public static String DEFAULT_ACCESS_ID		= ""	; // 
-	public static String DEFAULT_ACCESS_SECRET 	= ""	; // 
+	public static String DEFAULT_SECRET_ID		= ""	; //
+	public static String DEFAULT_SECRET_KEY 	= ""	; //
 	public static String DEFAULT_ENDPOINT		= ""	; // 
 	public static String DEFAULT_BUCKET			= ""	; // 
 	public static String DEFAULT_DIR			= ""	; // 
 	public static int DEFAULT_EXPIRE_SECOND 	= 3600	; // 
 
 
-	public String ACCESS_ID		= DEFAULT_ACCESS_ID				; // 
-	public String ACCESS_SECRET = DEFAULT_ACCESS_SECRET			; // 
+	public String SECRET_ID		= DEFAULT_SECRET_ID				; //
+	public String SECRET_KEY 	= DEFAULT_SECRET_KEY			; //
 	public String ENDPOINT		= DEFAULT_ENDPOINT				; // 
 	public String BUCKET		= DEFAULT_BUCKET				; // 
 	public String DIR			= DEFAULT_DIR					; // 
