@@ -117,7 +117,8 @@ public class COSUtil {
          * 添加一批操作权限 :
          */
         statement.addActions(new String[]{
-                "cos:PutObject",
+                "cos:*"
+              /*  "cos:PutObject",
                 // 表单上传、小程序上传
                 "cos:PostObject",
                 // 分块上传
@@ -130,7 +131,7 @@ public class COSUtil {
                 // 创建媒体处理任务
                 "ci:CreateMediaJobs",
                 // 文件压缩
-                "ci:CreateFileProcessJobs"
+                "ci:CreateFileProcessJobs"*/
         });
 
         /**
@@ -158,9 +159,6 @@ public class COSUtil {
         try {
 
             com.tencent.cloud.Response response = CosStsClient.getCredential(config);
-            System.out.println(response.credentials.tmpSecretId);
-            System.out.println(response.credentials.tmpSecretKey);
-            System.out.println(response.credentials.sessionToken);
 
             result.put("SECRET_ID", response.credentials.tmpSecretId);
             result.put("SECRET_KEY", response.credentials.tmpSecretKey);

@@ -4,9 +4,9 @@
  <tlibversion>2.3</tlibversion>
  <jspversion>1.2</jspversion>
  <shortname>anyline</shortname>
- <uri>http://www.anyline.org/aliyun</uri>
+ <uri>http://www.anyline.org/tencent/cloud</uri>
 	<tag>
-		<name>oss</name>
+		<name>cos</name>
 		<tagclass>org.anyline.tencent.cos.tag.COSConfig</tagclass>
 		<bodycontent>empty</bodycontent>
 		<info>cos签名</info>

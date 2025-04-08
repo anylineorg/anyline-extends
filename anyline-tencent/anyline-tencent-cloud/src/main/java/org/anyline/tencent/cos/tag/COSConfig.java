@@ -38,7 +38,7 @@ public class COSConfig extends BaseBodyTag {
     private String dir = "";
 
     private String key = AnylineConfig.DEFAULT_INSTANCE_KEY;
-    private String var = "al.config.cos['tencent']";
+    private String var = "al.config.oss.tencent";
 
     public int doEndTag() throws JspException {
         try{
@@ -74,7 +74,7 @@ public class COSConfig extends BaseBodyTag {
             script.append("    SecretId: '" + map.get("SECRET_ID") + "',\n");
             script.append("    SecretKey: '").append(map.get("SECRET_KEY")).append("',\n");
             script.append("    SecurityToken: '").append(map.get("SESSION_TOKEN")).append("',\n");
-            script.append("    StartTime: ").append(System.currentTimeMillis()).append(",\n");
+            script.append("    StartTime: ").append(System.currentTimeMillis()/1000).append(",\n");
             script.append("    ExpiredTime: ").append(map.get("EXPIRE")).append("\n");//临时密钥过期时间
             script.append(" });");
             script.append("</script>\n");
