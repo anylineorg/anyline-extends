@@ -22,6 +22,7 @@
 		<module>anyline-tencent/anyline-wechat</module>
 		<module>anyline-map</module>
 		<module>anyline-print/anyline-print-10ss</module>
+		<module>anyline-print/anyline-print-fei</module>
 		<module>anyline-sms</module>
 		<module>anyline-bing-seo</module>
 		<module>anyline-easemob</module>
