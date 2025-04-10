@@ -20,20 +20,15 @@
 package org.anyline.print.fei.util;
 
 import org.anyline.entity.DataRow;
-import org.anyline.entity.DataSet;
-import org.anyline.net.HttpUtil;
-import org.anyline.print.fei.util.FeiConfig.URL;
-import org.anyline.util.BasicUtil;
-import org.anyline.util.encrypt.MD5Util;
 import org.anyline.log.Log;
 import org.anyline.log.LogProxy;
+import org.anyline.net.HttpUtil;
+import org.anyline.util.BasicUtil;
 import org.anyline.util.encrypt.SHA1Util;
 
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
-import java.util.UUID;
 
 public class FeiUtil {
     private static final Log log = LogProxy.get(FeiUtil.class);
