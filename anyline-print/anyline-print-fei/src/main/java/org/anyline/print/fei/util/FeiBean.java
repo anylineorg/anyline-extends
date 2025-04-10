@@ -26,32 +26,29 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
-@Component("anyline.p100s.load.bean")
+@Component("anyline.print.fei.load.bean")
 public class FeiBean implements InitializingBean {
 
-    @Value("${anyline.p100s.app:}")
-    public String APP_ID                   ;
-    @Value("${anyline.p100s.secret:}")
-    public String APP_SECRET               ;
-    @Value("${anyline.p100s.app:type:}")
+    @Value("${anyline.print.fei.user:}")
+    public String USER                   ;
+    @Value("${anyline.print.fei.key:}")
+    public String KEY               ;
+    @Value("${anyline.print.fei.app:type:}")
     public String TYPE                     ; // 0:自用 1:开放
-    @Value("${anyline.p100s.server:}")
-    public String ACCESS_TOKEN_SERVER      ;
 
 
     @Override
     public void afterPropertiesSet()  {
-        APP_ID = BasicUtil.evl(APP_ID, FeiConfig.DEFAULT_APP_ID);
-        if(BasicUtil.isEmpty(APP_ID)){
+        USER = BasicUtil.evl(USER, FeiConfig.DEFAULT_USER);
+        if(BasicUtil.isEmpty(USER)){
             return;
         }
         DataRow row = new DataRow();
-        row.put("APP_ID", BasicUtil.evl(APP_ID, FeiConfig.DEFAULT_APP_ID));
-        row.put("APP_SECRET", BasicUtil.evl(APP_SECRET, FeiConfig.DEFAULT_APP_SECRET));
+        row.put("USER", BasicUtil.evl(USER, FeiConfig.DEFAULT_USER));
+        row.put("KEY", BasicUtil.evl(KEY, FeiConfig.DEFAULT_KEY));
         row.put("TYPE", BasicUtil.evl(TYPE, FeiConfig.DEFAULT_TYPE));
-        row.put("ACCESS_TOKEN_SERVER", BasicUtil.evl(ACCESS_TOKEN_SERVER, FeiConfig.DEFAULT_ACCESS_TOKEN_SERVER));
     }
-    @Bean("anyline.p10s.init.util")
+    @Bean("anyline.print.fei.init.util")
     public FeiUtil instance(){
         return FeiUtil.getInstance();
     }

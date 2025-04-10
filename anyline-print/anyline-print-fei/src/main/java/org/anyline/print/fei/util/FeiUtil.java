@@ -27,6 +27,7 @@ import org.anyline.util.BasicUtil;
 import org.anyline.util.encrypt.MD5Util;
 import org.anyline.log.Log;
 import org.anyline.log.LogProxy;
+import org.anyline.util.encrypt.SHA1Util;
 
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -37,7 +38,6 @@ import java.util.UUID;
 public class FeiUtil {
     private static final Log log = LogProxy.get(FeiUtil.class);
 
-    private static DataSet accessTokens = new DataSet();
     private FeiConfig config = null;
 
     private static Hashtable<String, FeiUtil> instances = new Hashtable<String, FeiUtil>();
@@ -76,16 +76,16 @@ public class FeiUtil {
     public FeiConfig getConfig() {
         return config;
     }
-    private DataRow api(FeiConfig.URL url, Map<String,Object> params){
+    private DataRow api(FeiConfig.API api, Map<String,Object> params){
         DataRow result = null;
         long time = System.currentTimeMillis()/1000;
-        params.put("client_id", config.APP_ID);
-        params.put("timestamp",time);
+        params.put("user", config.USER);
+        params.put("stime",time);
         params.put("sign", sign(time));
-        params.put("id",UUID.randomUUID().toString());
+        params.put("apiname",api.getCode());
         Map<String, String> header = new HashMap<String, String>();
         header.put("Content-Type","application/x-www-form-urlencoded");
-        String txt = HttpUtil.post(header,url.getCode(), "UTF-8",params).getText();
+        String txt = HttpUtil.post(header, FeiConfig.HOST, "UTF-8", params).getText();
         log.info("[invoice api][result:{}]", txt);
         DataRow row = DataRow.parseJson(txt);
         if(row.getInt("error",-1) ==0){
@@ -101,100 +101,6 @@ public class FeiUtil {
         }
         return result;
     }
-    // {'error':'0','error_description':'success','body':{'access_token':'xxxx','refresh_token':'xxxx','expires_in':2592000,'scope':'all'}}
-    // 自用
-    public DataRow getAccessToken(){
-        DataRow row = null;
-        row = accessTokens.getRow("APP_ID", config.APP_ID);
-        if(null == row){
-            row = newAccessToken();
-        }else if(row.isExpire()){//过期刷新
-            row = refreshAccessToken(row.getString("refresh_token"));
-        }
-        return row;
-
-    }
-    // 开放平台
-    public DataRow getAccessToken(String code){
-        DataRow row = null;
-        row = newAccessToken(code);
-        return row;
-    }
-    // 自用
-    public DataRow newAccessToken(){
-        DataRow row = null;
-        if(BasicUtil.isEmpty(config.ACCESS_TOKEN_SERVER)){
-            Map<String,Object> params = new HashMap<String,Object>();
-            params.put("grant_type", "client_credentials");
-            params.put("scope","all");
-            row = api(FeiConfig.URL.ACCESS_TOKEN, params);
-            log.info("[new access token][token:{}]", row);
-        }else{
-            String url = config.ACCESS_TOKEN_SERVER+ "?appid="+config.APP_ID+"&secret="+config.APP_SECRET;
-
-            String text = HttpUtil.post(url).getText();
-            row = DataRow.parseJson(text);
-            log.info("[new access token][server:{}][token:{}]", config.ACCESS_TOKEN_SERVER, row);
-        }
-        row.put("APP_ID", config.APP_ID);
-        accessTokens.addRow(row);
-        return row;
-    }
-    // 开放平台
-    public DataRow newAccessToken(String code){
-        DataRow row = null;
-//       if(BasicUtil.isEmpty(config.ACCESS_TOKEN_SERVER)){
-        Map<String,Object> params = new HashMap<String,Object>();
-        params.put("grant_type", "authorization_code");			// 开放平台
-        params.put("code",code);
-        params.put("scope","all");
-        row = api(FeiConfig.URL.ACCESS_TOKEN, params);
-        log.info("[new access token][code:{}][token:{}]", code, row);
-/*        }else{
-            String url = config.ACCESS_TOKEN_SERVER+ "?appid="+config.APP_ID+"&secret="+config.APP_SECRET;
-            if(BasicUtil.isNotEmpty(code)){
-                url += "&code="+code;
-            }
-            String text = HttpUtil.post(url,"UTF-8").getText();
-            row = DataRow.parseJson(text);
-            log.info("[new access token][server:{}][code:{}][token:{}]", config.ACCESS_TOKEN_SERVER, code, row);
-        }*/
-        row.put("APP_ID", config.APP_ID);
-        return row;
-    }
-    public DataRow refreshAccessToken(String refresh){
-        DataRow row = null;
-        // if(BasicUtil.isEmpty(config.ACCESS_TOKEN_SERVER)){
-        Map<String,Object> params = new HashMap<String,Object>();
-        params.put("grant_type", "refresh_token");
-        params.put("scope", "all");
-        params.put("refresh_token", refresh);
-        row = api(URL.ACCESS_TOKEN, params);
-/*        }else{
-        	String url = config.ACCESS_TOKEN_SERVER+ "?appid="+config.APP_ID+"&secret="+config.APP_SECRET;
-            url += "&refresh="+refresh;
-            String text = HttpUtil.post(url,"UTF-8").getText();
-            row = DataRow.parseJson(text);
-            log.info("[refresh access token][server:{}][refresh:{}][token:{}]", config.ACCESS_TOKEN_SERVER, refresh, row);
-        }*/
-        return row;
-    }
-
-    /**
-     * 获取用户授权码
-     * @param redirect 回调地址
-     * @param state 状态保持
-     * @return url url
-     */
-    public String createAuthorizeCodeUrl(String redirect, String state){
-        try {
-            redirect = URLEncoder.encode(redirect, "UTF-8");
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        String url = "https://open-api.10ss.net/oauth/authorize?response_type=code&client_id="+config.APP_ID+"&redirect_uri="+redirect+"&state="+state;
-        return url;
-    }
     /**
      * 自用模式 添加打印机
      * @param code 打印机编号
@@ -205,18 +111,11 @@ public class FeiUtil {
      */
     public void addPrinter(String code, String secret, String phone, String name) throws Exception{
         Map<String,Object> params = new HashMap<String,Object>();
-        params.put("machine_code", code);
-        params.put("msign", secret);
-        if(BasicUtil.isNotEmpty(phone)) {
-            params.put("phone", phone);
-        }
-        if(BasicUtil.isNotEmpty(name)) {
-            params.put("print_name", name);
-        }
-        DataRow token = getAccessToken();
-        params.put("access_token", token.getString("access_token"));
-        DataRow row = api(FeiConfig.URL.ADD_PRINTER, params);
-        if(!row.getBoolean("success",false)){
+        StringBuilder builder = new StringBuilder();
+        builder.append(code).append("#").append(secret).append("#").append(name).append("#").append(phone).append("#1");
+        params.put("printerContent", builder.toString());
+        DataRow row = api(FeiConfig.API.ADD_PRINTER, params);
+        if(row.getInt("ret",0) != 0){
             throw new Exception(row.getString("error"));
         }
     }
@@ -230,11 +129,11 @@ public class FeiUtil {
      */
     public void deletePrinter(String code) throws Exception{
         Map<String,Object> params = new HashMap<String,Object>();
-        params.put("machine_code", code);
-        DataRow token = getAccessToken();
-        params.put("access_token", token.getString("access_token"));
-        DataRow row = api(FeiConfig.URL.DELETE_PRINTER, params);
-        if(!row.getBoolean("success",false)){
+        StringBuilder builder = new StringBuilder();
+        builder.append(code);
+        params.put("snlist", builder.toString());
+        DataRow row = api(FeiConfig.API.DELETE_PRINTER, params);
+        if(row.getInt("ret",0) != 0){
             throw new Exception(row.getString("error"));
         }
     }
@@ -242,24 +141,28 @@ public class FeiUtil {
     /**
      * 文本打印
      * @param machine machine
-     * @param order order
+     * @param times 打印次数
      * @param text text
      * @throws Exception 异常 Exception
      * @return DataRow
      */
-    public DataRow print(String machine, String order, String text) throws Exception{
-        DataRow token = getAccessToken();
-        Map<String,Object> params = new HashMap<String,Object>();
-        params.put("machine_code", machine);
-        if(BasicUtil.isNotEmpty(order)) {
-            params.put("origin_id", order);
+    public DataRow print(String machine, String text, int times) throws Exception{
+        Map<String,Object> params = new HashMap<>();
+        params.put("content", text);
+        params.put("sn", machine);
+        params.put("times", times);
+        DataRow row = api(FeiConfig.API.PRINT_TEXT, params);
+        if(row.getInt("ret",0) != 0){
+            throw new Exception(row.getString("error"));
         }
-        params.put("content",text);
-        params.put("access_token", token.getString("access_token"));
-        return api(URL.PRINT_TEXT, params);
+        return row;
     }
+    public DataRow print(String machine, String text) throws Exception{
+        return print(machine, text, 1);
+    }
+    //对参数user+UKEY+stime 拼接后（+号表示连接符）进行SHA1加密得到签名，加密后签名值为40位小写字符串
     private String sign(long time){
-        String result = MD5Util.crypto(config.APP_ID+time+config.APP_SECRET).toLowerCase();
+        String result = SHA1Util.sign(config.USER + config.KEY + time).toLowerCase();
         return result;
     }
 }

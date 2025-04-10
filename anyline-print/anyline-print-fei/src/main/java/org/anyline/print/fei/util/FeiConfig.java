@@ -32,27 +32,24 @@ public class FeiConfig  extends AnylineConfig {
     private static Hashtable<String, AnylineConfig> instances = new Hashtable<>();
 
 
-    public static String DEFAULT_APP_ID                = "" ;
-    public static String DEFAULT_APP_SECRET            = "" ;
+    public static String DEFAULT_USER                = "" ;
+    public static String DEFAULT_KEY            = "" ;
     public static String DEFAULT_TYPE                  = "0"; // 0:自用 1:开放
-    public static String DEFAULT_ACCESS_TOKEN_SERVER   = "" ;
 
 
 
-    public String APP_ID                = DEFAULT_APP_ID                ;
-    public String APP_SECRET            = DEFAULT_APP_SECRET            ;
+    public String USER                = DEFAULT_USER                ;
+    public String KEY                 = DEFAULT_KEY            ;
     public String TYPE                  = DEFAULT_TYPE                  ; // 0:自用 1:开放
-    public String ACCESS_TOKEN_SERVER   = DEFAULT_ACCESS_TOKEN_SERVER   ;
-
 
     private static File configDir;
     public static String CONFIG_NAME = "anyline-Fei.xml";
+    public static final String HOST = "https://api.feieyun.cn/Api/Open/";
 
-    public static enum URL{
-        ACCESS_TOKEN		{public String getCode(){return "https://open-api.10ss.net/oauth/oauth";} 	        public String getName(){return "ACCESS TOKEN";}},
-        ADD_PRINTER	        {public String getCode(){return "https://open-api.10ss.net/printer/addprinter";}    public String getName(){return "添加自用打印机";}},
-        DELETE_PRINTER	    {public String getCode(){return "https://open-api.10ss.net/printer/deleteprinter";}    public String getName(){return "删除自用打印机";}},
-        PRINT_TEXT	        {public String getCode(){return "https://open-api.10ss.net/print/index";}    public String getName(){return "打印文本";}};
+    public static enum API{
+        ADD_PRINTER	        {public String getCode(){return "Open_printerAddlist";}    public String getName(){return "添加自用打印机";}},
+        DELETE_PRINTER	    {public String getCode(){return "Open_printerDelList";}    public String getName(){return "删除自用打印机";}},
+        PRINT_TEXT	        {public String getCode(){return "Open_printMsg";}    public String getName(){return "打印文本";}};
         public abstract String getName();
         public abstract String getCode();
     };
@@ -124,10 +121,10 @@ public class FeiConfig  extends AnylineConfig {
     public FeiConfig register(DataRow row){
         return register(DEFAULT_INSTANCE_KEY, row);
     }
-    public FeiConfig register(String app, String secret){
+    public FeiConfig register(String user, String key){
         DataRow row = new DataRow();
-        row.put("APP_ID", app);
-        row.put("APP_SECRET",secret);
+        row.put("USER", user);
+        row.put("KEY",key);
         return register(row);
     }
 }
