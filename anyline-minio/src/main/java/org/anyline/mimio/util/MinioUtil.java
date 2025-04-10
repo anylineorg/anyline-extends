@@ -15,8 +15,6 @@
  */
 
 
-
-
 package org.anyline.mimio.util;
 
 import io.minio.*;
@@ -103,8 +101,6 @@ public class MinioUtil {
         }
         return util;
     }
-
-
 
 
     /**

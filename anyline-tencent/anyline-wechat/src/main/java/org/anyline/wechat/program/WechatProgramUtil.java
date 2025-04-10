@@ -15,8 +15,6 @@
  */
 
 
-
-
 package org.anyline.wechat.program;
 
 

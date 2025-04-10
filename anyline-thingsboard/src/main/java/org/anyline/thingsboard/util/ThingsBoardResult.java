@@ -15,8 +15,6 @@
  */
 
 
-
-
 package org.anyline.thingsboard.util;
 
 import org.anyline.net.HttpResponse;

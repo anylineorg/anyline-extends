@@ -15,8 +15,6 @@
  */
 
 
-
-
 package org.anyline.aliyun.sms.util;
 
 import com.aliyun.dysmsapi20170525.Client;

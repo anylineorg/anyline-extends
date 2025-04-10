@@ -15,8 +15,6 @@
  */
 
 
-
-
 package org.anyline.feishu.util;
 
 import org.anyline.entity.DataRow;

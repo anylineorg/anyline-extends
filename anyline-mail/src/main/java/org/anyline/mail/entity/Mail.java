@@ -15,8 +15,6 @@
  */
 
 
-
-
 package org.anyline.mail.entity;
  
 import java.io.File; 

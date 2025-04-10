@@ -15,8 +15,6 @@
  */
 
 
-
-
 package org.anyline.sms.util;
 
 import org.anyline.net.HttpUtil;

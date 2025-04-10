@@ -15,8 +15,6 @@
  */
 
 
-
-
 package org.anyline.wechat.entity;
  
 import java.util.HashMap; 

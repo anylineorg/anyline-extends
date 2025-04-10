@@ -15,8 +15,6 @@
  */
 
 
-
-
 package org.anyline.wechat.util;
  
 import org.anyline.util.AnylineConfig;

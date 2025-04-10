@@ -15,8 +15,6 @@
  */
 
 
-
-
 package org.anyline.print.fei.util;
 
 import org.anyline.entity.DataRow;

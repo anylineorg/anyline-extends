@@ -15,8 +15,6 @@
  */
 
 
-
-
 package org.anyline.aliyun.oss.util;
 
 import org.anyline.util.BasicUtil;

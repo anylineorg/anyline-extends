@@ -15,8 +15,6 @@
  */
 
 
-
-
 package org.anyline.wechat.pay.util.v3;
 
 import org.anyline.entity.DataRow;

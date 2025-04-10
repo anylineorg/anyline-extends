@@ -15,8 +15,6 @@
  */
 
 
-
-
 package org.anyline.baidu.seo.util;
 
 public class PushResponse {

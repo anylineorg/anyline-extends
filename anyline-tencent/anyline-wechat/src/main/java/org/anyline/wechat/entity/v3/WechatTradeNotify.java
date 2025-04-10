@@ -15,8 +15,6 @@
  */
 
 
-
-
 package org.anyline.wechat.entity.v3;
 
 import java.util.Map;

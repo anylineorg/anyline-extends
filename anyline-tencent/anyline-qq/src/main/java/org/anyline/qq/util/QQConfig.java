@@ -15,9 +15,7 @@
  */
 
 
-
-
-package org.anyline.qq.util; 
+package org.anyline.qq.util;
  
 import org.anyline.util.AnylineConfig; 
  

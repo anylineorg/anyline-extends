@@ -15,8 +15,6 @@
  */
 
 
-
-
 package org.anyline.seo.util;
 
 import org.anyline.entity.DataRow;

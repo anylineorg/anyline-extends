@@ -15,8 +15,6 @@
  */
 
 
-
-
 package org.anyline.alipay.entity;
  
 import com.alipay.api.response.AlipayFundTransToaccountTransferResponse; 

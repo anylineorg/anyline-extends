@@ -15,8 +15,6 @@
  */
 
 
-
-
 package org.anyline.aliyun.sms.util;
 
 public class SMSTemplate {

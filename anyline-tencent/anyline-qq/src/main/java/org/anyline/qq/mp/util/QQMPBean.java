@@ -15,8 +15,6 @@
  */
 
 
-
-
 package org.anyline.qq.mp.util;
 
 import org.anyline.entity.DataRow;

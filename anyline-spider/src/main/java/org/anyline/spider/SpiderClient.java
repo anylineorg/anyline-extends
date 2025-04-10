@@ -15,8 +15,6 @@
  */
 
 
-
-
 package org.anyline.spider;
 
 import org.anyline.util.BeanUtil;

@@ -15,8 +15,6 @@
  */
 
 
-
-
 package org.anyline.alipay.entity;
 /** 
  * notify 结果 

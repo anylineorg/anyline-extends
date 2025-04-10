@@ -18,8 +18,6 @@
 
 
 
-
-
 package org.anyline.wechat.mp.tag;
  
 import org.anyline.entity.DataRow;

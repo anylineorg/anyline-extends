@@ -15,8 +15,6 @@
  */
 
 
-
-
 package org.anyline.jpush.util;
 
 import cn.jiguang.common.ClientConfig;

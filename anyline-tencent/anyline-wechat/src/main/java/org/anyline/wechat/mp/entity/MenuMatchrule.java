@@ -15,8 +15,6 @@
  */
 
 
-
-
 package org.anyline.wechat.mp.entity;
 
 public class MenuMatchrule {

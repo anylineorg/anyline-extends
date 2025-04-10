@@ -15,8 +15,6 @@
  */
 
 
-
-
 package org.anyline.alipay.entity;
 /** 
  * 单笔转账到支付宝账户 

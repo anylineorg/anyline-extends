@@ -16,8 +16,6 @@
 
 
 
-
-
 package org.anyline.nc;
  
 import org.anyline.util.ConfigTable;

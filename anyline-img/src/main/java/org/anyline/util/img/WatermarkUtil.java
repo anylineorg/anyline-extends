@@ -15,8 +15,6 @@
  */
 
 
-
-
 package org.anyline.util.img;
 
 import org.anyline.util.DateUtil;

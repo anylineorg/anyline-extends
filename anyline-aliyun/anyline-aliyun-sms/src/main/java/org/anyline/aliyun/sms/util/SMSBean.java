@@ -15,8 +15,6 @@
  */
 
 
-
-
 package org.anyline.aliyun.sms.util;
 
 import org.anyline.sms.util.SMSListener;

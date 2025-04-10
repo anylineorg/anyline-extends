@@ -15,8 +15,6 @@
  */
 
 
-
-
 package org.anyline.util.encrypt;
 
 import org.bouncycastle.crypto.CipherParameters;

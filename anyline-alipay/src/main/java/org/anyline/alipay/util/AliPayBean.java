@@ -15,8 +15,6 @@
  */
 
 
-
-
 package org.anyline.alipay.util;
 
 import org.anyline.entity.DataRow;

@@ -15,9 +15,7 @@
  */
 
 
-
-
-package org.anyline.struts.result; 
+package org.anyline.struts.result;
  
 import java.io.PrintWriter;
 
