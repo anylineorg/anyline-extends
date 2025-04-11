@@ -81,11 +81,15 @@ public class FeiUtil {
         String txt = HttpUtil.post(header, FeiConfig.HOST, "UTF-8", params).getText();
         log.info("[invoice api][result:{}]", txt);
         //{"msg":"ok","ret":0,"data":{"ok":[""],"no":[],"noGuide":[]},"serverExecutedTime":25}]
+        //{"msg":"ok","ret":0,"data":"222538508_20250411131616_1010458444","serverExecutedTime":10}
         DataRow row = DataRow.parseJson(txt);
         if(row.getInt("ret",-1) ==0){
-            result = row.getRow("data");
-            if(null == result){
+            Object data = row.get("data");
+            if(data instanceof DataRow){
+                result = (DataRow)data;
+            }else{
                 result = new DataRow();
+                result.put("msg", data);
             }
             result.put("success", true);
         }else{
