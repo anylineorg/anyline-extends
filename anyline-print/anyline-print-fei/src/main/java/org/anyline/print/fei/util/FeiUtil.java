@@ -22,7 +22,7 @@ import org.anyline.log.Log;
 import org.anyline.log.LogProxy;
 import org.anyline.net.HttpUtil;
 import org.anyline.util.BasicUtil;
-import org.anyline.util.encrypt.SHA1Util;
+import org.apache.commons.codec.digest.DigestUtils;
 
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -74,15 +74,16 @@ public class FeiUtil {
         long time = System.currentTimeMillis()/1000;
         params.put("user", config.USER);
         params.put("stime",time);
-        params.put("sign", sign(time));
+        params.put("sig", sign(time));
         params.put("apiname",api.getCode());
         Map<String, String> header = new HashMap<String, String>();
         header.put("Content-Type","application/x-www-form-urlencoded");
         String txt = HttpUtil.post(header, FeiConfig.HOST, "UTF-8", params).getText();
         log.info("[invoice api][result:{}]", txt);
+        //{"msg":"ok","ret":0,"data":{"ok":[""],"no":[],"noGuide":[]},"serverExecutedTime":25}]
         DataRow row = DataRow.parseJson(txt);
-        if(row.getInt("error",-1) ==0){
-            result = row.getRow("body");
+        if(row.getInt("ret",-1) ==0){
+            result = row.getRow("data");
             if(null == result){
                 result = new DataRow();
             }
@@ -90,7 +91,7 @@ public class FeiUtil {
         }else{
             result = new DataRow();
             result.put("success", false);
-            result.put("error",row.getString("error_description"));
+            result.put("error",row.getString("msg"));
         }
         return result;
     }
@@ -108,7 +109,7 @@ public class FeiUtil {
         builder.append(code).append("#").append(secret).append("#").append(name).append("#").append(phone).append("#1");
         params.put("printerContent", builder.toString());
         DataRow row = api(FeiConfig.API.ADD_PRINTER, params);
-        if(row.getInt("ret",0) != 0){
+        if(!row.getBoolean("success",false)){
             throw new Exception(row.getString("error"));
         }
     }
@@ -126,7 +127,7 @@ public class FeiUtil {
         builder.append(code);
         params.put("snlist", builder.toString());
         DataRow row = api(FeiConfig.API.DELETE_PRINTER, params);
-        if(row.getInt("ret",0) != 0){
+        if(!row.getBoolean("success",false)){
             throw new Exception(row.getString("error"));
         }
     }
@@ -145,7 +146,7 @@ public class FeiUtil {
         params.put("sn", machine);
         params.put("times", times);
         DataRow row = api(FeiConfig.API.PRINT_TEXT, params);
-        if(row.getInt("ret",0) != 0){
+        if(!row.getBoolean("success",false)){
             throw new Exception(row.getString("error"));
         }
         return row;
@@ -155,7 +156,7 @@ public class FeiUtil {
     }
     //对参数user+UKEY+stime 拼接后（+号表示连接符）进行SHA1加密得到签名，加密后签名值为40位小写字符串
     private String sign(long time){
-        String result = SHA1Util.sign(config.USER + config.KEY + time).toLowerCase();
+        String result = DigestUtils.sha1Hex(config.USER + config.KEY + time);
         return result;
     }
 }

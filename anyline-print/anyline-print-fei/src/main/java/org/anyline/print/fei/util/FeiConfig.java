@@ -35,7 +35,6 @@ public class FeiConfig  extends AnylineConfig {
     public static String DEFAULT_TYPE                  = "0"; // 0:自用 1:开放
 
 
-
     public String USER                = DEFAULT_USER                ;
     public String KEY                 = DEFAULT_KEY            ;
     public String TYPE                  = DEFAULT_TYPE                  ; // 0:自用 1:开放
