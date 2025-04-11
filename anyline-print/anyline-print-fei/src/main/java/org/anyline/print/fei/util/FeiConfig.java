@@ -41,7 +41,7 @@ public class FeiConfig  extends AnylineConfig {
     public String TYPE                  = DEFAULT_TYPE                  ; // 0:自用 1:开放
 
     private static File configDir;
-    public static String CONFIG_NAME = "anyline-Fei.xml";
+    public static String CONFIG_NAME = "anyline-print-fei.xml";
     public static final String HOST = "https://api.feieyun.cn/Api/Open/";
 
     public static enum API{
