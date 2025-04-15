@@ -79,7 +79,7 @@ public class ExcelUtil {
 		return list;
 	}
 	public static List<List<List<String>>> reads(File file, int rows) {
-		List<List<List<String>>> list = null;
+		List<List<List<String>>> list = new ArrayList<>();
 		try {
 			Workbook workbook = getWorkbook(file);
 			int size = workbook.getNumberOfSheets();
