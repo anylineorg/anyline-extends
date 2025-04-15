@@ -39,6 +39,7 @@ public class ExcelUtil {
 
 	public static final String OFFICE_EXCEL_XLS = "xls";
 	public static final String OFFICE_EXCEL_XLSX = "xlsx";
+
 	/**
 	 * 读取指定Sheet也的内容
 	 * @param file file 文件
@@ -72,6 +73,19 @@ public class ExcelUtil {
 		try {
 			Workbook workbook = getWorkbook(file);
 			list = read(workbook.getSheetAt(sheet), rows, 0);
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		return list;
+	}
+	public static List<List<List<String>>> reads(File file, int rows) {
+		List<List<List<String>>> list = null;
+		try {
+			Workbook workbook = getWorkbook(file);
+			int size = workbook.getNumberOfSheets();
+			for(int i=0; i<size; i++){
+				list.add(read(workbook.getSheetAt(i), rows, 0));
+			}
 		}catch (Exception e){
 			e.printStackTrace();
 		}
@@ -203,6 +217,9 @@ public class ExcelUtil {
 	public static List<List<String>> read(File file, int sheet) throws Exception {
 		return read(file, sheet, 0);
 	}
+	public static List<List<List<String>>> reads(File file) throws Exception {
+		return reads(file, 0);
+	}
 	public static List<List<String>> read(InputStream is, int sheet) throws Exception {
 		return read(is, sheet, 0);
 	}
@@ -312,7 +329,7 @@ public class ExcelUtil {
 	 * @return List
 	 */
 	public static List<List<String>> read(Sheet sheet, int start, int end) {
-		List<List<String>> lists = new ArrayList<List<String>>();
+		List<List<String>> lists = new ArrayList<>();
 		if(sheet != null){
 			int max = sheet.getLastRowNum();// 得到excel的总记录条数
 			int last = max;
