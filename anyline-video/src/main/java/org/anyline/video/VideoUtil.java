@@ -68,7 +68,7 @@ public class VideoUtil {
 			thumbnailImage.getGraphics().drawImage(srcImage.getScaledInstance(srcImageWidth, srcImageHeight, 1), 0, 0, null);
 			ImageIO.write(thumbnailImage, "jpg", out);
 			ff.stop();
-			log.warn("[视频截图][耗时:{}]",DateUtil.conversion(System.currentTimeMillis()-fr));
+			log.warn("[视频截图][耗时:{}]",DateUtil.format(System.currentTimeMillis()-fr));
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();

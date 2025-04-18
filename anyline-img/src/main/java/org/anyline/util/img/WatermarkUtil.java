@@ -129,7 +129,7 @@ public class WatermarkUtil {
                 e.printStackTrace(); 
             } 
         }
-        log.warn("[添加水印][耗时:{}][text:{}][src:{}][target:{}]", DateUtil.conversion(System.currentTimeMillis()-fr),text, src.getAbsoluteFile(), target.getAbsoluteFile());
+        log.warn("[添加水印][耗时:{}][text:{}][src:{}][target:{}]", DateUtil.format(System.currentTimeMillis()-fr),text, src.getAbsoluteFile(), target.getAbsoluteFile());
         return true; 
     } 
     public void markText(String text, String src, String target){
@@ -223,7 +223,7 @@ public class WatermarkUtil {
                 e.printStackTrace(); 
             }
         }
-        log.warn("[添加水印][耗时:{}][x:{}][y:{}][icon:{}][src:{}][target:{}]",DateUtil.conversion(System.currentTimeMillis()-fr), _x,_y,icon.getAbsoluteFile(), src.getAbsoluteFile(), target.getAbsoluteFile());
+        log.warn("[添加水印][耗时:{}][x:{}][y:{}][icon:{}][src:{}][target:{}]",DateUtil.format(System.currentTimeMillis()-fr), _x,_y,icon.getAbsoluteFile(), src.getAbsoluteFile(), target.getAbsoluteFile());
     }
 
     public void markIcon(File icon, File src, File target) {

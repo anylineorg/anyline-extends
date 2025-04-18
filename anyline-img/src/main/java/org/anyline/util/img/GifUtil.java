@@ -22,6 +22,7 @@ import com.sun.imageio.plugins.gif.GIFImageReaderSpi;
 import com.sun.imageio.plugins.gif.GIFImageWriter;
 import com.sun.imageio.plugins.gif.GIFImageWriterSpi;
 import org.anyline.util.ConfigTable;
+import org.anyline.util.DateUtil;
 import org.anyline.util.NumberUtil;
 import org.anyline.log.Log;
 import org.anyline.log.LogProxy;
@@ -120,7 +121,7 @@ public class GifUtil {
                 src[i] = ImageIO.read(item); // 读入需要播放的jpg文件   
                 e.addFrame(src[i]);  // 添加到帧中   
                 if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
-                	log.warn("[合成 gif][第{}/{}帧][gif:{}][源文件:{}][耗时:{}]",i+1,size,tar.getAbsolutePath(), item.getAbsoluteFile(),System.currentTimeMillis()-fr); 
+                	log.warn("[合成 gif][第{}/{}帧][gif:{}][源文件:{}][耗时:{}]",i+1,size,tar.getAbsolutePath(), item.getAbsoluteFile(), DateUtil.format(System.currentTimeMillis()-fr));
                 } 
             }   
             e.finish();   
@@ -156,7 +157,7 @@ public class GifUtil {
                 src[i] = ImageIO.read(item); // 读入需要播放的jpg文件   
                 e.addFrame(src[i]);  // 添加到帧中   
                 if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
-                	log.warn("[合成 gif][第{}/{}帧][gif:{}][源文件:{}][耗时:{}]",i+1,size,tar.getAbsoluteFile(),item.getAbsoluteFile(),System.currentTimeMillis()-fr); 
+                	log.warn("[合成 gif][第{}/{}帧][gif:{}][源文件:{}][耗时:{}]", i+1, size, tar.getAbsoluteFile(), item.getAbsoluteFile(), DateUtil.format(System.currentTimeMillis()-fr));
                 } 
             }   
             e.finish();   
