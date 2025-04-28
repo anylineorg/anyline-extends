@@ -132,7 +132,7 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
             }
         }
         String api = "/ws/geocoder/v1";
-        Map<String,Object> params = new HashMap<>();
+        Map<String, Object> params = new HashMap<>();
         params.put("address", address);
         DataRow row = api(api, params);
         if(null != row){
@@ -260,7 +260,7 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
         params.put("sig", sign);
         return sign;
     }
-    private DataRow api(String api, Map<String,Object> params){
+    private DataRow api(String api, Map<String, Object> params){
         DataRow row = null;
         sign(api, params);
         HttpResponse response = HttpUtil.get(QQMapConfig.HOST + api,"UTF-8", params);

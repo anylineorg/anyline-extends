@@ -81,10 +81,10 @@ public class NacosUtil {
 		}
 
 		// AnylineConfig子类
-		Map<String, Map<String,Object>> listenerFiles = AnylineConfig.getListeners();
-		for (Map.Entry<String, Map<String,Object>> item : listenerFiles.entrySet()) {
+		Map<String, Map<String, Object>> listenerFiles = AnylineConfig.getListeners();
+		for (Map.Entry<String, Map<String, Object>> item : listenerFiles.entrySet()) {
 			File file = new File(item.getKey());
-			Map<String,Object> params = item.getValue();
+			Map<String, Object> params = item.getValue();
 			Class<AnylineConfig> clazz = (Class<AnylineConfig>)params.get("CLAZZ");
 			Hashtable<String, AnylineConfig> instances = (Hashtable<String, AnylineConfig>)params.get("INSTANCES");
 			String[] compatibles = (String[])params.get("COMPATIBLES");

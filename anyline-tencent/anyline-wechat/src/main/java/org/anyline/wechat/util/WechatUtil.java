@@ -54,7 +54,7 @@ public class WechatUtil {
 		sign = MD5Util.crypto(sign).toUpperCase(); 
 		return sign; 
 	} 
-	public static boolean validateSign(String secret, Map<String,Object> map){
+	public static boolean validateSign(String secret, Map<String, Object> map){
 		String sign = (String)map.get("sign"); 
 		if(BasicUtil.isEmpty(sign)){
 			return false; 

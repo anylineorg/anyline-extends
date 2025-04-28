@@ -122,7 +122,7 @@ public class WechatProgramUtil extends WechatUtil {
 	public InputStream createQRCode(String path, int width) throws Exception{
 		String access_token = getAccessToken(config);
 		String url = "https://api.weixin.qq.com/cgi-bin/wxaapp/createwxaqrcode?access_token="+access_token;
-		Map<String,Object> params = new HashMap<String,Object>();
+		Map<String, Object> params = new HashMap<>();
 		params.put("path",path);
 		if(width>0){
 			params.put("width", width);
@@ -173,7 +173,7 @@ public class WechatProgramUtil extends WechatUtil {
 	public InputStream createWXCode(String path, int width, boolean autoColor, String color, boolean hyaline){
 		String access_token = getAccessToken(config);
 		String url = "https://api.weixin.qq.com/wxa/getwxacode?access_token="+access_token;
-		Map<String,Object> params = new HashMap<String,Object>();
+		Map<String, Object> params = new HashMap<>();
 		params.put("path",path);
 		if(width>0){
 			params.put("width", width);
@@ -239,7 +239,7 @@ public class WechatProgramUtil extends WechatUtil {
 	public InputStream createWXCodeUnlimit(String path, String scene, int width, boolean autoColor, String color, boolean hyaline){
 		String access_token = getAccessToken(config);
 		String url = "https://api.weixin.qq.com/wxa/getwxacode?access_token="+access_token;
-		Map<String,Object> params = new HashMap<String,Object>();
+		Map<String, Object> params = new HashMap<>();
 		params.put("path",path);
 		if(width>0){
 			params.put("width", width);

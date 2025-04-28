@@ -32,10 +32,10 @@ public class WechatPrePayOrder {
 	private String attach						;//附加数据				string（128）	否	 附加数据,在查询API和支付通知中原样返回,可作为自定义参数使用示例值:自定义数据
 	private String notify_url					;//通知地址				string（256）	是	 通知URL必须为直接可访问的URL,不允许携带查询串.格式:URL示例值:https://www.weixin.qq.com/wxpay/pay.php
 	private String goods_tag					;//订单优惠标记			string（32）	否	 订单优惠标记示例值:WXG
-	private Map<String,Object> amount			;//订单金额 total(分) currency(CNY)		是
-	private Map<String,Object> payer			;//支付者 sp_openid sub_openid			是
-	private Map<String,Object> detail			;//优惠功能								否
-	private Map<String,Object> scene_info		;//支付场景								否
+	private Map<String, Object> amount			;//订单金额 total(分) currency(CNY)		是
+	private Map<String, Object> payer			;//支付者 sp_openid sub_openid			是
+	private Map<String, Object> detail			;//优惠功能								否
+	private Map<String, Object> scene_info		;//支付场景								否
 
 	public String getDescription() {
 		return description;
@@ -109,7 +109,7 @@ public class WechatPrePayOrder {
 		this.amount = amount;
 	}
 	public void setAmount(int total, String currency) {
-		this.amount = new HashMap<String,Object>();
+		this.amount = new HashMap<>();
 		amount.put("total",total);
 		amount.put("currency",currency);
 	}
@@ -125,7 +125,7 @@ public class WechatPrePayOrder {
 		this.payer = payer;
 	}
 	public void setPayer(String openid) {
-		this.payer = new HashMap<String,Object>();
+		this.payer = new HashMap<>();
 		payer.put("openid",openid);
 	}
 
@@ -148,19 +148,19 @@ public class WechatPrePayOrder {
 		}
 		detail.put("invoice_id",invoice_id);
 	}
-	public void setGoods_detail(List<Map<String,Object>> goods_detail){
+	public void setGoods_detail(List<Map<String, Object>> goods_detail){
 		if(detail == null){
 			detail = new HashMap<>();
 		}
 		detail.put("goods_detail",goods_detail);
 	}
-	public void addGoods_detail(Map<String,Object> goods){
+	public void addGoods_detail(Map<String, Object> goods){
 		if(detail == null){
 			detail = new HashMap<>();
 		}
-		List<Map<String,Object>> goods_detail = (List<Map<String,Object>>)detail.get("goods_detail");
+		List<Map<String, Object>> goods_detail = (List<Map<String, Object>>)detail.get("goods_detail");
 		if(null == goods_detail){
-			goods_detail = new ArrayList<Map<String,Object>>();
+			goods_detail = new ArrayList<Map<String, Object>>();
 		}
 		goods_detail.add(goods);
 	}
@@ -174,7 +174,7 @@ public class WechatPrePayOrder {
 	 * @param unit_price 商品单价
 	 */
 	public void addGoods_detail(String merchant_goods_id, String wechatpay_goods_id, String goods_name, int quantity, int unit_price){
-		Map<String,Object> goods = new HashMap<>();
+		Map<String, Object> goods = new HashMap<>();
 		goods.put("merchant_goods_id",merchant_goods_id);
 		goods.put("wechatpay_goods_id",wechatpay_goods_id);
 		goods.put("goods_name",goods_name);
@@ -196,7 +196,7 @@ public class WechatPrePayOrder {
 	 */
 	public void setPayer_client_ip(String payer_client_ip){
 		if(null == scene_info){
-			scene_info = new HashMap<String,Object>();
+			scene_info = new HashMap<>();
 		}
 		scene_info.put("payer_client_ip",payer_client_ip);
 	}
@@ -207,7 +207,7 @@ public class WechatPrePayOrder {
 	 */
 	public void setDevice_id(String device){
 		if(null == scene_info){
-			scene_info = new HashMap<String,Object>();
+			scene_info = new HashMap<>();
 		}
 		scene_info.put("device_id",device);
 	}
@@ -216,9 +216,9 @@ public class WechatPrePayOrder {
 	 * 商户门店信息
 	 * @param store_info 商户门店信息
 	 */
-	public void setStore_info(Map<String,Object> store_info){
+	public void setStore_info(Map<String, Object> store_info){
 		if(null == scene_info){
-			scene_info = new HashMap<String,Object>();
+			scene_info = new HashMap<>();
 		}
 		scene_info.put("store_info",store_info);
 	}
@@ -231,7 +231,7 @@ public class WechatPrePayOrder {
 	 * @param address 详细地址
 	 */
 	public void setStore_info(String id, String name, String area_code, String address){
-		Map<String,Object> store_info = new HashMap<String,Object>();
+		Map<String, Object> store_info = new HashMap<>();
 		store_info.put("id",id);
 		store_info.put("name",name);
 		store_info.put("area_code",area_code);

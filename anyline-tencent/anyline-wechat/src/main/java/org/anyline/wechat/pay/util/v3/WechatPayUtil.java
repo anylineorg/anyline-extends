@@ -133,7 +133,7 @@ public class WechatPayUtil {
         String random = BasicUtil.getRandomUpperString(32);
 
         String pkg = "prepay_id="+prepayid;
-        Map<String,Object> params = new HashMap<String,Object>();
+        Map<String, Object> params = new HashMap<>();
         params.put("package", pkg);
         params.put("timeStamp", timestamp);
         params.put("appId", appid);

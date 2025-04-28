@@ -1,3 +1,1 @@
-
-
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.anyline.p10ss.util.P10ssBean
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.anyline.print.p10ss.util.P10ssBean

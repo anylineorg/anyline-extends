@@ -82,11 +82,11 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 	 */ 
 	public String create(String name, int loctype, String lng, String lat, String address, Map<String, Object> extras){
 		String url = AmapConfig.DEFAULT_YUNTU_HOST + "/datamanage/data/create"; 
-		Map<String,Object> params = new HashMap<>();
+		Map<String, Object> params = new HashMap<>();
 		params.put("key", config.KEY);
 		params.put("tableId", config.TABLE);
 		params.put("loctype", loctype+""); 
-		Map<String,Object> data = new HashMap<>();
+		Map<String, Object> data = new HashMap<>();
 		if(null != extras){
 			Iterator<String> keys = extras.keySet().iterator();
 			while(keys.hasNext()){
@@ -126,10 +126,10 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 		} 
 		return id; 
 	} 
-	public String create(String name, String lng, String lat, String address, Map<String,Object> extras){
+	public String create(String name, String lng, String lat, String address, Map<String, Object> extras){
 		return create(name, 1, lng, lat, address, extras); 
 	} 
-	public String create(String name, String lng, String lat, Map<String,Object> extras){
+	public String create(String name, String lng, String lat, Map<String, Object> extras){
 		return create(name, 1, lng, lat, null, extras); 
 	} 
 	public String create(String name, int loctype, String lng, String lat, String address){
@@ -190,7 +190,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 				param += "," + ids.get(i); 
 			} 
 		} 
-		Map<String,Object> params = new HashMap<String,Object>(); 
+		Map<String, Object> params = new HashMap<>(); 
 		params.put("key", config.KEY); 
 		params.put("tableId", config.TABLE); 
 		params.put("ids", param); 
@@ -228,15 +228,15 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 	 * @param extras  extras
 	 * @return int 0:更新失败,没有对应的id  1:更新完成  -1:异常
 	 */ 
-	public long update(String id, String name, int loctype, String lng, String lat, String address, Map<String,Object> extras){
+	public long update(String id, String name, int loctype, String lng, String lat, String address, Map<String, Object> extras){
 		long cnt = 0;
 		String url = AmapConfig.DEFAULT_YUNTU_HOST + "/datamanage/data/update"; 
-		Map<String,Object> params = new HashMap<String,Object>(); 
+		Map<String, Object> params = new HashMap<>(); 
 		params.put("key", config.KEY); 
 		params.put("tableId", config.TABLE); 
 		params.put("loctype", loctype+""); 
  
-		Map<String,Object> data = new HashMap<>(); 
+		Map<String, Object> data = new HashMap<>(); 
 		if(null != extras){
 			Iterator<String> keys = extras.keySet().iterator(); 
 			while(keys.hasNext()){
@@ -277,10 +277,10 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 		} 
 		return cnt; 
 	} 
-	public long update(String id, String name, String lng, String lat, String address, Map<String,Object> extras){
+	public long update(String id, String name, String lng, String lat, String address, Map<String, Object> extras){
 		return update(id, name, 1, lng, lat, address, extras); 
 	} 
-	public long update(String id, String name, String lng, String lat, Map<String,Object> extras){
+	public long update(String id, String name, String lng, String lat, Map<String, Object> extras){
 		return update(id, name, 1, lng, lat, null, extras); 
 	} 
 	public long update(String id, String name, int loctype, String lng, String lat, String address){
@@ -307,7 +307,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 	public String createTable(String name){
 		String tableId = null; 
 		String url = AmapConfig.DEFAULT_YUNTU_HOST + "/datamanage/table/create"; 
-		Map<String,Object> params = new HashMap<String,Object>(); 
+		Map<String, Object> params = new HashMap<>(); 
 		params.put("key", config.KEY); 
 		params.put("name", name); 
 		String sign = sign(params); 
@@ -336,7 +336,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 	public DataSet local(String keywords, String city, String filter, String sortrule, int limit, int page){
 		DataSet set = null; 
 		String url = AmapConfig.DEFAULT_YUNTU_HOST + "/datasearch/local"; 
-		Map<String,Object> params = new HashMap<String,Object>(); 
+		Map<String, Object> params = new HashMap<>(); 
 		params.put("key", config.KEY); 
 		params.put("tableId", config.TABLE); 
 		params.put("keywords", keywords); 
@@ -393,7 +393,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 	public DataSet around(String center, int radius, String keywords, Map<String, String> filters, String sortrule, int limit, int page){
 		DataSet set = null; 
 		String url = AmapConfig.DEFAULT_YUNTU_HOST + "/datasearch/around"; 
-		Map<String,Object> params = new HashMap<String,Object>(); 
+		Map<String, Object> params = new HashMap<>(); 
 		params.put("key", config.KEY); 
 		params.put("tableId", config.TABLE); 
 		params.put("center", center); 
@@ -504,7 +504,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 	public DataSet list(String filter, String sortrule, int limit, int page){
 		DataSet set = null; 
 		String url = AmapConfig.DEFAULT_YUNTU_HOST + "/datamanage/data/list"; 
-		Map<String,Object> params = new HashMap<String,Object>(); 
+		Map<String, Object> params = new HashMap<>(); 
 		params.put("key", config.KEY); 
 		params.put("tableId", config.TABLE); 
 		params.put("filter", filter); 
@@ -556,7 +556,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 	public DataRow info(String id){
 		DataRow row = null; 
 		String url = AmapConfig.DEFAULT_YUNTU_HOST + "/datasearch/id"; 
-		Map<String,Object> params = new HashMap<String,Object>(); 
+		Map<String, Object> params = new HashMap<>(); 
 		params.put("key", config.KEY); 
 		params.put("tableId", config.TABLE); 
 		params.put("_id", id); 
@@ -591,7 +591,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 	public DataSet statByProvince(String keywords, String country, String filter){
 		DataSet set = null; 
 		String url = AmapConfig.DEFAULT_YUNTU_HOST + "/datasearch/statistics/province"; 
-		Map<String,Object> params = new HashMap<String,Object>(); 
+		Map<String, Object> params = new HashMap<>(); 
 		params.put("key", config.KEY); 
 		params.put("tableId", config.TABLE); 
 		params.put("filter", filter); 
@@ -630,7 +630,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 	public DataSet statByCity(String keywords, String province, String filter){
 		DataSet set = null; 
 		String url = AmapConfig.DEFAULT_YUNTU_HOST + "/datasearch/statistics/city"; 
-		Map<String,Object> params = new HashMap<String,Object>(); 
+		Map<String, Object> params = new HashMap<>(); 
 		params.put("key", config.KEY); 
 		params.put("tableId", config.TABLE); 
 		params.put("filter", filter); 
@@ -670,7 +670,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 	public DataSet statByDistrict(String keywords, String province, String city, String filter){
 		DataSet set = null; 
 		String url = AmapConfig.DEFAULT_YUNTU_HOST + "/datasearch/statistics/province"; 
-		Map<String,Object> params = new HashMap<String,Object>(); 
+		Map<String, Object> params = new HashMap<>(); 
 		params.put("key", config.KEY); 
 		params.put("tableId", config.TABLE); 
 		params.put("filter", filter); 
@@ -708,7 +708,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 	public DataSet nearby(String center, String radius, int limit, int timerange ){
 		DataSet set = null; 
 		String url = AmapConfig.DEFAULT_YUNTU_HOST + "/datasearch/statistics/province"; 
-		Map<String,Object> params = new HashMap<String,Object>(); 
+		Map<String, Object> params = new HashMap<>(); 
 		params.put("key", config.KEY); 
 		params.put("center", center); 
 		params.put("radius", radius); 
@@ -760,7 +760,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 		coordinate.setSuccess(false);
 		DataRow row = null; 
 		String api = "/v3/geocode/regeo";
-		Map<String,Object> params = new HashMap<>();
+		Map<String, Object> params = new HashMap<>();
 		params.put("key", config.KEY); 
 		params.put("location", coordinate.getLng()+","+coordinate.getLat());
 
@@ -820,7 +820,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 			address = address.replace(" ","");
 		}
 		String api = "/v3/geocode/geo";
-		Map<String,Object> params = new HashMap<String,Object>(); 
+		Map<String, Object> params = new HashMap<>(); 
 		params.put("key", config.KEY); 
 		params.put("address", address); 
 		if(BasicUtil.isNotEmpty(city)){
@@ -881,7 +881,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 	public DataRow directionDrive(String origin, String destination, String points, int strategy){
 		DataRow row = null; 
 		String url = "http://restapi.amap.com/v3/direction/driving"; 
-		Map<String,Object> params = new HashMap<String,Object>(); 
+		Map<String, Object> params = new HashMap<>(); 
 		params.put("key", config.KEY); 
 		params.put("origin", origin); 
 		params.put("destination", destination); 
@@ -926,7 +926,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 	public DataSet poi(String city, String keywords){
 		DataSet set = new DataSet();
 		String url = "https://restapi.amap.com/v5/place/text";
-		Map<String,Object> params = new HashMap<String,Object>();
+		Map<String, Object> params = new HashMap<>();
 		params.put("city", city);
 		params.put("keywords", keywords);
 		params.put("page","1");
@@ -941,7 +941,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 		return set;
 	}
 
-	public DataRow get(String host, String api, Map<String,Object> params){
+	public DataRow get(String host, String api, Map<String, Object> params){
 		DataRow row = null;
 		sign(params);
 		try {
@@ -990,7 +990,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 	 * @param params  params
 	 * @return String
 	 */ 
-	public String sign(Map<String,Object> params){
+	public String sign(Map<String, Object> params){
 		String sign = ""; 
 		sign = BeanUtil.map2string(params) + config.SECRET;
 		sign = MD5Util.sign(sign,"UTF-8");

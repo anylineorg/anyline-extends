@@ -132,7 +132,7 @@ public class ThingsBoardClient extends RestClient {
      * @return boolean
      */
     public boolean saveEntityTelemetry(EntityType type, String id, String scope, Long ttl, Long ts, Map<?,?> values) {
-        Map<String,Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         map.put("ts", ts);
         map.put("values", values);
         List<Map<?,?>> maps = new ArrayList<>();

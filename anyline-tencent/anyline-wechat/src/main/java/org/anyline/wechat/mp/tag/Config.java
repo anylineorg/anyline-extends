@@ -81,7 +81,7 @@ public class Config extends BaseBodyTag {
 				if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
 					log.info("[config init][url:{}]", url);
 				}
-				Map<String,Object> map = util.jsapiSign(url);
+				Map<String, Object> map = util.jsapiSign(url);
 				StringBuilder builder = new StringBuilder();
 				builder.append("<script language=\"javascript\">\n");
 				if(debug){

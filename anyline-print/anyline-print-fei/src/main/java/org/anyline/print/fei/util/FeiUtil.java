@@ -69,7 +69,7 @@ public class FeiUtil {
     public FeiConfig getConfig() {
         return config;
     }
-    private DataRow api(FeiConfig.API api, Map<String,Object> params){
+    private DataRow api(FeiConfig.API api, Map<String, Object> params){
         DataRow result = null;
         long time = System.currentTimeMillis()/1000;
         params.put("user", config.USER);
@@ -108,7 +108,7 @@ public class FeiUtil {
      * @throws Exception 异常 添加失败时异常
      */
     public void addPrinter(String code, String secret, String phone, String name) throws Exception{
-        Map<String,Object> params = new HashMap<String,Object>();
+        Map<String, Object> params = new HashMap<>();
         StringBuilder builder = new StringBuilder();
         builder.append(code).append("#").append(secret).append("#").append(name).append("#").append(phone).append("#1");
         params.put("printerContent", builder.toString());
@@ -126,7 +126,7 @@ public class FeiUtil {
      * @throws Exception 异常 添加失败时异常
      */
     public void deletePrinter(String code) throws Exception{
-        Map<String,Object> params = new HashMap<String,Object>();
+        Map<String, Object> params = new HashMap<>();
         StringBuilder builder = new StringBuilder();
         builder.append(code);
         params.put("snlist", builder.toString());
@@ -145,7 +145,7 @@ public class FeiUtil {
      * @return DataRow
      */
     public DataRow print(String machine, String text, int times) throws Exception{
-        Map<String,Object> params = new HashMap<>();
+        Map<String, Object> params = new HashMap<>();
         params.put("content", text);
         params.put("sn", machine);
         params.put("times", times);

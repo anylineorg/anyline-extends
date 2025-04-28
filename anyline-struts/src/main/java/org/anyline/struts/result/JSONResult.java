@@ -61,7 +61,7 @@ public class JSONResult extends StrutsResultSupport {
         	// 转换成JSON格式 
         	// JsonConfig config = new JsonConfig(); 
         	String dataType   = null; 	// 数据类型
-        	Map<String,Object> map = new HashMap<String,Object>(); 
+        	Map<String, Object> map = new HashMap<>(); 
         	if(null == data){
         		message = (String)BasicUtil.nvl(message, "没有返回数据"); 
         		data = false; 

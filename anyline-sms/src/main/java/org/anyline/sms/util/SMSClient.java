@@ -72,7 +72,7 @@ public class SMSClient {
 	public SMSResult send(String platform, String tenant, String sign, String template, String mobile, Map<String, String> params) {
 		SMSResult result = null; 
 		try{
-			Map<String,Object> map = new HashMap<String,Object>(); 
+			Map<String, Object> map = new HashMap<>(); 
 			map.put("a", config.APP_KEY);
 			map.put("k", config.APP_SECRET);
 			map.put("s", sign);

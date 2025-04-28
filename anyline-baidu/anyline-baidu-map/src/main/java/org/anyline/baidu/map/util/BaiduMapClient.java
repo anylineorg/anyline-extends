@@ -92,7 +92,7 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
 
         Coordinate coordinate = new Coordinate();
         coordinate.setAddress(address);
-        Map<String,Object> params = new LinkedHashMap<>();
+        Map<String, Object> params = new LinkedHashMap<>();
         params.put("address", address);
         params.put("output", "json");
         DataRow row = api(api, params);
@@ -123,7 +123,7 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
         coordinate.setLng(_lng);
         coordinate.setLat(_lat);
         coordinate.setSrs(_type);
-        Map<String,Object> params = new LinkedHashMap<>();
+        Map<String, Object> params = new LinkedHashMap<>();
         params.put("location",coordinate.getLat()+","+coordinate.getLng());
         params.put("extensions_town","true");
         params.put("output","json");
@@ -163,7 +163,7 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
     }
 
 
-    private DataRow api(String api, Map<String,Object> params){
+    private DataRow api(String api, Map<String, Object> params){
         DataRow row = null;
         sign(api, params);
         HttpResponse response = HttpUtil.get(HOST + api,"UTF-8", params);
@@ -194,7 +194,7 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
         }
         return row;
     }
-    public void sign(String api, Map<String,Object> params){
+    public void sign(String api, Map<String, Object> params){
         params.put("ak", config.AK);
         try {
             for (String key : params.keySet()) {

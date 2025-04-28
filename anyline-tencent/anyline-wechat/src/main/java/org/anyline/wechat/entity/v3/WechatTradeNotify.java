@@ -30,10 +30,10 @@ public class WechatTradeNotify {
     private String bank_type			            ;//付款银行			sring[1,16] 否  银行类型,采用字符串类型的银行标识.  示例值:CMC
     private String attach				            ;//附加数据			sring[1,128] 否  附加数据,在查询API和支付通知中原样返回,可作为自定义参数使用  示例值:自定义数据
     private String success_time			            ;//支付完成时间		sring[1,64] 否  支付完成时间,遵循rfc3339标准格式,格式为YYYY-MM-DDTHH:mm:ss+TIMEZONE,YYYY-MM-DD表示年月日,T出现在字符串中,表示time元素的开头,HH:mm:ss表示时分秒,TIMEZONE表示时区（+08:00表示东八区时间,领先UTC 8小时,即北京时间）.例如:2015-05-20T13:29:35+08:00表示,北京时间2015年5月20日 13点29分35秒.  示例值:2018-06-08T10:34:56+08:00
-    private Map<String,Object> combine_payer_info   ;//支付者			object 否  示例值:见请求示例
-    private Map<String,Object> amount               ;//订单金额信息
-    private Map<String,Object> scene_info           ;//场景信息
-    private Map<String,Object> promotion_detail     ; // 优惠功能
+    private Map<String, Object> combine_payer_info   ;//支付者			object 否  示例值:见请求示例
+    private Map<String, Object> amount               ;//订单金额信息
+    private Map<String, Object> scene_info           ;//场景信息
+    private Map<String, Object> promotion_detail     ; // 优惠功能
 
     public String getAppid() {
         return appid;

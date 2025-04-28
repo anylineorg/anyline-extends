@@ -289,7 +289,7 @@ public class FeishuUtil {
 		String url = "https://open.feishu.cn/open-apis/contact/v3/departments/"+parent+"/children";
 		Map<String, String> header = new HashMap<>();
 		header.put("Authorization", "Bearer " + tenant_access_token());
-		Map<String,Object> params = new HashMap<>();
+		Map<String, Object> params = new HashMap<>();
 		params.put("page_size", 50);
 		while (true) {
 			String body = HttpUtil.get(header, url, "UTF-8", params).getText();

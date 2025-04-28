@@ -41,7 +41,8 @@
 		<module>anyline-web-ext</module>
 		<module>anyline-feishu</module>
 		<module>anyline-extends-environment</module>
-	</modules>
+        <module>anyline-print/anyline-print-feng</module>
+    </modules>
 	<build>
 		<plugins>
 			<plugin>

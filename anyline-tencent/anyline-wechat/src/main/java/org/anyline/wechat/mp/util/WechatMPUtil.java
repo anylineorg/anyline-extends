@@ -149,15 +149,15 @@ public class WechatMPUtil extends WechatUtil {
 	 * @param params  params
 	 * @return String
 	 */ 
-	public String jsapiSign(Map<String,Object> params){
+	public String jsapiSign(Map<String, Object> params){
 		String sign = ""; 
 		sign = BeanUtil.map2string(params);
 		sign = SHA1Util.sign(sign);
 		return sign; 
 	} 
 	 
-	public Map<String,Object> jsapiSign(String url){
-		Map<String,Object> params = new HashMap<String,Object>(); 
+	public Map<String, Object> jsapiSign(String url){
+		Map<String, Object> params = new HashMap<>(); 
 		params.put("noncestr", BasicUtil.getRandomLowerString(32)); 
 		params.put("jsapi_ticket", getJsapiTicket()); 
 		params.put("timestamp", System.currentTimeMillis()/1000+""); 
@@ -297,7 +297,7 @@ public class WechatMPUtil extends WechatUtil {
 	public DataRow addUserTag(List<String> users, int tag){
 		String token = getAccessToken();
 		String url = "https://api.weixin.qq.com/cgi-bin/tags/members/batchuntagging?access_token="+token;
-		Map<String,Object> params = new HashMap<String,Object>();
+		Map<String, Object> params = new HashMap<>();
 		params.put("openid_list", users);
 		params.put("tagid", tag);
 		String result = HttpUtil.post(url,"UTF-8", new StringEntity(BeanUtil.map2json(params),"UTF-8")).getText();

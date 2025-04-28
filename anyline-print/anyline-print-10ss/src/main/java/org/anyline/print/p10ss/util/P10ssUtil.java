@@ -15,12 +15,12 @@
  */
 
 
-package org.anyline.p10ss.util;
+package org.anyline.print.p10ss.util;
 
 import org.anyline.entity.DataRow;
 import org.anyline.entity.DataSet;
 import org.anyline.net.HttpUtil;
-import org.anyline.p10ss.util.P10ssConfig.URL;
+import org.anyline.print.p10ss.util.P10ssConfig.URL;
 import org.anyline.util.BasicUtil;
 import org.anyline.util.encrypt.MD5Util;
 import org.anyline.log.Log;
@@ -74,7 +74,7 @@ public class P10ssUtil {
     public P10ssConfig getConfig() {
         return config;
     }
-    private DataRow api(P10ssConfig.URL url, Map<String,Object> params){
+    private DataRow api(P10ssConfig.URL url, Map<String, Object> params){
         DataRow result = null;
         long time = System.currentTimeMillis()/1000;
         params.put("client_id", config.APP_ID);
@@ -122,7 +122,7 @@ public class P10ssUtil {
     public DataRow newAccessToken(){
         DataRow row = null;
         if(BasicUtil.isEmpty(config.ACCESS_TOKEN_SERVER)){
-            Map<String,Object> params = new HashMap<String,Object>();
+            Map<String, Object> params = new HashMap<>();
             params.put("grant_type", "client_credentials");
             params.put("scope","all");
             row = api(P10ssConfig.URL.ACCESS_TOKEN, params);
@@ -142,7 +142,7 @@ public class P10ssUtil {
     public DataRow newAccessToken(String code){
         DataRow row = null;
 //       if(BasicUtil.isEmpty(config.ACCESS_TOKEN_SERVER)){
-        Map<String,Object> params = new HashMap<String,Object>();
+        Map<String, Object> params = new HashMap<>();
         params.put("grant_type", "authorization_code");			// 开放平台
         params.put("code",code);
         params.put("scope","all");
@@ -163,7 +163,7 @@ public class P10ssUtil {
     public DataRow refreshAccessToken(String refresh){
         DataRow row = null;
         // if(BasicUtil.isEmpty(config.ACCESS_TOKEN_SERVER)){
-        Map<String,Object> params = new HashMap<String,Object>();
+        Map<String, Object> params = new HashMap<>();
         params.put("grant_type", "refresh_token");
         params.put("scope", "all");
         params.put("refresh_token", refresh);
@@ -202,7 +202,7 @@ public class P10ssUtil {
      * @throws Exception 异常 添加失败时异常
      */
     public void addPrinter(String code, String secret, String phone, String name) throws Exception{
-        Map<String,Object> params = new HashMap<String,Object>();
+        Map<String, Object> params = new HashMap<>();
         params.put("machine_code", code);
         params.put("msign", secret);
         if(BasicUtil.isNotEmpty(phone)) {
@@ -227,7 +227,7 @@ public class P10ssUtil {
      * @throws Exception 异常 添加失败时异常
      */
     public void deletePrinter(String code) throws Exception{
-        Map<String,Object> params = new HashMap<String,Object>();
+        Map<String, Object> params = new HashMap<>();
         params.put("machine_code", code);
         DataRow token = getAccessToken();
         params.put("access_token", token.getString("access_token"));
@@ -247,7 +247,7 @@ public class P10ssUtil {
      */
     public DataRow print(String machine, String order, String text) throws Exception{
         DataRow token = getAccessToken();
-        Map<String,Object> params = new HashMap<String,Object>();
+        Map<String, Object> params = new HashMap<>();
         params.put("machine_code", machine);
         if(BasicUtil.isNotEmpty(order)) {
             params.put("origin_id", order);
