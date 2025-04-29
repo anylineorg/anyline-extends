@@ -26,8 +26,12 @@ import org.anyline.print.feng.util.FengConfig.URL;
 import org.anyline.util.BasicUtil;
 import org.anyline.util.BeanUtil;
 import org.anyline.util.encrypt.MD5Util;
+import org.apache.http.entity.StringEntity;
 
-import java.util.*;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Map;
 
 public class FengUtil {
     private static final Log log = LogProxy.get(FengUtil.class);
@@ -71,21 +75,23 @@ public class FengUtil {
     public FengConfig getConfig() {
         return config;
     }
-    private DataRow api(FengConfig.URL url, Map<String, Object> data){
+    private DataRow api(FengConfig.URL api, Map<String, Object> data){
         DataRow result = null;
         long time = System.currentTimeMillis()/1000;
-        String nonce = BasicUtil.getRandomLowerString(6);
+        String nonce = BasicUtil.getRandomNumberString(6);
         Map<String, Object> params = new HashMap<>();
         String json = BeanUtil.map2json(data);
         String sign = sign(json, nonce);
-        params.put("bizData", data);
+        params.put("bizData", json);
         params.put("nonce", nonce);
         params.put("appId", config.APP_ID);
-        params.put("timestamp",time);
+        params.put("timestamp",time+"");
         Map<String, String> header = new HashMap<>();
         header.put("Content-Type","application/json");
         header.put("sign", sign);
-        String txt = HttpUtil.post(header,url.getCode(), "UTF-8",params).getText();
+        String body = BeanUtil.map2json(params);
+        String url = HttpUtil.mergePath("https://iot-app-prod.fengdada.cn", api.getCode());
+        String txt = HttpUtil.post(header, url, "UTF-8", new StringEntity(body, "UTF-8")).getText();
         log.info("[invoice api][result:{}]", txt);
         DataRow row = DataRow.parseJson(txt);
         if(row.getInt("code",-1) == 200){
@@ -174,8 +180,8 @@ public class FengUtil {
     public String sign(String data, String nonce) {
         String result = null;
         try {
-            String md5 = MD5Util.crypto(data+nonce+config.APP_SECRET).toLowerCase();
-            result = Base64.getEncoder().encodeToString(md5.getBytes());
+            byte[] bytes = MD5Util.bytes(data + nonce + config.APP_SECRET);
+            result = Base64.getEncoder().encodeToString(bytes);
         }catch (Exception e){
             e.printStackTrace();
         }
