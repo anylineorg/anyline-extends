@@ -44,7 +44,7 @@ public class FengConfig extends AnylineConfig {
 
 
     private static File configDir;
-    public static String CONFIG_NAME = "anyline-feng.xml";
+    public static String CONFIG_NAME = "anyline-print-feng.xml";
 
     public static enum URL{
         CAPTCHA             {public String getCode(){return "/mk/api/print/captcha";} 	        public String getName(){return "验证码";}},

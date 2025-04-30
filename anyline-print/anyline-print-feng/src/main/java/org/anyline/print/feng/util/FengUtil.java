@@ -108,11 +108,12 @@ public class FengUtil {
     /**
      * 打印机验证码 调用后打打印出来
      * @param code 打印机imei编号
+     * @return 打印结果
      */
-    public void captcha(String code){
+    public DataRow captcha(String code){
         Map<String, Object> params = new HashMap<>();
         params.put("printerId", code);
-        api(URL.CAPTCHA, params);
+        return api(URL.CAPTCHA, params);
     }
     /**
      * 自用模式 添加打印机

@@ -44,7 +44,7 @@ public class P10ssConfig  extends AnylineConfig {
 
 
     private static File configDir;
-    public static String CONFIG_NAME = "anyline-p10ss.xml";
+    public static String CONFIG_NAME = "anyline-print-p10ss.xml";
 
     public static enum URL{
         ACCESS_TOKEN		{public String getCode(){return "https://open-api.10ss.net/oauth/oauth";} 	        public String getName(){return "ACCESS TOKEN";}},
