@@ -262,14 +262,14 @@ public class P10ssUtil {
         params.put("machine_code", machine);
         params.put("order_id", order);
         params.put("access_token", token.getString("access_token"));
-        return api(URL.PRINT_TEXT, params);
+        return api(URL.PRINT_CANCEL, params);
     }
     public DataRow cancels(String machine){
         DataRow token = getAccessToken();
         Map<String, Object> params = new HashMap<>();
         params.put("machine_code", machine);
         params.put("access_token", token.getString("access_token"));
-        return api(URL.PRINT_TEXT, params);
+        return api(URL.PRINT_CANCELS, params);
     }
     private String sign(long time){
         String result = MD5Util.crypto(config.APP_ID+time+config.APP_SECRET).toLowerCase();
