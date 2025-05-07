@@ -50,7 +50,9 @@ public class P10ssConfig  extends AnylineConfig {
         ACCESS_TOKEN		{public String getCode(){return "https://open-api.10ss.net/oauth/oauth";} 	        public String getName(){return "ACCESS TOKEN";}},
         ADD_PRINTER	        {public String getCode(){return "https://open-api.10ss.net/printer/addprinter";}    public String getName(){return "添加自用打印机";}},
         DELETE_PRINTER	    {public String getCode(){return "https://open-api.10ss.net/printer/deleteprinter";}    public String getName(){return "删除自用打印机";}},
-        PRINT_TEXT	        {public String getCode(){return "https://open-api.10ss.net/print/index";}    public String getName(){return "打印文本";}};
+        PRINT_TEXT	        {public String getCode(){return "https://open-api.10ss.net/print/index";}    public String getName(){return "打印文本";}},
+        PRINT_CANCEL	    {public String getCode(){return "https://open-api.10ss.net/printer/cancelone";}    public String getName(){return "取消打印";}},
+        PRINT_CANCELS	    {public String getCode(){return "https://open-api.10ss.net/printer/cancelall";}    public String getName(){return "取消打印";}};
         public abstract String getName();
         public abstract String getCode();
     };
