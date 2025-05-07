@@ -239,7 +239,7 @@ public class P10ssUtil {
 
     /**
      * 文本打印
-     * @param machine machine
+     * @param machine 设备号
      * @param order order
      * @param text text
      * @throws Exception 异常 Exception

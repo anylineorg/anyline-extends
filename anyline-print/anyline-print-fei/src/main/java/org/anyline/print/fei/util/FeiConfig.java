@@ -46,6 +46,7 @@ public class FeiConfig  extends AnylineConfig {
     public static enum API{
         ADD_PRINTER	        {public String getCode(){return "Open_printerAddlist";}    public String getName(){return "添加自用打印机";}},
         DELETE_PRINTER	    {public String getCode(){return "Open_printerDelList";}    public String getName(){return "删除自用打印机";}},
+        PRINT_CANCELS       {public String getCode(){return "Open_delPrinterSqs";}    public String getName(){return "取消打印";}},
         PRINT_TEXT	        {public String getCode(){return "Open_printMsg";}    public String getName(){return "打印文本";}};
         public abstract String getName();
         public abstract String getCode();

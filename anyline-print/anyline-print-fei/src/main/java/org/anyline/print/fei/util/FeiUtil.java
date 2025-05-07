@@ -138,7 +138,7 @@ public class FeiUtil {
 
     /**
      * 文本打印
-     * @param machine machine
+     * @param machine 设备号
      * @param times 打印次数
      * @param text text
      * @throws Exception 异常 Exception
@@ -157,6 +157,22 @@ public class FeiUtil {
     }
     public DataRow print(String machine, String text) throws Exception{
         return print(machine, text, 1);
+    }
+
+    /**
+     * 取消打印
+     * @param machine 设备号
+     * @throws Exception 异常 Exception
+     * @return DataRow
+     */
+    public DataRow cancels(String machine) throws Exception{
+        Map<String, Object> params = new HashMap<>();
+        params.put("sn", machine);
+        DataRow row = api(FeiConfig.API.PRINT_CANCELS, params);
+        if(!row.getBoolean("success",false)){
+            throw new Exception(row.getString("error"));
+        }
+        return row;
     }
     //对参数user+UKEY+stime 拼接后（+号表示连接符）进行SHA1加密得到签名，加密后签名值为40位小写字符串
     private String sign(long time){
