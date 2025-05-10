@@ -144,11 +144,14 @@ public class FeiUtil {
      * @throws Exception 异常 Exception
      * @return DataRow
      */
-    public DataRow print(String machine, String text, int times) throws Exception{
+    public DataRow print(String machine, String text, int times, String callback) throws Exception{
         Map<String, Object> params = new HashMap<>();
         params.put("content", text);
         params.put("sn", machine);
         params.put("times", times);
+        if(BasicUtil.isNotEmpty(callback)){
+            params.put("backurl", callback);
+        }
         DataRow row = api(FeiConfig.API.PRINT_TEXT, params);
         if(!row.getBoolean("success",false)){
             throw new Exception(row.getString("error"));
@@ -156,7 +159,10 @@ public class FeiUtil {
         return row;
     }
     public DataRow print(String machine, String text) throws Exception{
-        return print(machine, text, 1);
+        return print(machine, text, 1, null);
+    }
+    public DataRow print(String machine, String text, String callback) throws Exception{
+        return print(machine, text, 1, callback);
     }
 
     /**
