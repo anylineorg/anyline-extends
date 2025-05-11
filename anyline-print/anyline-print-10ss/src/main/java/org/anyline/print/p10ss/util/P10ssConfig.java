@@ -46,8 +46,9 @@ public class P10ssConfig  extends AnylineConfig {
     private static File configDir;
     public static String CONFIG_NAME = "anyline-print-p10ss.xml";
 
-    public static enum URL{
+    public enum URL{
         ACCESS_TOKEN		{public String getCode(){return "https://open-api.10ss.net/oauth/oauth";} 	        public String getName(){return "ACCESS TOKEN";}},
+        CONFIG_PUSH		    {public String getCode(){return "https://open-api.10ss.net/oauth/setpushurl";} 	    public String getName(){return "设置推送地址";}},
         ADD_PRINTER	        {public String getCode(){return "https://open-api.10ss.net/printer/addprinter";}    public String getName(){return "添加自用打印机";}},
         DELETE_PRINTER	    {public String getCode(){return "https://open-api.10ss.net/printer/deleteprinter";}    public String getName(){return "删除自用打印机";}},
         PRINT_TEXT	        {public String getCode(){return "https://open-api.10ss.net/print/index";}    public String getName(){return "打印文本";}},
@@ -56,6 +57,14 @@ public class P10ssConfig  extends AnylineConfig {
         public abstract String getName();
         public abstract String getCode();
     };
+    public enum PUSH_TYPE{
+
+        PRINT_FINISH	    {public String getCode(){return "oauth_finish";}    public String getName(){return "打印完成";}},
+        ORDER_STATUS	    {public String getCode(){return "oauth_getOrder";}    public String getName(){return "接单拒单";}},
+        MACHINE_STATUS	    {public String getCode(){return "oauth_printStatus";}    public String getName(){return "终端状态";}};
+        public abstract String getName();
+        public abstract String getCode();
+    }
 
     public static Hashtable<String,AnylineConfig>getInstances(){
         return instances;

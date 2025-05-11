@@ -19,12 +19,12 @@ package org.anyline.print.p10ss.util;
 
 import org.anyline.entity.DataRow;
 import org.anyline.entity.DataSet;
+import org.anyline.log.Log;
+import org.anyline.log.LogProxy;
 import org.anyline.net.HttpUtil;
 import org.anyline.print.p10ss.util.P10ssConfig.URL;
 import org.anyline.util.BasicUtil;
 import org.anyline.util.encrypt.MD5Util;
-import org.anyline.log.Log;
-import org.anyline.log.LogProxy;
 
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -255,6 +255,22 @@ public class P10ssUtil {
         params.put("content",text);
         params.put("access_token", token.getString("access_token"));
         return api(URL.PRINT_TEXT, params);
+    }
+    public DataRow setPush(String machine, P10ssConfig.PUSH_TYPE type, String url, String status){
+        DataRow token = getAccessToken();
+        Map<String, Object> params = new HashMap<>();
+        params.put("machine_code", machine);
+        params.put("cmd", type.getCode());
+        params.put("url", url);
+        params.put("status", "open");
+        params.put("access_token", token.getString("access_token"));
+        return api(URL.CONFIG_PUSH, params);
+    }
+    public DataRow openPush(String machine, P10ssConfig.PUSH_TYPE type, String url){
+        return setPush(machine, type, url, "open");
+    }
+    public DataRow cancelPush(String machine, P10ssConfig.PUSH_TYPE type, String url){
+        return setPush(machine, type, url, "close");
     }
     public DataRow cancel(String machine, String order){
         DataRow token = getAccessToken();
