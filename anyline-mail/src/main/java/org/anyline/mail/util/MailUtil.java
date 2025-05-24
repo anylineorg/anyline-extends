@@ -58,9 +58,9 @@ public class MailUtil {
 		} 
 		MailUtil util = instances.get(key); 
 		if (null == util) {
-			util = new MailUtil(); 
 			MailConfig config = MailConfig.getInstance(key);
 			if(null != config) {
+				util = new MailUtil();
 				util.config = config;
 				util.props.put("username", config.ACCOUNT);
 				util.props.put("password", config.PASSWORD);
