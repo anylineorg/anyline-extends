@@ -75,16 +75,18 @@ public class PDFUtil {
         }
         return result;
     }
-
+    public static List<String> reads(File file) throws Exception {
+        return reads(file, false);
+    }
     /**
      * 按页读取
-     * @param file
+     * @param file 文件
+     * @param position 是否按位置排序(true:上先,false:左先)
      * @return strings
      * @throws Exception Exception
      */
-    public static List<String> reads(File file) throws Exception {
+    public static List<String> reads(File file, boolean position) throws Exception {
         // 是否排序
-        boolean sort = false;
         // 内存中存储的PDF Document
         PDDocument doc = null;
         //输入流
@@ -96,7 +98,7 @@ public class PDFUtil {
             PDFTextStripper stripper = null;
             stripper = new PDFTextStripper();
             // 设置是否排序
-            stripper.setSortByPosition(sort);
+            stripper.setSortByPosition(position);
 
             List<String> texts=new ArrayList<>();
             for (int i = 0; i < endPage; i++) {
