@@ -33,6 +33,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,6 +74,90 @@ public class PDFUtil {
             }
         }
         return result;
+    }
+
+    /**
+     * 按页读取
+     * @param file
+     * @return strings
+     * @throws Exception Exception
+     */
+    public static List<String> reads(File file) throws Exception {
+        // 是否排序
+        boolean sort = false;
+        // 内存中存储的PDF Document
+        PDDocument doc = null;
+        //输入流
+        InputStream is = Files.newInputStream(file.toPath());
+        try {
+            doc = PDDocument.load(is);
+            // 获取页码
+            int endPage = doc.getNumberOfPages();
+            PDFTextStripper stripper = null;
+            stripper = new PDFTextStripper();
+            // 设置是否排序
+            stripper.setSortByPosition(sort);
+
+            List<String> texts=new ArrayList<>();
+            for (int i = 0; i < endPage; i++) {
+                int page=i+1;
+                // 设置起始页
+                stripper.setStartPage(page);
+                // 设置结束页
+                stripper.setEndPage(page);
+                texts.add(stripper.getText(doc));
+            }
+            return texts;
+        } finally {
+            if (is != null) {
+                // 关闭输出流
+                is.close();
+            }
+            if (doc != null) {
+                // 关闭PDF Document
+                doc.close();
+            }
+        }
+    }
+    public static void remove(File file, File target, int ... pages) throws Exception{
+        PDDocument doc = null;
+        //输入流
+        InputStream is = Files.newInputStream(file.toPath());
+        try {
+            doc = PDDocument.load(is);
+            int size = pages.length;
+            for(int i=size-1;i>=0;i--){
+                int page = pages[i];
+                doc.removePage(page);
+            }
+            doc.save(target);
+        } finally {
+            is.close();
+            if (doc != null) {
+                // 关闭PDF Document
+                doc.close();
+            }
+        }
+    }
+    public static void remove(File file, File target, List<Integer> pages) throws Exception{
+        PDDocument doc = null;
+        //输入流
+        InputStream is = Files.newInputStream(file.toPath());
+        try {
+            doc = PDDocument.load(is);
+            int size = pages.size();
+            for(int i=size-1;i>=0;i--){
+                int page = pages.get(i);
+                doc.removePage(page);
+            }
+            doc.save(target);
+        } finally {
+            is.close();
+            if (doc != null) {
+                // 关闭PDF Document
+                doc.close();
+            }
+        }
     }
     /**
      * 读取pdf文件图片<br/>
