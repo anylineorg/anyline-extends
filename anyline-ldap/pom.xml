@@ -11,8 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>anyline-ldap</artifactId>
-
-
+    <name>anyline ldap</name>
     <dependencies>
         <dependency>
             <groupId>org.anyline</groupId>

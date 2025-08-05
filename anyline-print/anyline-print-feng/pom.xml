@@ -11,6 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>anyline-print-feng</artifactId>
+    <name>anyline print feng</name>
     <description>蜂打打</description>
     <dependencies>
         <dependency>

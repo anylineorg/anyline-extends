@@ -11,6 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>anyline-baidu-ai-ocr</artifactId>
+    <name>anyline baidu ai ocr</name>
 
     <properties>
     </properties>

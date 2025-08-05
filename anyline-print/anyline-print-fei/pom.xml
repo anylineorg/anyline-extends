@@ -11,6 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>anyline-print-fei</artifactId>
+    <name>anyline print fei</name>
     <description>飞鹅打印机</description>
     <dependencies>
         <dependency>

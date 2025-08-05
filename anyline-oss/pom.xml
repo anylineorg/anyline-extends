@@ -14,7 +14,7 @@
     <artifactId>anyline-oss</artifactId>
     <packaging>jar</packaging>
     <name>anyline-oss</name>
-    <description></description>
+    <description>anyline oss</description>
     <url>http://www.anyline.org/oss</url>
 
     <dependencies>
