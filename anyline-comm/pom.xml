@@ -10,6 +10,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>anyline-comm</artifactId>
+    <name>anyline comm</name>
     <description>串、并口通信</description>
     <dependencies>
         <dependency>
