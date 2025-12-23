@@ -107,7 +107,7 @@ public class EasemobUtil {
 			String txt = HttpUtil.post(defaultHeader(), url, "UTF-8", entity).getText(); 
 			DataRow row = DataRow.parseJson(txt); 
 			if(null != row && row.containsKey("entities")){
-				DataSet set = row.getSet("entities"); 
+				DataSet<DataRow> set = row.getSet("entities"); 
 				if(set.size() > 0){
 					result = set.getRow(0); 
 				} 
@@ -128,8 +128,8 @@ public class EasemobUtil {
 	 * @param list  list
 	 * @return DataSet
 	 */ 
-	public DataSet regs(List<Map<String, String>> list){
-		DataSet result = new DataSet(); 
+	public DataSet<DataRow> regs(List<Map<String, String>> list){
+		DataSet<DataRow> result = new DataSet(); 
 		StringBuilder json = new StringBuilder(); 
 		json.append("["); 
 		if(null != list){
@@ -252,7 +252,7 @@ public class EasemobUtil {
 			} 
 			DataRow row = DataRow.parseJson(txt); 
 			if(null != row && row.containsKey("entities")){
-				DataSet set = row.getSet("entities"); 
+				DataSet<DataRow> set = row.getSet("entities"); 
 				if(set.size() > 0){
 					result = set.getRow(0); 
 				} 
@@ -268,8 +268,8 @@ public class EasemobUtil {
 	 * @param cursor 分页游标 
 	 * @return DataSet
 	 */ 
-	public DataSet getUsers(int limit, String cursor){
-		DataSet set = new DataSet(); 
+	public DataSet<DataRow> getUsers(int limit, String cursor){
+		DataSet<DataRow> set = new DataSet(); 
 		String url = baseUrl +  "/users/"; 
 		Map<String, String> params = new HashMap<String, String>(); 
 		params.put("limit", limit+""); 
@@ -293,7 +293,7 @@ public class EasemobUtil {
 		} 
 		return set; 
 	} 
-	public DataSet getUsers(int limit){
+	public DataSet<DataRow> getUsers(int limit){
 		return getUsers(limit, null); 
 	} 
 	/** 
@@ -321,8 +321,8 @@ public class EasemobUtil {
 	 * @param user  user
 	 * @return DataSet
 	 */ 
-	public DataSet getFriends(String user){
-		DataSet result = new DataSet(); 
+	public DataSet<DataRow> getFriends(String user){
+		DataSet<DataRow> result = new DataSet(); 
 		String url = baseUrl + "/users/" + user + "/contacts/users"; 
 		try {
 			String txt = HttpBuilder.init()
@@ -398,8 +398,8 @@ public class EasemobUtil {
 	 * @param block  block
 	 * @return DataSet
 	 */
-	public DataSet getBlocks(String block){
-		DataSet result = new DataSet(); 
+	public DataSet<DataRow> getBlocks(String block){
+		DataSet<DataRow> result = new DataSet(); 
 		String url = baseUrl + "/users/" + block + "/blocks/users"; 
 		try {
 			String txt = HttpBuilder.init()

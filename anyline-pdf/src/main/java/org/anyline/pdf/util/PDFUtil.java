@@ -17,6 +17,7 @@
 
 package org.anyline.pdf.util;
 
+import org.anyline.entity.DataRow;
 import org.anyline.entity.DataSet;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.io.RandomAccessBuffer;
@@ -207,8 +208,8 @@ public class PDFUtil {
      * 读取表格
      * @return DataSet
      */
-    public static DataSet table(){
-        DataSet set = new DataSet();
+    public static DataSet<DataRow> table(){
+        DataSet<DataRow> set = new DataSet();
         return set;
     }
 

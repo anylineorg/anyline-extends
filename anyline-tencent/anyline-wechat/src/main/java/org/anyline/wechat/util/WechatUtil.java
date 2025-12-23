@@ -39,7 +39,7 @@ import java.util.Map;
  
 public class WechatUtil {
 	protected static final Log log = LogProxy.get(WechatUtil.class);
-	private static DataSet accessTokens = new DataSet();
+	private static DataSet<DataRow> accessTokens = new DataSet();
 	/** 
 	 * 参数签名 
 	 *  

@@ -36,7 +36,7 @@ import java.util.Map;
 public class FengUtil {
     private static final Log log = LogProxy.get(FengUtil.class);
 
-    private static DataSet accessTokens = new DataSet();
+    private static DataSet<DataRow> accessTokens = new DataSet();
     private FengConfig config = null;
 
     private static Hashtable<String, FengUtil> instances = new Hashtable<String, FengUtil>();

@@ -89,13 +89,13 @@ public class AnylineAction extends AbstractController implements ServletRequestA
 		return entity(request, KEY_CASE.CONFIG, null, false, false, params);
 	}
 
-	public DataSet entitys(boolean keyEncrypt, boolean valueEncrypt, String... params) {
+	public DataSet<DataRow> entitys(boolean keyEncrypt, boolean valueEncrypt, String... params) {
 		return entitys(request, KEY_CASE.CONFIG, keyEncrypt, valueEncrypt, params);
 	}
-	public DataSet entitys(boolean keyEncrypt, String... params) {
+	public DataSet<DataRow> entitys(boolean keyEncrypt, String... params) {
 		return entitys(request, KEY_CASE.CONFIG, keyEncrypt, false, params);
 	}
-	public DataSet entitys(String... params) {
+	public DataSet<DataRow> entitys(String... params) {
 		return entitys(request, KEY_CASE.CONFIG, false, false, params);
 	}
 	protected ConfigStore condition(boolean navi, String... configs) {
@@ -294,7 +294,7 @@ public class AnylineAction extends AbstractController implements ServletRequestA
 	protected String success() {
 		return success(request, data); 
 	} 
-	public String navi(DataSet data, String page, Object ext){
+	public String navi(DataSet<DataRow> data, String page, Object ext){
 		if(null == data){
 			data = (DataSet)request.getAttribute("_anyline_navi_data"); 
 		}else{
@@ -307,7 +307,7 @@ public class AnylineAction extends AbstractController implements ServletRequestA
 		Map<String, Object> map = super.navi(request, response, data, navi, page, ext); 
 		return success(map); 
 	} 
-	public String navi(DataSet data, String page){
+	public String navi(DataSet<DataRow> data, String page){
 		return navi(data, page, null); 
 	} 
 	protected String jsonFail(Object... msgs){
@@ -330,7 +330,7 @@ public class AnylineAction extends AbstractController implements ServletRequestA
 			} 
 		} 
 		String html = ""; 
-		DataSet messages = (DataSet) request.getAttribute(Constant.REQUEST_ATTR_MESSAGE);
+		DataSet<DataRow> messages = (DataSet) request.getAttribute(Constant.REQUEST_ATTR_MESSAGE);
 		if (null != messages) {
 			for (int i = 0; i < messages.size(); i++) {
 				DataRow msg = messages.getRow(i); 

@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.Map;
 
 public class WechatMPUtil extends WechatUtil {
-	private static DataSet jsapiTickets = new DataSet();
+	private static DataSet<DataRow> jsapiTickets = new DataSet();
 
 	private WechatMPConfig config = null;
 

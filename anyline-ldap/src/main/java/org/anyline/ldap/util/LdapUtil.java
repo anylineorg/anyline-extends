@@ -252,8 +252,8 @@ public class LdapUtil {
 	 * @param filter  :指定子节点(格式为"(objectclass=*)",*是指全部,可以指定某一特定类型的树节点)
 	 * @return DataSet
 	 */
-	public DataSet search(String base, int scope, String filter) {
-		DataSet set = new DataSet();
+	public DataSet<DataRow> search(String base, int scope, String filter) {
+		DataSet<DataRow> set = new DataSet();
 		SearchControls sc = new SearchControls();
 		sc.setSearchScope(scope);
 		NamingEnumeration ne = null;

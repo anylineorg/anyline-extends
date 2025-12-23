@@ -108,7 +108,7 @@ public class P10ssConfig  extends AnylineConfig {
     public static P10ssConfig parse(String key, DataRow row){
         return parse(P10ssConfig.class, key, row, instances,compatibles);
     }
-    public static Hashtable<String,AnylineConfig> parse(String column, DataSet set){
+    public static Hashtable<String,AnylineConfig> parse(String column, DataSet<DataRow> set){
         for(DataRow row:set){
             String key = row.getString(column);
             parse(key, row);

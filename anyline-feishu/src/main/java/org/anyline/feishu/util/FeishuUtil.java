@@ -229,7 +229,7 @@ public class FeishuUtil {
 		String url = "https://open.feishu.cn/open-apis/contact/v3/users/batch";
 		String body = HttpUtil.get(header, url, "UTF-8", params).getText();
 		DataRow row = DataRow.parseJson(body);
-		DataSet items = row.getRow("data").getSet("items");
+		DataSet<DataRow> items = row.getRow("data").getSet("items");
 		if(null != items) {
 			for (DataRow item : items) {
 				users.add(info(item));
@@ -261,7 +261,7 @@ public class FeishuUtil {
 			DataRow row = DataRow.parseJson(body);
 			DataRow data = row.getRow("data");
 			if(null != data) {
-				DataSet items = data.getSet("items");
+				DataSet<DataRow> items = data.getSet("items");
 				if (null != items) {
 					for (DataRow item : items) {
 						users.add(info(item));
@@ -297,7 +297,7 @@ public class FeishuUtil {
 			if (row.getInt("CODE", -1) == 0) {
 				DataRow data = row.getRow("data");
 				if(null != data) {
-					DataSet items = data.getItems();
+					DataSet<DataRow> items = data.getItems();
 					if (null != items) {
 						for (DataRow item : items) {
 							Department department = new Department();
@@ -305,7 +305,7 @@ public class FeishuUtil {
 							department.setName(item.getString("name"));
 							department.setOpenid(item.getString("open_department_id"));
 							department.setParentCode(item.getString("parent_department_id"));
-							DataSet leaders = item.getSet("leaders");
+							DataSet<DataRow> leaders = item.getSet("leaders");
 							if (null != leaders) {
 								for (DataRow leader : leaders) {
 									if (leader.getInt("leaderType", 0) == 1) {//主负责人
