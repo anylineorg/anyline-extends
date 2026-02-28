@@ -68,7 +68,7 @@ public class JSONResult extends StrutsResultSupport {
         	}else if(data instanceof Iterable){
 				dataType = "list"; 
         	}else if (data instanceof DataSet) {
-        		DataSet set = (DataSet)data; 
+        		DataSet<DataRow> set = (DataSet)data; 
         		result = set.isSuccess(); 
         		message = (String)BasicUtil.nvl(message,set.getMessage()); 
 				dataType = "list"; 

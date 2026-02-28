@@ -180,8 +180,8 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
                         throw new AnylineException("API_OVER_LIMIT", "访问已超出日访问量");
                     } else if ("401".equals(status) || "402".equals(status)) {
                         try {
-                            log.warn("并发量已达到上限,sleep 50 ...");
-                            Thread.sleep(50);
+                            log.warn("并发量已达到上限,sleep 100 ...");
+                            Thread.sleep(100);
                             api(api, params);
                         } catch (Exception e) {
                             e.printStackTrace();

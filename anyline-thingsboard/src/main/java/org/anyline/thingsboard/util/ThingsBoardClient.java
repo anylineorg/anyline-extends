@@ -179,7 +179,7 @@ public class ThingsBoardClient extends RestClient {
      * @return DataSet
      */
 
-    public DataSet getLatestTimeseries(EntityType type, String id,  String keys, boolean useStrictDataTypes) {
+    public DataSet<DataRow> getLatestTimeseries(EntityType type, String id,  String keys, boolean useStrictDataTypes) {
         Map<String, List<JsonNode>> maps = this.restTemplate.exchange(
                         this.baseURL + "/api/plugins/telemetry/{entityType}/{entityId}/values/timeseries?keys={keys}&useStrictDataTypes={useStrictDataTypes}"
                         , HttpMethod.GET, HttpEntity.EMPTY,
@@ -189,14 +189,14 @@ public class ThingsBoardClient extends RestClient {
         return pivot(maps);
     }
 
-    public DataSet getLatestTimeseries(EntityType type, String id,  String keys) {
+    public DataSet<DataRow> getLatestTimeseries(EntityType type, String id,  String keys) {
         return getLatestTimeseries(type, id, keys, true);
     }
 
-    public DataSet getLatestDeviceTimeseries(String id,  String keys, boolean useStrictDataTypes) {
+    public DataSet<DataRow> getLatestDeviceTimeseries(String id,  String keys, boolean useStrictDataTypes) {
         return getLatestTimeseries(EntityType.DEVICE, id, keys, useStrictDataTypes);
     }
-    public DataSet getLatestDeviceTimeseries(String id,  String keys) {
+    public DataSet<DataRow> getLatestDeviceTimeseries(String id,  String keys) {
         return getLatestTimeseries(EntityType.DEVICE, id, keys, true);
     }
 
@@ -222,7 +222,7 @@ public class ThingsBoardClient extends RestClient {
      * @return DataSet
      */
 
-    public DataSet getTimeseries(EntityType type, String entity, String keys, Long interval, Aggregation agg, SortOrder.Direction order, Long start, Long end, Integer limit, boolean strict) {
+    public DataSet<DataRow> getTimeseries(EntityType type, String entity, String keys, Long interval, Aggregation agg, SortOrder.Direction order, Long start, Long end, Integer limit, boolean strict) {
         Map<String, String> params = new HashMap<>();
         params.put("type", type.name());
         params.put("entity", entity);
@@ -259,45 +259,45 @@ public class ThingsBoardClient extends RestClient {
         }
     }
 
-    public DataSet getTimeseries(EntityType type, String entity, String keys,  SortOrder.Direction order, Long start, Long end, Integer limit, boolean strict) {
+    public DataSet<DataRow> getTimeseries(EntityType type, String entity, String keys,  SortOrder.Direction order, Long start, Long end, Integer limit, boolean strict) {
         return getTimeseries(type, entity, keys, null, null, order ,start, end, limit , strict);
     }
 
-    public DataSet getTimeseries(EntityType type, String entity, String keys,  SortOrder.Direction order, Long start, Long end, Integer limit) {
+    public DataSet<DataRow> getTimeseries(EntityType type, String entity, String keys,  SortOrder.Direction order, Long start, Long end, Integer limit) {
         return getTimeseries(type, entity, keys, null, null, order ,start, end, limit , true);
     }
-    public DataSet getTimeseries(EntityType type, String entity, String keys,  Long start, Long end, Integer limit) {
+    public DataSet<DataRow> getTimeseries(EntityType type, String entity, String keys,  Long start, Long end, Integer limit) {
         return getTimeseries(type, entity, keys, null, null, SortOrder.Direction.DESC ,start, end, limit , true);
     }
 
-    public DataSet getTimeseries(String type, String entity, String keys, Long interval, Aggregation agg, SortOrder.Direction order, Long start, Long end, Integer limit, boolean strict) {
+    public DataSet<DataRow> getTimeseries(String type, String entity, String keys, Long interval, Aggregation agg, SortOrder.Direction order, Long start, Long end, Integer limit, boolean strict) {
         return getTimeseries(EntityType.valueOf(type), entity, keys, interval, agg, order, start, end, limit, strict);
     }
 
-    public DataSet getTimeseries(String type, String entity, String keys,  SortOrder.Direction order, Long start, Long end, Integer limit, boolean strict) {
+    public DataSet<DataRow> getTimeseries(String type, String entity, String keys,  SortOrder.Direction order, Long start, Long end, Integer limit, boolean strict) {
         return getTimeseries(EntityType.valueOf(type), entity, keys, null, null, order ,start, end, limit , strict);
     }
 
-    public DataSet getTimeseries(String type, String entity, String keys,  SortOrder.Direction order, Long start, Long end, Integer limit) {
+    public DataSet<DataRow> getTimeseries(String type, String entity, String keys,  SortOrder.Direction order, Long start, Long end, Integer limit) {
         return getTimeseries(EntityType.valueOf(type), entity, keys, null, null, order ,start, end, limit , true);
     }
-    public DataSet getTimeseries(String type, String entity, String keys,  Long start, Long end, Integer limit) {
+    public DataSet<DataRow> getTimeseries(String type, String entity, String keys,  Long start, Long end, Integer limit) {
         return getTimeseries(EntityType.valueOf(type), entity, keys, null, null, SortOrder.Direction.DESC ,start, end, limit , true);
     }
 
 
-    public DataSet getDeviceTimeseries(String id, String keys, Long interval, Aggregation agg, SortOrder.Direction order, Long start, Long end, Integer limit, boolean strict) {
+    public DataSet<DataRow> getDeviceTimeseries(String id, String keys, Long interval, Aggregation agg, SortOrder.Direction order, Long start, Long end, Integer limit, boolean strict) {
         return getTimeseries(EntityType.DEVICE, id, keys, interval, agg, order, start, end, limit, strict) ;
     }
 
-    public DataSet getDeviceTimeseries(String id, String keys,  SortOrder.Direction order, Long start, Long end, Integer limit, boolean strict) {
+    public DataSet<DataRow> getDeviceTimeseries(String id, String keys,  SortOrder.Direction order, Long start, Long end, Integer limit, boolean strict) {
         return getTimeseries(EntityType.DEVICE, id, keys, null, null, order ,start, end, limit , strict);
     }
 
-    public DataSet getDeviceTimeseries(String id, String keys,  SortOrder.Direction order, Long start, Long end, Integer limit) {
+    public DataSet<DataRow> getDeviceTimeseries(String id, String keys,  SortOrder.Direction order, Long start, Long end, Integer limit) {
         return getTimeseries(EntityType.DEVICE, id, keys, null, null, order ,start, end, limit , true);
     }
-    public DataSet getDeviceTimeseries(String id, String keys,  Long start, Long end, Integer limit) {
+    public DataSet<DataRow> getDeviceTimeseries(String id, String keys,  Long start, Long end, Integer limit) {
         return getTimeseries(EntityType.DEVICE, id, keys, null, null, SortOrder.Direction.DESC ,start, end, limit , true);
     }
 
@@ -418,11 +418,11 @@ public class ThingsBoardClient extends RestClient {
      * @param timeseries 按属性分组的遥测数据
      * @return DataSet
      */
-    private DataSet pivot(Map<String, List<JsonNode>> timeseries){
-        DataSet set = new DataSet();
+    private DataSet<DataRow> pivot(Map<String, List<JsonNode>> timeseries){
+        DataSet<DataRow> set = new DataSet();
         try {
             List<TsKvEntry> list = RestJsonConverter.toTimeseries(timeseries);
-            DataSet tmps = new DataSet();
+            DataSet<DataRow> tmps = new DataSet();
             for (TsKvEntry entry : list) {
                 DataRow row = new DataRow();
                 row.put("ts", entry.getTs());
@@ -430,9 +430,9 @@ public class ThingsBoardClient extends RestClient {
                 row.put("value", entry.getValue());
                 tmps.add(row);
             }
-            DataSet groups = tmps.group("ts");
+            DataSet<DataRow> groups = tmps.group("ts");
             for(DataRow group:groups){
-                DataSet items = group.getItems();
+                DataSet<DataRow> items = group.getItems();
                 DataRow row = new DataRow();
                 row.put("ts", group.get("ts"));
                 for(DataRow item:items){

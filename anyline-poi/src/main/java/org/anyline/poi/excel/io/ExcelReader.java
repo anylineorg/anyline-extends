@@ -37,8 +37,8 @@ public class ExcelReader {
 	public static ExcelReader init(){
 		return new ExcelReader();
 	}
-	public DataSet read() throws Exception {
-		DataSet set = new DataSet();
+	public DataSet<DataRow> read() throws Exception {
+		DataSet<DataRow> set = new DataSet();
 		if(null == is &&(null == file || !file.exists())){
 			return set;
 		}

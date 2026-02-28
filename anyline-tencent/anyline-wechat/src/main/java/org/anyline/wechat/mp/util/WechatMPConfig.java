@@ -73,7 +73,7 @@ public class WechatMPConfig extends WechatConfig{
 		WechatMPUtil.getInstance(instance);
 		return config;
 	}
-	public static Hashtable<String,AnylineConfig> parse(String column, DataSet set){
+	public static Hashtable<String,AnylineConfig> parse(String column, DataSet<DataRow> set){
 		for(DataRow row:set){
 			String instance = row.getString(column);
 			parse(instance, row);

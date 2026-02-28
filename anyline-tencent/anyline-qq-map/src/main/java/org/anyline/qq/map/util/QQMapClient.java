@@ -21,20 +21,21 @@ import org.anyline.client.map.AbstractMapClient;
 import org.anyline.client.map.MapClient;
 import org.anyline.entity.Coordinate;
 import org.anyline.entity.DataRow;
+import org.anyline.entity.DataSet;
 import org.anyline.entity.SRS;
+import org.anyline.entity.geometry.Point;
+import org.anyline.entity.geometry.Ring;
 import org.anyline.exception.AnylineException;
+import org.anyline.log.Log;
+import org.anyline.log.LogProxy;
 import org.anyline.net.HttpResponse;
 import org.anyline.net.HttpUtil;
 import org.anyline.util.AnylineConfig;
 import org.anyline.util.BasicUtil;
 import org.anyline.util.BeanUtil;
 import org.anyline.util.encrypt.MD5Util;
-import org.anyline.log.Log;
-import org.anyline.log.LogProxy;
 
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Map;
+import java.util.*;
 
 public class QQMapClient extends AbstractMapClient implements MapClient {
     private static Log log = LogProxy.get(QQMapClient.class);
@@ -243,8 +244,201 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
         }
         return coordinate;
     }
+    /**
+     * 附近poi https://lbs.qq.com/service/webService/webServiceGuide/search/webServiceSearch
+     * @param city 城市
+     * @param category 类别
+     * @param keyword 关键定
+     * @return List
+     */
+    @Override
+    public List<Coordinate> poi(String city, String category, String keyword) {
+        List<Coordinate> coordinates = new ArrayList<>();
+        String api = "/ws/place/v1/search";
 
+        Map<String, Object> params = new HashMap<>();
+        if(BasicUtil.isNotEmpty(keyword)){
+            params.put("keyword", keyword);
+        }
+        String boundary = "region("+city+",0)";
+        params.put("boundary", boundary);
+        //filter=category= 241000,241100
+        if(BasicUtil.isNotEmpty(category)){
+            String filter = "category="+category;
+            params.put("filter", filter);
+        }
+        params.put("page_size", 20);
+        params.put("added_fields", "category_code");
+        int page = 1;
+        Map<String, Coordinate> maps = new HashMap<>();
+        while (true){
+            params.put("page_index", page++);
+            DataRow row = api(api, params);
+            if(null != row){
+                DataSet<DataRow> set = row.getSet("data");
+                int exists = 0;
+                if(null != set && !set.isEmpty()) {
+                    for(DataRow item:set){
+                        Coordinate coordinate = poi(item);
+                        if(maps.containsKey(coordinate.getId())){
+                            exists++;
+                        }else{
+                            coordinates.add(coordinate);
+                        }
+                        maps.put(coordinate.getId(), coordinate);
+                    }
+                    //最后一页小于20个
+                    if(set.size() < 20){
+                        break;
+                    }
+                    //有10个以上重复的中断(算成最后一页)
+                    if(exists > 10){
+                        break;
+                    }
+                }else{
+                    break;
+                }
+            }else{
+                break;
+            }
+        }
+        return coordinates;
+    }
 
+    /**
+     * 附近poi https://lbs.qq.com/service/webService/webServiceGuide/search/webServiceSearch
+     * @param lng 经度
+     * @param lat 经度
+     * @param radius 半径
+     * @param category 类别
+     * @param keyword 关键定
+     * @return List
+     */
+    @Override
+    public List<Coordinate> poi(Double lng, Double lat, int radius, String category, String keyword) {
+        List<Coordinate> coordinates = new ArrayList<>();
+        String api = "/ws/place/v1/search";
+
+        Map<String, Object> params = new HashMap<>();
+        if(BasicUtil.isNotEmpty(keyword)){
+            params.put("keyword", keyword);
+        }
+        String boundary = "nearby("+lng+","+lat+","+radius+",1)";
+        params.put("boundary", boundary);
+        //filter=category= 241000,241100
+        if(BasicUtil.isNotEmpty(category)){
+            String filter = "category="+category;
+            params.put("filter", filter);
+        }
+        params.put("page_size", 20);
+        params.put("added_fields", "category_code");
+        int page = 1;
+        Map<String, Coordinate> maps = new HashMap<>();
+        while (true){
+            params.put("page_index", page++);
+            DataRow row = api(api, params);
+            if(null != row){
+                DataSet<DataRow> set = row.getSet("data");
+                int exists = 0;
+                if(null != set && !set.isEmpty()) {
+                    for(DataRow item:set){
+                        Coordinate coordinate = poi(item);
+                        if(maps.containsKey(coordinate.getId())){
+                            exists++;
+                        }else{
+                            coordinates.add(coordinate);
+                        }
+                        maps.put(coordinate.getId(), coordinate);
+                    }
+                    //最后一页小于20个
+                    if(set.size() < 20){
+                        break;
+                    }
+                    //有10个以上重复的中断(算成最后一页)
+                    if(exists >= set.size()-1 || exists > 10){
+                        break;
+                    }
+                }else{
+                    break;
+                }
+            }else{
+                break;
+            }
+        }
+        return coordinates;
+    }
+    private Coordinate poi(DataRow row){
+        Coordinate coordinate = new Coordinate();
+        coordinate.setMetadata(row);
+        coordinate.setId(row.getString("id"));
+        coordinate.setTitle(row.getString("title"));
+        coordinate.setAddress(row.getString("address"));
+        coordinate.setPoiCategoryName(row.getString("category"));
+        coordinate.setPoiCategoryCode(row.getString("category_code"));
+        coordinate.setTel(row.getString("tel"));
+        DataRow location = row.getRow("location");
+        if(null != location) {
+            coordinate.setLng(location.getDouble("lng"));
+            coordinate.setLat(location.getDouble("lat"));
+        }
+        DataRow ad = row.getRow("ad_info");
+        if(null != ad) {
+            String adcode = ad.getString("adcode");
+            if(BasicUtil.isNotEmpty(adcode)) {
+                String provinceCode = adcode.substring(0, 2);
+                String cityCode = adcode.substring(0, 4);
+                coordinate.setProvinceCode(provinceCode);
+                coordinate.setCityCode(cityCode);
+                coordinate.setCountyCode(adcode);
+            }
+        }
+        return coordinate;
+    }
+
+    /**
+     * 轮廓
+     * @param keyword 地区 如青岛/3702
+     * @return List 如果有飞地，返回多个多边形
+     */
+    @Override
+    public List<Ring> outline(String keyword) {
+        List<Ring> rings = new ArrayList<>();
+        String api = "/ws/district/v1/search";
+        Map<String, Object> params = new HashMap<>();
+        if(BasicUtil.isNotEmpty(keyword)){
+            params.put("keyword", keyword);
+        }
+        params.put("get_polygon", 2);
+        params.put("max_offset", 100);
+        DataRow row = api(api, params);
+        List list = row.getList("result");
+        if(null != list && !list.isEmpty()){
+            Object obj = list.get(0);
+            if(obj instanceof DataSet){
+                DataSet<DataRow> set = (DataSet<DataRow>) obj;
+                for (DataRow item : set) {
+                    List polygons = (List)item.get("polygon");
+                    if(null != polygons && !polygons.isEmpty()){
+                        for (Object polygon : polygons) {
+                            Ring ring = new Ring();
+                            rings.add(ring);
+                            if(polygon instanceof List){
+                                List polygonPoints = (List)polygon;
+                                int size = polygonPoints.size();
+                                //lng,lat,lng,lat格式
+                                for (int i = 0; i < size-1; i+=2) {
+                                    Point point = new Point(BasicUtil.parseDouble(polygonPoints.get(i).toString(),0d), BasicUtil.parseDouble(polygonPoints.get(i+1).toString(),0d));
+                                    ring.add(point);
+                                }
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+        return rings;
+    }
 
     /**
      * 参数签名
@@ -254,6 +448,7 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
      */
     private String sign(String api, Map<String, Object> params){
         params.put("key", config.KEY);
+        params.remove("sig");
         String sign = null;
         String src = api + "?" + BeanUtil.map2string(params) + config.SECRET;
         sign = MD5Util.crypto(src);
@@ -268,17 +463,17 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
         if(status == 200){
             String txt = response.getText();
             row = DataRow.parseJson(txt);
-            if(null == row){
+            if(null != row){
                 status = row.getInt("status",-1);
                 if(status != 0) {
                     log.warn("[{}][执行失败][status:{}][info:{}]", api , status, row.getString("message"));
                     log.warn("[{}][response:{}]", api, txt);
-                    if ("302".equals(status)) {
+                    if (status ==302 || status == 121) {
                         throw new AnylineException("API_OVER_LIMIT", "访问已超出日访问量");
-                    } else if ("401".equals(status) || "402".equals(status)) {
+                    } else if (status == 401 || status == 402) {
                         try {
-                            log.warn("并发量已达到上限,sleep 50 ...");
-                            Thread.sleep(50);
+                            log.warn("并发量已达到上限,sleep 100 ...");
+                            Thread.sleep(100);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

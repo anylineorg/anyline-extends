@@ -35,7 +35,7 @@ import java.util.UUID;
 public class P10ssUtil {
     private static final Log log = LogProxy.get(P10ssUtil.class);
 
-    private static DataSet accessTokens = new DataSet();
+    private static DataSet<DataRow> accessTokens = new DataSet();
     private P10ssConfig config = null;
 
     private static Hashtable<String, P10ssUtil> instances = new Hashtable<String, P10ssUtil>();

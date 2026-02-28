@@ -94,7 +94,7 @@ public class FeiConfig  extends AnylineConfig {
     public static FeiConfig parse(String key, DataRow row){
         return parse(FeiConfig.class, key, row, instances,compatibles);
     }
-    public static Hashtable<String,AnylineConfig> parse(String column, DataSet set){
+    public static Hashtable<String,AnylineConfig> parse(String column, DataSet<DataRow> set){
         for(DataRow row:set){
             String key = row.getString(column);
             parse(key, row);

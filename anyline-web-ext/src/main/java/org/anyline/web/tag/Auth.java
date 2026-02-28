@@ -61,7 +61,7 @@ public class Auth extends BaseBodyTag {
 			if(encode){
 				String stateValue = state;
 				state = BasicUtil.getRandomLowerString(20);
-				DataSet states = (DataSet)pageContext.getServletContext().getAttribute("auth_states");
+				DataSet<DataRow> states = (DataSet)pageContext.getServletContext().getAttribute("auth_states");
 				if(null == states){
 					states = new DataSet();
 					pageContext.getServletContext().setAttribute("auth_states", states);

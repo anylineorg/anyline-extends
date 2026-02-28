@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.anyline</groupId>
 	<artifactId>anyline-extends</artifactId>
-	<version>8.7.2-SNAPSHOT</version>
+	<version>8.7.3-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>anyline-extends</name>
     <modules>
@@ -42,7 +42,8 @@
 		<module>anyline-feishu</module>
 		<module>anyline-extends-environment</module>
         <module>anyline-print/anyline-print-feng</module>
-    </modules>
+		<module>anyline-tdmap</module>
+	</modules>
 	<build>
 		<plugins>
 			<plugin>
@@ -58,7 +59,7 @@
 	<repositories>
 		<repository>
 			<id>ossrh</id>
-			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+			<url>https://central.sonatype.com/repository/maven-snapshots/</url>
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>
