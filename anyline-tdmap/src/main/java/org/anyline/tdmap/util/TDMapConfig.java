@@ -27,8 +27,8 @@ import java.util.Hashtable;
 
 public class TDMapConfig extends AnylineConfig{
 	private static Hashtable<String,AnylineConfig> instances = new Hashtable<>();
-	public static String DEFAULT_YUNTU_HOST		= "http://yuntuapi.amap.com";
-	public static String DEFAULT_HOST			= "https://restapi.amap.com";
+	public static String DEFAULT_YUNTU_HOST		= "http://api.tianditu.gov.cn";
+	public static String DEFAULT_HOST			= "http://api.tianditu.gov.cn";
 	public static String DEFAULT_KEY			= "";
 	public static String DEFAULT_SECRET 		= "";
 	public static String DEFAULT_TABLE 			= "";
@@ -40,7 +40,7 @@ public class TDMapConfig extends AnylineConfig{
 	public String TABLE 	= DEFAULT_TABLE		;
 
 	private static File configDir;
-	public static String CONFIG_NAME = "anyline-amap.xml";
+	public static String CONFIG_NAME = "anyline-tdmap.xml";
 
 	public static Hashtable<String,AnylineConfig>getInstances(){
 		return instances;

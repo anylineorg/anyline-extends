@@ -763,49 +763,117 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 		String api = "/v3/geocode/regeo";
 		Map<String, Object> params = new HashMap<>();
 		params.put("key", config.KEY); 
-		params.put("location", coordinate.getLng()+","+coordinate.getLat());
+		params.put("location", _lng + "," +_lat);
 
-		// 换回原坐标系
-		coordinate.setLng(_lng);
-		coordinate.setLat(_lat);
-		coordinate.setSrs(_type);
+		Map<String, Object> ps = coordinate.getParams();
+		if(null != ps){
+			if(ps.containsKey("poitype")){
+				params.put("poitype", ps.get("poitype"));
+			}
+			if(ps.containsKey("radius")){
+				params.put("radius", ps.get("radius"));
+			}
+			if(ps.containsKey("extensions")){
+				params.put("extensions", ps.get("extensions"));
+			}
+			if(ps.containsKey("homeorcorp")){
+				params.put("homeorcorp", ps.get("homeorcorp"));
+			}
+			if(ps.containsKey("roadlevel")){
+				params.put("roadlevel", ps.get("roadlevel"));
+			}
+		}
 
 		row = get(AmapConfig.DEFAULT_HOST, api, params);
 		row = row.getRow("regeocode");
 		if (null != row) {
 			coordinate.setAddress(row.getString("formatted_address"));
-
 			DataRow adr = row.getRow("addressComponent");
 			if (null != adr) {
-				String adcode = adr.getString("adcode");
-				String provinceCode = adcode.substring(0, 2);
-				String cityCode = adcode.substring(0, 4);
-				coordinate.setProvinceCode(provinceCode);
-				coordinate.setProvinceName(adr.getString("province"));
-				coordinate.setCityCode(cityCode);
-				coordinate.setCityName(adr.getString("city"));
-				coordinate.setCountyCode(adcode);
-				coordinate.setCountyName(adr.getString("district"));
-				coordinate.setTownCode(adr.getString("towncode"));
-				coordinate.setTownName(adr.getString("township"));
-				DataRow st = adr.getRow("streetNumber");
-				if (null != st) {
-					String street = st.getString("street");
-					String number = st.getString("number");
-					if (null != number && null != street) {
-						number = number.replace(street, "");
-					}
-					coordinate.setStreet(street);
-					coordinate.setStreetNumber(number);
-
-				}
-				coordinate.setSuccess(true);
+				parse(coordinate, adr);
 			}
+			//解析附近poi
+			DataSet<DataRow> pois = row.getSet("pois");
+			List<Coordinate> poi_coordinates = new ArrayList<>();
+			for (DataRow poi : pois) {
+				Coordinate poi_coordinate = new Coordinate();
+				parse(poi_coordinate, poi);
+				poi_coordinate.setProvinceCode(coordinate.getProvinceCode());
+				poi_coordinate.setProvinceName(coordinate.getProvinceName());
+				poi_coordinate.setCityCode(coordinate.getCityCode());
+				poi_coordinate.setCityName(coordinate.getCityName());
+				poi_coordinate.setCountyCode(coordinate.getCountyCode());
+				poi_coordinate.setCountyName(coordinate.getCountyName());
+				poi_coordinate.setTownCode(coordinate.getTownCode());
+				poi_coordinate.setTownName(coordinate.getTownName());
+				poi_coordinate.setVillageCode(coordinate.getVillageCode());
+				poi_coordinate.setVillageName(coordinate.getVillageName());
+
+				poi_coordinates.add(poi_coordinate);
+			}
+			coordinate.setPois(poi_coordinates);
 		}
-		if(null != coordinate) {
-			coordinate.correct();
+		// 换回原坐标系
+		coordinate.setLng(_lng);
+		coordinate.setLat(_lat);
+		coordinate.setSrs(_type);
+		coordinate.setSuccess(true);
+        return coordinate;
+	}
+
+
+	/**
+	 * 解析返回结果赋值
+	 * @param coordinate 有可能是oi
+	 * @param result 返回内容
+	 */
+	private void parse(Coordinate coordinate, DataRow result){
+		coordinate.setMetadata(result);
+		coordinate.setId(result.getString("id"));
+		coordinate.setTitle(result.getString("name"));
+		Object tel = result.get("tel");
+		if(tel instanceof Collection){
+			if(!((Collection)tel).isEmpty()){
+				coordinate.setTel(tel.toString());
+			}
+		}else if(tel instanceof String){
+			coordinate.setTel((String) tel);
 		}
-		return coordinate;
+		String ad_code = result.getString("adcode");
+		if(null != ad_code){
+			String provinceCode = ad_code.substring(0, 2);
+			String cityCode = ad_code.substring(0, 4);
+			coordinate.setProvinceCode(provinceCode);
+			coordinate.setProvinceName(result.getString("province"));
+			coordinate.setCityCode(cityCode);
+			coordinate.setCityName(result.getString("city"));
+			coordinate.setCountyCode(ad_code);
+			coordinate.setCountyName(result.getString("district"));
+			coordinate.setTownCode(result.getString("towncode"));
+			coordinate.setTownName(result.getString("township"));
+			DataRow st = result.getRow("streetNumber");
+			if (null != st) {
+				String street = st.getString("street");
+				String number = st.getString("number");
+				if (null != number && null != street) {
+					number = number.replace(street, "");
+				}
+				coordinate.setStreet(street);
+				coordinate.setStreetNumber(number);
+
+			}
+		}else{
+			//poi数据
+			coordinate.setPoiCategoryName(result.getString("type"));
+			coordinate.setAddress(result.getString("address"));
+		}
+		String location = result.getString("location");
+		if(null != location && location.contains(",")){
+			String[] locations = location.split(",");
+			coordinate.setLng(locations[0]);
+			coordinate.setLat(locations[1]);
+		}
+		coordinate.correct();
 	}
 	/** 
 	 * 根据地址查坐标 
@@ -828,6 +896,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 			params.put("city", city); 
 		}
 		DataRow row = get(AmapConfig.DEFAULT_HOST, api, params);
+		coordinate.setMetadata(row);
 		DataSet<DataRow> set = null;
 		if(row.containsKey("geocodes")){
 			set = row.getSet("geocodes");

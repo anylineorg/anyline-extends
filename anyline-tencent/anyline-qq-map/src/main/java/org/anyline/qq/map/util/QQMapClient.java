@@ -90,6 +90,7 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
         DataRow row = api(api, params);
         if(null != row){
             coordinate = new Coordinate();
+            coordinate.setMetadata(row);
             DataRow result = row.getRow("result");
             if(null != result) {
                 DataRow point = result.getRow("location");
@@ -169,6 +170,7 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
             coordinate.setReliability(result.getInt("reliability",0));
             coordinate.setAccuracy(result.getInt("level",0));
             coordinate.setSuccess(true);
+            coordinate.setMetadata(row);
 
         }
         if(null != coordinate) {
@@ -194,55 +196,107 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
         coordinate.setSuccess(false);
 
         Map<String, Object> params = new HashMap<>();
-        params.put("location", coordinate.getLat()+","+coordinate.getLng());        // 这里是纬度在前
-
-        // 换回原坐标系
-        coordinate.setLng(_lng);
-        coordinate.setLat(_lat);
-        coordinate.setSrs(_type);
-
+        params.put("location", _lat +"," + _lng);        // 这里是纬度在前
+        Map<String, Object> ps = coordinate.getParams();
+        if(null != ps){
+            if(ps.containsKey("radius")){
+                params.put("radius", ps.get("radius"));
+            }
+            if(ps.containsKey("get_poi")){
+                params.put("get_poi", ps.get("get_poi"));
+            }
+            if(ps.containsKey("poi_options")){
+                params.put("poi_options", ps.get("poi_options"));
+            }
+        }
         DataRow row = api(api, params);
         if(null != row){
             DataRow result = row.getRow("result");
             if(null != result) {
-                coordinate.setAddress(result.getString("address"));
-            }
-            DataRow adr = row.getRow("result","address_component");
-            if(null != adr) {
-                coordinate.setProvinceName(adr.getString("province"));
-                coordinate.setCityName(adr.getString("city"));
-                coordinate.setCountyName(adr.getString("district"));
-
-                String street = adr.getString("street");
-                coordinate.setStreet(street);
-                String number = adr.getString("street_number");
-                if(null != number && null != street){
-                    number = number.replace(street,"");
+                parse(coordinate, result);
+                //附近poi
+                DataSet<DataRow> pois = result.getSet("pois");
+                if(null != pois){
+                    List<Coordinate> poi_coordinates = new ArrayList<>();
+                    for(DataRow poi : pois){
+                        Coordinate poi_coordinate = new Coordinate();
+                        parse(poi_coordinate, poi);
+                        poi_coordinates.add(poi_coordinate);
+                    }
+                    coordinate.setPois(poi_coordinates);
                 }
             }
-            adr = row.getRow("result","ad_info");
-            if(null != adr) {
-                String adcode = adr.getString("adcode");
-                if(BasicUtil.isNotEmpty(adcode)) {
-                    String provinceCode = adcode.substring(0, 2);
-                    String cityCode = adcode.substring(0, 4);
-                    coordinate.setProvinceCode(provinceCode);
-                    coordinate.setCityCode(cityCode);
-                    coordinate.setCountyCode(adcode);
-                }
-            }
-            adr = row.getRow("result","address_reference","town");
-            if(null != adr){
-                coordinate.setTownCode(adr.getString("id"));
-                coordinate.setTownName(adr.getString("title"));
-            }
-            coordinate.setSuccess(true);
-
         }
-        if(null != coordinate) {
-            coordinate.correct();
-        }
+        // 换回原坐标系
+        coordinate.setLng(_lng);
+        coordinate.setLat(_lat);
+        coordinate.setSrs(_type);
+        coordinate.setSuccess(true);
         return coordinate;
+    }
+
+    /**
+     * 解析返回结果赋值
+     * @param coordinate 有可能是oi
+     * @param result 返回内容
+     */
+    private void parse(Coordinate coordinate, DataRow result){
+        coordinate.setMetadata(result);
+        coordinate.setAddress(result.getString("address"));
+        coordinate.setId(result.getString("id")); //poi时有id值
+        DataRow address_component = result.getRow("address_component");
+        if(null != address_component) {
+            coordinate.setProvinceName(address_component.getString("province"));
+            coordinate.setCityName(address_component.getString("city"));
+            coordinate.setCountyName(address_component.getString("district"));
+
+            String street = address_component.getString("street");
+            coordinate.setStreet(street);
+            String number = address_component.getString("street_number");
+            if(null != number && null != street){
+                number = number.replace(street,"");
+            }
+        }
+        DataRow ad_info = result.getRow("ad_info");
+        if(null != ad_info) {
+            String adcode = ad_info.getString("adcode");
+            if(BasicUtil.isNotEmpty(adcode)) {
+                String provinceCode = adcode.substring(0, 2);
+                String cityCode = adcode.substring(0, 4);
+                coordinate.setProvinceCode(provinceCode);
+                coordinate.setCityCode(cityCode);
+                coordinate.setCountyCode(adcode);
+            }
+            String provinceName = ad_info.getString("province");
+            if(BasicUtil.isNotEmpty(provinceName)) {
+                coordinate.setProvinceName(provinceName);
+            }
+            String cityName = ad_info.getString("city");
+            if(BasicUtil.isNotEmpty(cityName)) {
+                coordinate.setCityName(cityName);
+            }
+            String districtName = ad_info.getString("district");
+            if(BasicUtil.isNotEmpty(districtName)) {
+                coordinate.setCountyName(districtName);
+            }
+        }
+        //相对参考
+        DataRow address_reference = result.getRow("address_reference","town");
+        if(null != address_reference){
+            coordinate.setTownCode(address_reference.getString("id"));
+            coordinate.setTownName(address_reference.getString("title"));
+        }
+        DataRow location = result.getRow("location");
+        if(null != location){
+            coordinate.setLng(location.getString("lng"));
+            coordinate.setLat(location.getString("lat"));
+        }
+        coordinate.setTitle(result.getString("title"));
+        coordinate.setTel(result.getString("tel"));
+        coordinate.setPoiCategoryCode(result.getString("category_code"));
+        coordinate.setPoiCategoryName(result.getString("category"));
+
+        coordinate.correct();
     }
     /**
      * 附近poi https://lbs.qq.com/service/webService/webServiceGuide/search/webServiceSearch
