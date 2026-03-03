@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configs>
+	<!--https://developer.huawei.com/consumer/cn/service/josp/agc/index.html#/myProject-->
+	<config key="default">
+		<property key="SECRET">72c5c*****4144682</property>
+	</config>
+</configs>

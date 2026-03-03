@@ -43,6 +43,7 @@
 		<module>anyline-extends-environment</module>
         <module>anyline-print/anyline-print-feng</module>
 		<module>anyline-tdmap</module>
+		<module>anyline-huawei-map</module>
 	</modules>
 	<build>
 		<plugins>
