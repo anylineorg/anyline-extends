@@ -105,29 +105,12 @@ public class HuaweiMapClient extends AbstractMapClient implements MapClient {
 		params.put("radius", 50);
 
 		row = post(HuaweiMapConfig.DEFAULT_HOST, api, params);
-		row = row.getRow("regeocode");
 		if (null != row) {
-			parse(coordinate, row);
 			//解析附近poi
-			DataSet<DataRow> pois = row.getSet("pois");
-			List<Coordinate> poi_coordinates = new ArrayList<>();
-			for (DataRow poi : pois) {
-				Coordinate poi_coordinate = new Coordinate();
-				parse(poi_coordinate, poi);
-				poi_coordinate.setProvinceCode(coordinate.getProvinceCode());
-				poi_coordinate.setProvinceName(coordinate.getProvinceName());
-				poi_coordinate.setCityCode(coordinate.getCityCode());
-				poi_coordinate.setCityName(coordinate.getCityName());
-				poi_coordinate.setCountyCode(coordinate.getCountyCode());
-				poi_coordinate.setCountyName(coordinate.getCountyName());
-				poi_coordinate.setTownCode(coordinate.getTownCode());
-				poi_coordinate.setTownName(coordinate.getTownName());
-				poi_coordinate.setVillageCode(coordinate.getVillageCode());
-				poi_coordinate.setVillageName(coordinate.getVillageName());
-
-				poi_coordinates.add(poi_coordinate);
+			DataSet<DataRow> pois = row.getSet("sites");
+			if(!pois.isEmpty()){
+				parse(coordinate, pois.getRow(0));
 			}
-			coordinate.setPois(poi_coordinates);
 		}
 		// 换回原坐标系
 		coordinate.setLng(_lng);
@@ -155,8 +138,6 @@ public class HuaweiMapClient extends AbstractMapClient implements MapClient {
 			coordinate.setLng(location.getString("lng"));
 			coordinate.setLat(location.getString("lat"));
 		}
-		coordinate.setId(result.getString("siteId"));
-		coordinate.setTitle(result.getString("name"));
 		DataRow adr = result.getRow("address");
 		if(null != adr){
 			coordinate.setProvinceName(adr.getString("adminArea"));
@@ -198,7 +179,7 @@ public class HuaweiMapClient extends AbstractMapClient implements MapClient {
 				coordinate.setSrs(SRS.GCJ02LL);
 			}
 		}else{
-			log.warn("[坐标查询失败][info:{}][params:{}]",row.getString("info"),BeanUtil.map2string(params));
+			log.warn("[坐标查询失败][info:{}][params:{}]",row.getString("info"),BeanUtil.map2json(params));
 		}
 		return coordinate;
 	}
@@ -274,7 +255,7 @@ public class HuaweiMapClient extends AbstractMapClient implements MapClient {
 	}
 	public DataRow post(String host, String api, Map<String, Object> params){
 		DataRow row = null;
-		String body = BeanUtil.map2string(params);
+		String body = BeanUtil.map2json(params);
 		StringEntity entity = null;
 		try{
 			entity = new StringEntity(body);
