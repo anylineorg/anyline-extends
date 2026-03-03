@@ -33,7 +33,6 @@ public class HuaweiMapConfig extends AnylineConfig{
 	public static String DEFAULT_TABLE 			= "";
 
 	public String HOST		= DEFAULT_HOST      ;
-	public String KEY		= DEFAULT_KEY		;
 	public String SECRET 	= DEFAULT_SECRET	;
 	public String TABLE 	= DEFAULT_TABLE		;
 
