@@ -128,11 +128,18 @@ public class HuaweiMapClient extends AbstractMapClient implements MapClient {
 	 */
 	private void parse(Coordinate coordinate, DataRow result){
 		coordinate.setMetadata(result);
+		DataRow poi = result.getRow("poi");
+		if(null != poi){
+			coordinate.setTel(poi.getString("phone"));
+			List types = poi.getList("hwPoiTypes");
+			if(null != types){
+				coordinate.setPoiCategoryCode(BeanUtil.concat(types));
+			}
 
+		}
 		coordinate.setId(result.getString("siteId"));
 		coordinate.setTitle(result.getString("name"));
 		coordinate.setAddress(result.getString("formatAddress"));
-		coordinate.setTel(result.getString("phone"));
 		DataRow location = result.getRow("location");
 		if(null != location){
 			coordinate.setLng(location.getString("lng"));
@@ -145,11 +152,6 @@ public class HuaweiMapClient extends AbstractMapClient implements MapClient {
 			coordinate.setCountyName(adr.getString("tertiaryAdminArea"));
 			coordinate.setTownName(adr.getString("subLocality"));
 		}
-		List types = result.getList("hwPoiTypes");
-		if(null != types){
-			coordinate.setPoiCategoryCode(BeanUtil.concat(types));
-		}
-
 		coordinate.correct();
 	}
 	/**
