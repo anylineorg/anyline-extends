@@ -58,7 +58,7 @@
 	<repositories>
 		<repository>
 			<id>ossrh</id>
-			<url>https://central.sonatype.com/repository/maven-snapshots/</url><!--maven官方默认的快照仓库地址 注意2025-06-30以之前的地址是http://oss.sonatype.org/content/repositories/snapshots/-->
+			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>
