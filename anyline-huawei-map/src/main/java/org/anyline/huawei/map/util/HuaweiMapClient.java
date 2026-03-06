@@ -196,7 +196,7 @@ public class HuaweiMapClient extends AbstractMapClient implements MapClient {
 	 * @param lat 经度
 	 * @param radius 半径
 	 * @param category 类别
-	 * @param keyword 关键定
+	 * @param keyword 关键词
 	 * @return List
 	 */
 	@Override

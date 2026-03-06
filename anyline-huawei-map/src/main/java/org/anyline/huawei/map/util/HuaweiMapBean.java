@@ -23,7 +23,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
-@Component("anyline.ampa.load.bean")
+@Component("anyline.huawei.map.load.bean")
 public class HuaweiMapBean implements InitializingBean {
 
     @Value("${anyline.HuaweiMap.host:}")

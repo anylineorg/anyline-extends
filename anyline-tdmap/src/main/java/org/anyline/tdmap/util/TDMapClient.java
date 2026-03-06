@@ -32,6 +32,7 @@ import org.anyline.util.BasicUtil;
 import org.anyline.util.BeanUtil;
 import org.anyline.util.encrypt.MD5Util;
 
+import java.net.URLEncoder;
 import java.util.*;
 
 /**
@@ -78,65 +79,100 @@ public class TDMapClient extends AbstractMapClient implements MapClient {
 	}
 
 	/**
+	 * 城市内 poi
+	 * @param city 城市编码
+	 * @param category 类别 ","隔开(英文逗号)
+	 * @param keyword 关键词
+	 * @return List
+	 */
+	public List<Coordinate> poi(String city, String category, String keyword){
+		List<Coordinate> coordinates = new ArrayList<>();
+		String api = "/v2/search";
+		Map<String, Object> params = new HashMap<>();
+		if(BasicUtil.isNotEmpty(keyword)){
+			params.put("keyWord", keyword);
+		}
+		if(!city.startsWith("156")){
+			city = "156" + city;
+		}
+		params.put("specify", city);
+		params.put("queryType", 12);
+		if(BasicUtil.isNotEmpty(category)){
+			params.put("dataTypes", category);
+		}
+		params.put("show", 2);
+		int[] starts = new int[]{0,300};
+		int count = 300;
+		Map<String, Coordinate> maps = new HashMap<>();
+		for (int start:starts) {
+			params.put("count", count);
+			params.put("start", start);
+			DataRow row = get(TDMapConfig.DEFAULT_HOST, api, params);
+			if(null != row){
+				DataSet<DataRow> set = row.getSet("pois");
+				if(null != set) {
+					for(DataRow item:set){
+						Coordinate coordinate = poi(item);
+						if(!maps.containsKey(coordinate.getId())){
+							coordinates.add(coordinate);
+						}
+						maps.put(coordinate.getId(), coordinate);
+					}
+				}
+			}
+		}
+		log.warn("[查询结果:{}]", coordinates.size());
+		return coordinates;
+	}
+
+	/**
 	 * 附近poi http://lbs.tianditu.gov.cn/server/search2.html
 	 * @param lng 经度
 	 * @param lat 经度
 	 * @param radius 半径
 	 * @param category 类别
-	 * @param keyword 关键定
+	 * @param keyword 关键词
 	 * @return List
 	 */
 	@Override
 	public List<Coordinate> poi(Double lng, Double lat, int radius, String category, String keyword) {
 		List<Coordinate> coordinates = new ArrayList<>();
 		String api = "/v2/search";
-///v2/search?postStr={%22keyWord%22:%22%E5%85%AC%E5%9B%AD%22,%22level%22:12,%22queryRadius%22:5000,%22pointLonlat%22:%22116.48016,39.93136%22,%22queryType%22:3,%22start%22:0,%22count%22:10}&type=query&tk=f232b5b5a4f8cac146f03860e8dcacf4
+///http://api.tianditu.gov.cn/v2/search?postStr={%22keyWord%22:%22%E5%85%AC%E5%9B%AD%22,%22level%22:12,%22queryRadius%22:5000,%22pointLonlat%22:%22116.48016,39.93136%22,%22queryType%22:3,%22start%22:0,%22count%22:10,%22show%22:2}&type=query&tk=f232b5b5a4f8cac146f03860e8dcacf4
+		//http://api.tianditu.gov.cn/v2/search?postStr={"keyWord":"公园","level":12,"queryRadius":5000,"pointLonlat":"116.48016,39.93136","queryType":3,"start":0,"count":10}&type=query&tk=您的密钥
 		Map<String, Object> params = new HashMap<>();
 		if(BasicUtil.isNotEmpty(keyword)){
-			params.put("keyword", keyword);
+			params.put("keyWord", keyword);
 		}
-		params.put("location", lng + "," + lat);
-		params.put("radius", radius);
-		//filter=category= 241000,241100
+		params.put("pointLonlat", lng + "," + lat);
+		params.put("queryRadius", radius);
 		if(BasicUtil.isNotEmpty(category)){
-			params.put("types", category);
+			params.put("dataTypes", category);
 		}
-		params.put("extensions", "all");
-		params.put("offset", 25);
+		params.put("queryType", "3");
+		params.put("show", 2);
 		params.put("key", config.KEY);
-		int page = 1;
+		int[] starts = new int[]{0,300};
+		int count = 300;
 		Map<String, Coordinate> maps = new HashMap<>();
-		while (true){
-			params.put("page", page++);
+		for (int start:starts) {
+			params.put("count", count);
+			params.put("start", start);
 			DataRow row = get(TDMapConfig.DEFAULT_HOST, api, params);
 			if(null != row){
 				DataSet<DataRow> set = row.getSet("pois");
-				int exists = 0;
-				if(null != set && !set.isEmpty()) {
+				if(null != set) {
 					for(DataRow item:set){
 						Coordinate coordinate = poi(item);
-						if(maps.containsKey(coordinate.getId())){
-							exists++;
-						}else{
+						if(!maps.containsKey(coordinate.getId())){
 							coordinates.add(coordinate);
 						}
 						maps.put(coordinate.getId(), coordinate);
 					}
-					//最后一页小于20个
-					if(set.size() < 25){
-						break;
-					}
-					//有10个以上重复的中断(算成最后一页)
-					if(exists > 10){
-						break;
-					}
-				}else{
-					break;
 				}
-			}else{
-				break;
 			}
 		}
+		log.warn("[查询结果:{}]", coordinates.size());
 		return coordinates;
 	}
 
@@ -152,38 +188,57 @@ public class TDMapClient extends AbstractMapClient implements MapClient {
 
 	private Coordinate poi(DataRow row){
 		Coordinate coordinate = new Coordinate();
-		coordinate.setPoiCategoryName(row.getString("type"));
-		coordinate.setPoiCategoryCode(row.getString("typecode"));
-		coordinate.setLocation(row.getString("location"));
+		coordinate.setPoiCategoryName(row.getString("typeName"));
+		coordinate.setPoiCategoryCode(row.getString("typeCode"));
+		coordinate.setLocation(row.getString("lonlat"));
 		coordinate.setAddress(row.getString("address"));
 		coordinate.setTitle(row.getString("name"));
-		coordinate.setId(row.getString("id"));
-		coordinate.setTel(row.getString("tel"));
-		String adcode = row.getString("adcode");
-		if(BasicUtil.isNotEmpty(adcode)) {
-			String provinceCode = adcode.substring(0, 2);
-			String cityCode = adcode.substring(0, 4);
-			coordinate.setProvinceCode(provinceCode);
-			coordinate.setCityCode(cityCode);
-			coordinate.setCountyCode(adcode);
+		coordinate.setId(row.getString("hotPointID"));
+		coordinate.setTel(row.getString("phone"));
+		String province = row.getString("provinceCode");
+		if(null != province){
+			if(province.startsWith("156")){
+				province = province.substring(3);
+			}
+			if(province.endsWith("0000")){
+				province = province.substring(0, 2);
+			}
 		}
+		coordinate.setProvinceCode(province);
+		String city = row.getString("cityCode");
+		if(null != city){
+			if(city.startsWith("156")){
+				city = city.substring(3);
+			}
+			if(city.endsWith("00")){
+				city = city.substring(0, 4);
+			}
+		}
+		coordinate.setCityCode(city);
+		String county = row.getString("countyCode");
+		if(null != county){
+			if(county.startsWith("156")){
+				county = county.substring(3);
+			}
+		}
+		coordinate.setCountyCode(county);
+
+		coordinate.setProvinceName(row.getString("province"));
+		coordinate.setCityName(row.getString("city"));
+		coordinate.setCountyName(row.getString("county"));
 		coordinate.setMetadata(row);
 		return coordinate;
 	}
-	public DataRow get(String host, String api, Map<String, Object> params){
+	public DataRow get(String host, String api, Map<String, Object> params) {
 		DataRow row = null;
-		sign(params);
-		/*try {
-			for (String key : params.keySet()) {
-				Object value = params.get(key);
-				if(value instanceof String) {
-					params.put(key, URLEncoder.encode(value.toString(), "UTF-8"));
-				}
-			}
-		}catch (Exception e){
+		String query = null;
+		try {
+			query = URLEncoder.encode(BeanUtil.map2json(params), "UTF-8");
+		}catch (Exception e) {
 			e.printStackTrace();
-		}*/
-		HttpResponse response = HttpUtil.get(host + api,"UTF-8", params);
+		}
+		String url = host + api + "?postStr="+ query+"&type=query&tk="+config.KEY;
+		HttpResponse response = HttpUtil.get(url);
 		int status = response.getStatus();
 		if(status == 200) {
 			String txt = response.getText();
@@ -191,9 +246,14 @@ public class TDMapClient extends AbstractMapClient implements MapClient {
 			if(null == row){
 				throw new AnylineException(status, row.getString("INFO"));
 			}
-			status = row.getInt("STATUS", 0);
-			if (status == 0) {
-				// [逆地理编码][执行失败][code:10044][info:USER_DAILY_QUERY_OVER_LIMIT]
+			DataRow status_info = row.getRow("STATUS");
+			int infocode = 0;
+			String msg = null;
+			if(null != status_info){
+				infocode = status_info.getInt("infocode");
+				msg = status_info.getString("cndesc");
+			}
+			if (1000 != infocode) {
 				log.warn("[{}][执行失败][code:{}][info:{}]", api, row.getString("INFOCODE"), row.getString("INFO"));
 				log.warn("[{}}][response:{}]", txt);
 				String info_code = row.getString("INFOCODE");
@@ -212,7 +272,7 @@ public class TDMapClient extends AbstractMapClient implements MapClient {
 				}
 			}
 		}else{
-			throw new AnylineException(status, "api执行异常");
+			throw new AnylineException(status, "api执行异常:"+response.getText());
 		}
 		return row;
 	}

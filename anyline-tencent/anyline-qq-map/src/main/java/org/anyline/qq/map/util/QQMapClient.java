@@ -302,7 +302,7 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
      * 附近poi https://lbs.qq.com/service/webService/webServiceGuide/search/webServiceSearch
      * @param city 城市
      * @param category 类别
-     * @param keyword 关键定
+     * @param keyword 关键词
      * @return List
      */
     @Override
@@ -328,34 +328,35 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
         while (true){
             params.put("page_index", page++);
             DataRow row = api(api, params);
-            if(null != row){
-                DataSet<DataRow> set = row.getSet("data");
-                int exists = 0;
-                if(null != set && !set.isEmpty()) {
-                    for(DataRow item:set){
-                        Coordinate coordinate = poi(item);
-                        if(maps.containsKey(coordinate.getId())){
-                            exists++;
-                        }else{
-                            coordinates.add(coordinate);
-                        }
-                        maps.put(coordinate.getId(), coordinate);
-                    }
-                    //最后一页小于20个
-                    if(set.size() < 20){
-                        break;
-                    }
-                    //有10个以上重复的中断(算成最后一页)
-                    if(exists > 10){
-                        break;
-                    }
-                }else{
-                    break;
-                }
-            }else{
+            if(null == row){
                 break;
             }
+            DataSet<DataRow> set = row.getSet("data");
+            int exists = 0;
+            if(null == set || set.isEmpty()){
+                break;
+            }
+            for(DataRow item:set){
+                Coordinate coordinate = poi(item);
+                if(maps.containsKey(coordinate.getId())){
+                    exists++;
+                }else{
+                    coordinates.add(coordinate);
+                }
+                maps.put(coordinate.getId(), coordinate);
+            }
+            //最后一页小于20个
+            if(set.size() < 20){
+                break;
+            }
+            //有10个以上重复的中断(算成最后一页)
+            if(exists > 10){
+                break;
+            }
+
+
         }
+        log.warn("[查询结果:{}]", coordinates.size());
         return coordinates;
     }
 
@@ -365,7 +366,7 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
      * @param lat 经度
      * @param radius 半径
      * @param category 类别
-     * @param keyword 关键定
+     * @param keyword 关键词
      * @return List
      */
     @Override
@@ -391,34 +392,33 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
         while (true){
             params.put("page_index", page++);
             DataRow row = api(api, params);
-            if(null != row){
-                DataSet<DataRow> set = row.getSet("data");
-                int exists = 0;
-                if(null != set && !set.isEmpty()) {
-                    for(DataRow item:set){
-                        Coordinate coordinate = poi(item);
-                        if(maps.containsKey(coordinate.getId())){
-                            exists++;
-                        }else{
-                            coordinates.add(coordinate);
-                        }
-                        maps.put(coordinate.getId(), coordinate);
-                    }
-                    //最后一页小于20个
-                    if(set.size() < 20){
-                        break;
-                    }
-                    //有10个以上重复的中断(算成最后一页)
-                    if(exists >= set.size()-1 || exists > 10){
-                        break;
-                    }
+            if(null == row){
+                break;
+            }
+            DataSet<DataRow> set = row.getSet("data");
+            int exists = 0;
+            if(null == set || set.isEmpty()){
+                break;
+            }
+            for(DataRow item:set){
+                Coordinate coordinate = poi(item);
+                if(maps.containsKey(coordinate.getId())){
+                    exists++;
                 }else{
-                    break;
+                    coordinates.add(coordinate);
                 }
-            }else{
+                maps.put(coordinate.getId(), coordinate);
+            }
+            //最后一页小于20个
+            if(set.size() < 20){
+                break;
+            }
+            //有10个以上重复的中断(算成最后一页)
+            if(exists >= set.size()-1 || exists > 10){
                 break;
             }
         }
+        log.warn("[查询结果:{}]", coordinates.size());
         return coordinates;
     }
     private Coordinate poi(DataRow row){
