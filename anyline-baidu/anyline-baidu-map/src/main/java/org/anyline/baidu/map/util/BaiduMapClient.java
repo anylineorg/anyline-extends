@@ -25,13 +25,12 @@ import org.anyline.entity.SRS;
 import org.anyline.exception.AnylineException;
 import org.anyline.net.HttpResponse;
 import org.anyline.net.HttpUtil;
-import org.anyline.util.AnylineConfig;
-import org.anyline.util.BasicUtil;
-import org.anyline.util.BeanUtil;
+import org.anyline.util.*;
 import org.anyline.util.encrypt.MD5Util;
 import org.anyline.log.Log;
 import org.anyline.log.LogProxy;
 
+import java.io.File;
 import java.net.URLEncoder;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
@@ -104,9 +103,7 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
                 coordinate.setSuccess(true);
             }
         }
-        if(null != coordinate) {
-            coordinate.correct();
-        }
+        coordinate.correct();
         return coordinate;
     }
     @Override
@@ -156,9 +153,7 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
                 coordinate.setSuccess(true);
             }
         }
-        if(null != coordinate) {
-            coordinate.correct();
-        }
+        coordinate.correct();
         return coordinate;
     }
 
@@ -170,15 +165,20 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
         int status = response.getStatus();
         if(status == 200){
             String txt = response.getText();
+            if(null != BaiduMapConfig.CACHE_DIR){
+                File dir = new File(BaiduMapConfig.CACHE_DIR, config.AK+"/"+api.replace("/","_")+"/"+ DateUtil.format("yyyyMMddHH"));
+                File file = new File(dir, System.currentTimeMillis()+"_"+BasicUtil.getRandomString(8)+".txt");
+                FileUtil.write(BeanUtil.map2string(params) + "\r\n" + txt, file);
+            }
             row = DataRow.parseJson(txt);
-            if(null == row){
+            if(null != row){
                 status = row.getInt("status",-1);
                 if(status != 0) {
                     log.warn("[{}][执行失败][status:{}][info:{}]", api , status, row.getString("message"));
                     log.warn("[{}][response:{}]", api, txt);
-                    if ("302".equals(status)) {
+                    if (302 ==status) {
                         throw new AnylineException("API_OVER_LIMIT", "访问已超出日访问量");
-                    } else if ("401".equals(status) || "402".equals(status)) {
+                    } else if (401 == status || 402 == status) {
                         try {
                             log.warn("并发量已达到上限,sleep 100 ...");
                             Thread.sleep(100);
