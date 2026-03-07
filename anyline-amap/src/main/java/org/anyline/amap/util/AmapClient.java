@@ -1148,7 +1148,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 		if(status == 200) {
 			String txt = response.getText();
 			if(null != AmapConfig.CACHE_DIR){
-				File dir = new File(AmapConfig.CACHE_DIR, config.KEY+"/"+ DateUtil.format("yyyyMMdd"));
+				File dir = new File(AmapConfig.CACHE_DIR, config.KEY+"/"+api.replace("/","_")+"/"+DateUtil.format("yyyyMMdd"));
 				File file = new File(dir, System.currentTimeMillis()+"_"+BasicUtil.getRandomString(8)+".txt");
 				FileUtil.write(BeanUtil.map2json(params) + "\r\n" + txt, file);
 			}
