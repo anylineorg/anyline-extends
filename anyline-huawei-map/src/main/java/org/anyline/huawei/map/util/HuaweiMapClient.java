@@ -275,7 +275,7 @@ public class HuaweiMapClient extends AbstractMapClient implements MapClient {
 		if(status == 200) {
 			String txt = response.getText();
 			if(null != HuaweiMapConfig.CACHE_DIR){
-				File dir = new File(HuaweiMapConfig.CACHE_DIR, config.SECRET+"/"+api.replace("/","_")+"/"+DateUtil.format("yyyyMMdd"));
+				File dir = new File(HuaweiMapConfig.CACHE_DIR, config.SECRET+"/"+api.replace("/","_")+"/"+DateUtil.format("yyyyMMddHH"));
 				File file = new File(dir, System.currentTimeMillis()+"_"+BasicUtil.getRandomString(8)+".txt");
 				FileUtil.write(body+"\r\n"+txt, file);
 			}
