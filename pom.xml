@@ -13,6 +13,7 @@
 		<module>anyline-aliyun/anyline-aliyun-sms</module>
 		<module>anyline-amap</module>
 		<module>anyline-tdmap</module>
+		<module>anyline-huawei-map</module>
 		<module>anyline-baidu/anyline-baidu-map</module>
 		<module>anyline-baidu/anyline-baidu-seo</module>
 		<module>anyline-baidu/anyline-baidu-ai/anyline-baidu-ai-ocr</module>

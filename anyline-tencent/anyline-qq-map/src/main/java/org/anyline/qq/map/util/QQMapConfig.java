@@ -25,6 +25,7 @@ import org.anyline.util.ConfigTable;
 import java.util.Hashtable;
 
 public class QQMapConfig extends AnylineConfig {
+    public static String CACHE_DIR 				= null;
     public static String CONFIG_NAME = "anyline-qq-map.xml";
     private static Hashtable<String,AnylineConfig> instances = new Hashtable<>();
     public static String HOST           = "https://apis.map.qq.com";

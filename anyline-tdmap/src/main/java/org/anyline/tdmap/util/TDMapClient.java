@@ -30,8 +30,11 @@ import org.anyline.net.HttpResponse;
 import org.anyline.net.HttpUtil;
 import org.anyline.util.BasicUtil;
 import org.anyline.util.BeanUtil;
+import org.anyline.util.DateUtil;
+import org.anyline.util.FileUtil;
 import org.anyline.util.encrypt.MD5Util;
 
+import java.io.File;
 import java.net.URLEncoder;
 import java.util.*;
 
@@ -95,6 +98,7 @@ public class TDMapClient extends AbstractMapClient implements MapClient {
 		if(!city.startsWith("156")){
 			city = "156" + city;
 		}
+		city = BasicUtil.fillRChar(city, "0",9);
 		params.put("specify", city);
 		params.put("queryType", 12);
 		if(BasicUtil.isNotEmpty(category)){
@@ -234,45 +238,37 @@ public class TDMapClient extends AbstractMapClient implements MapClient {
 		String query = null;
 		try {
 			query = URLEncoder.encode(BeanUtil.map2json(params), "UTF-8");
-		}catch (Exception e) {
-			e.printStackTrace();
+		}catch (Exception ignore) {
 		}
 		String url = host + api + "?postStr="+ query+"&type=query&tk="+config.KEY;
 		HttpResponse response = HttpUtil.get(url);
 		int status = response.getStatus();
 		if(status == 200) {
 			String txt = response.getText();
+			if(null != TDMapConfig.CACHE_DIR){
+				File dir = new File(TDMapConfig.CACHE_DIR, config.KEY+"/"+ DateUtil.format("yyyyMMdd"));
+				File file = new File(dir, System.currentTimeMillis()+"_"+BasicUtil.getRandomString(8)+".txt");
+				FileUtil.write(BeanUtil.map2json(params)+"\r\n"+txt, file);
+			}
 			row = DataRow.parseJson(txt);
 			if(null == row){
-				throw new AnylineException(status, row.getString("INFO"));
-			}
-			DataRow status_info = row.getRow("STATUS");
-			int infocode = 0;
-			String msg = null;
-			if(null != status_info){
-				infocode = status_info.getInt("infocode");
-				msg = status_info.getString("cndesc");
-			}
-			if (1000 != infocode) {
-				log.warn("[{}][执行失败][code:{}][info:{}]", api, row.getString("INFOCODE"), row.getString("INFO"));
-				log.warn("[{}}][response:{}]", txt);
-				String info_code = row.getString("INFOCODE");
-				if ("10044".equals(info_code)) {
-					throw new AnylineException("API_OVER_LIMIT", "访问已超出日访问量");
-				} else if ("10019".equals(info_code) || "10020".equals(info_code) || "10021".equals(info_code)) {
-					log.warn("并发量已达到上限,sleep 100 ...");
-					try {
-						Thread.sleep(100);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-					return get(host, api, params);
-				} else {
-					throw new AnylineException(status, row.getString("INFO"));
-				}
+				throw new AnylineException(status);
 			}
 		}else{
-			throw new AnylineException(status, "api执行异常:"+response.getText());
+			//{"count":0,"resultType":1,"status":{"cndesc":"specify 不正确，请重新检查","infocode":2001}}
+			String txt = response.getText();
+			log.warn("[执行失败][msg:{}]", txt);
+			row = DataRow.parseJson(txt);
+			if(null != row){
+				DataRow status_info = row.getRow("STATUS");
+				String infocode = "0";
+				String msg = null;
+				if(null != status_info){
+					infocode = status_info.getString("infocode");
+					msg = status_info.getString("cndesc");
+				}
+				throw new AnylineException(status, infocode, msg);
+			}
 		}
 		return row;
 	}

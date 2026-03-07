@@ -25,12 +25,10 @@ import org.anyline.log.Log;
 import org.anyline.log.LogProxy;
 import org.anyline.net.HttpResponse;
 import org.anyline.net.HttpUtil;
-import org.anyline.util.BasicUtil;
-import org.anyline.util.BeanUtil;
-import org.anyline.util.ConfigTable;
-import org.anyline.util.NumberUtil;
+import org.anyline.util.*;
 import org.anyline.util.encrypt.MD5Util;
 
+import java.io.File;
 import java.util.*;
 
 /**
@@ -1149,6 +1147,11 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 		int status = response.getStatus();
 		if(status == 200) {
 			String txt = response.getText();
+			if(null != AmapConfig.CACHE_DIR){
+				File dir = new File(AmapConfig.CACHE_DIR, config.KEY+"/"+ DateUtil.format("yyyyMMdd"));
+				File file = new File(dir, System.currentTimeMillis()+"_"+BasicUtil.getRandomString(8)+".txt");
+				FileUtil.write(BeanUtil.map2json(params) + "\r\n" + txt, file);
+			}
 			row = DataRow.parseJson(txt);
 			if(null == row){
 				throw new AnylineException(status, row.getString("INFO"));

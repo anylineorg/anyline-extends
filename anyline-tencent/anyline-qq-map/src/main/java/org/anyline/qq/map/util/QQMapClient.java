@@ -30,11 +30,10 @@ import org.anyline.log.Log;
 import org.anyline.log.LogProxy;
 import org.anyline.net.HttpResponse;
 import org.anyline.net.HttpUtil;
-import org.anyline.util.AnylineConfig;
-import org.anyline.util.BasicUtil;
-import org.anyline.util.BeanUtil;
+import org.anyline.util.*;
 import org.anyline.util.encrypt.MD5Util;
 
+import java.io.File;
 import java.util.*;
 
 public class QQMapClient extends AbstractMapClient implements MapClient {
@@ -517,6 +516,11 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
         int status = response.getStatus();
         if(status == 200){
             String txt = response.getText();
+            if(null != QQMapConfig.CACHE_DIR){
+                File dir = new File(QQMapConfig.CACHE_DIR, config.KEY+"/"+ DateUtil.format("yyyyMMdd"));
+                File file = new File(dir, System.currentTimeMillis()+"_"+BasicUtil.getRandomString(8)+".txt");
+                FileUtil.write(BeanUtil.map2string(params) + "\r\n" + txt, file);
+            }
             row = DataRow.parseJson(txt);
             if(null != row){
                 status = row.getInt("status",-1);

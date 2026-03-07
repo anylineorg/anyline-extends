@@ -30,8 +30,11 @@ import org.anyline.net.HttpResponse;
 import org.anyline.net.HttpUtil;
 import org.anyline.util.BasicUtil;
 import org.anyline.util.BeanUtil;
+import org.anyline.util.DateUtil;
+import org.anyline.util.FileUtil;
 import org.apache.http.entity.StringEntity;
 
+import java.io.File;
 import java.util.*;
 
 /**
@@ -271,6 +274,11 @@ public class HuaweiMapClient extends AbstractMapClient implements MapClient {
 		int status = response.getStatus();
 		if(status == 200) {
 			String txt = response.getText();
+			if(null != HuaweiMapConfig.CACHE_DIR){
+				File dir = new File(HuaweiMapConfig.CACHE_DIR, config.SECRET+"/"+ DateUtil.format("yyyyMMdd"));
+				File file = new File(dir, System.currentTimeMillis()+"_"+BasicUtil.getRandomString(8)+".txt");
+				FileUtil.write(body+"\r\n"+txt, file);
+			}
 			row = DataRow.parseJson(txt);
 			String code = row.getString("returnCode");
 			if (!"0".equalsIgnoreCase(code)) {
