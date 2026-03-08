@@ -177,6 +177,7 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
                     log.warn("[{}][执行失败][status:{}][info:{}]", api , status, row.getString("message"));
                     log.warn("[{}][response:{}]", api, txt);
                     if (302 ==status) {
+                        last_limit = DateUtil.format("yyyy-MM-dd");
                         throw new AnylineException("API_OVER_LIMIT", "访问已超出日访问量");
                     } else if (401 == status || 402 == status) {
                         try {

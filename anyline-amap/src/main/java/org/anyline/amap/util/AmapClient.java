@@ -1163,6 +1163,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 				log.warn("[{}}][response:{}]", txt);
 				String info_code = row.getString("INFOCODE");
 				if ("10044".equals(info_code)) {
+					last_limit = DateUtil.format("yyyy-MM-dd");
 					throw new AnylineException("API_OVER_LIMIT", "访问已超出日访问量");
 				} else if ("10019".equals(info_code) || "10020".equals(info_code) || "10021".equals(info_code)) {
 					log.warn("并发量已达到上限,sleep 100 ...");

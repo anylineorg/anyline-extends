@@ -287,6 +287,7 @@ public class HuaweiMapClient extends AbstractMapClient implements MapClient {
 				log.warn("[{}}][response:{}]", txt);
 				String info_code = row.getString("INFOCODE");
 				if ("010024".equals(info_code)) {
+					last_limit = DateUtil.format("yyyy-MM-dd");
 					throw new AnylineException("API_OVER_LIMIT", "访问已超出日访问量(或接口欠费)");
 				} else if ("010037".equals(info_code)) {
 					log.warn("并发量已达到上限,sleep 100 ...");

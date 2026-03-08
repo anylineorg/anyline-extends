@@ -528,6 +528,7 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
                     log.warn("[{}][执行失败][status:{}][info:{}]", api , status, row.getString("message"));
                     log.warn("[{}][response:{}]", api, txt);
                     if (status ==302 || status == 121) {
+                        last_limit = DateUtil.format("yyyy-MM-dd");
                         throw new AnylineException("API_OVER_LIMIT", "访问已超出日访问量");
                     } else if (status == 401 || status == 402) {
                         try {
