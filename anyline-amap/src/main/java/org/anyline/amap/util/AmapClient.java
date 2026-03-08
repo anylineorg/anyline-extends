@@ -1028,7 +1028,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 				break;
 			}
 			for(DataRow item:set) {
-				Coordinate coordinate = poi(item);
+				Coordinate coordinate = coordinate(item);
 				if(maps.containsKey(coordinate.getId())) {
 					exists++;
 				}else{
@@ -1090,7 +1090,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 				break;
 			}
 			for(DataRow item:set) {
-				Coordinate coordinate = poi(item);
+				Coordinate coordinate = coordinate(item);
 				if(maps.containsKey(coordinate.getId())) {
 					exists++;
 				}else{
@@ -1110,7 +1110,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 		log.warn("[查询结果:{}]", coordinates.size());
 		return coordinates;
 	}
-	private Coordinate poi(DataRow row) {
+	private Coordinate coordinate(DataRow row) {
 		Coordinate coordinate = new Coordinate();
 		coordinate.setPoiCategoryName(row.getString("type"));
 		coordinate.setPoiCategoryCode(row.getString("typecode"));

@@ -21,6 +21,7 @@ import org.anyline.client.map.AbstractMapClient;
 import org.anyline.client.map.MapClient;
 import org.anyline.entity.Coordinate;
 import org.anyline.entity.DataRow;
+import org.anyline.entity.DataSet;
 import org.anyline.entity.SRS;
 import org.anyline.exception.AnylineException;
 import org.anyline.net.HttpResponse;
@@ -32,9 +33,8 @@ import org.anyline.log.LogProxy;
 
 import java.io.File;
 import java.net.URLEncoder;
-import java.util.Hashtable;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
+
 public class BaiduMapClient extends AbstractMapClient implements MapClient {
     private static Log log = LogProxy.get(BaiduMapClient.class);
     private static final String HOST = "https://api.map.baidu.com";
@@ -127,36 +127,144 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
 
         DataRow row = api(api, params);
         if(null != row) {
-            coordinate.setAddress(row.getString("formatted_address"));
-            DataRow adr = row.getRow("result","addressComponent");
-            if(null != adr) {
-                String adcode = adr.getString("adcode");
-                String provinceCode = adcode.substring(0,2);
-                String cityCode = adcode.substring(0,4);
-                coordinate.setProvinceCode(provinceCode);
-                coordinate.setProvinceName(adr.getString("province"));
-                coordinate.setCityCode(cityCode);
-                coordinate.setCityName(adr.getString("city"));
-                coordinate.setCountyName(adr.getString("district"));
-                coordinate.setCountyCode(adr.getString("adcode"));
-                coordinate.setTownCode(adr.getString("town_code"));
-                coordinate.setTownName(adr.getString("town"));
+            parse(coordinate, row);
+            //解析附近poi
+            DataSet<DataRow> pois = row.getSet("pois");
+            List<Coordinate> poi_coordinates = new ArrayList<>();
+            for (DataRow poi : pois) {
+                Coordinate poi_coordinate = new Coordinate();
+                poi(poi_coordinate, poi);
+                poi_coordinate.setProvinceCode(coordinate.getProvinceCode());
+                poi_coordinate.setProvinceName(coordinate.getProvinceName());
+                poi_coordinate.setCityCode(coordinate.getCityCode());
+                poi_coordinate.setCityName(coordinate.getCityName());
+                poi_coordinate.setCountyCode(coordinate.getCountyCode());
+                poi_coordinate.setCountyName(coordinate.getCountyName());
+                poi_coordinate.setTownCode(coordinate.getTownCode());
+                poi_coordinate.setTownName(coordinate.getTownName());
+                poi_coordinate.setVillageCode(coordinate.getVillageCode());
+                poi_coordinate.setVillageName(coordinate.getVillageName());
 
-                String street = adr.getString("street");
-                coordinate.setStreet(street);
-                String number = adr.getString("street_number");
-                if(null != number && null != street) {
-                    number = number.replace(street,"");
-                }
-                coordinate.setStreet(street);
-                coordinate.setStreetNumber(number);
-                coordinate.setSuccess(true);
+                poi_coordinates.add(poi_coordinate);
             }
+            coordinate.setPois(poi_coordinates);
         }
+        // 换回原坐标系
+        coordinate.setLng(_lng);
+        coordinate.setLat(_lat);
+        coordinate.setSrs(_type);
         coordinate.correct();
         return coordinate;
     }
+    /**
+     *
+     * @param city 城市 或 区县
+     * @param category 类别(中文)
+     * @param keyword 关键定
+     * @return List
+     */
+    public List<Coordinate> poi(String city, String category, String keyword) {
+        List<Coordinate> coordinates = new ArrayList<>();
+        String api = "/place/v3/region";
 
+        Map<String, Object> params = new HashMap<>();
+        if(BasicUtil.isNotEmpty(keyword)) {
+            params.put("query", keyword);
+        }
+        if(BasicUtil.isNotEmpty(category)) {
+            params.put("type", category);
+        }
+        params.put("page_size", 20);
+        params.put("region", city);
+        params.put("extensions", "all");
+        params.put("scope", 2);//详细POI
+
+        int page = 0; //从0开始
+        Map<String, Coordinate> maps = new HashMap<>();
+        int pages = 0;
+        while (pages == 0 || page <= pages) {
+            params.put("page_num", page++);
+            DataRow row = api(api, params);
+            if(null == row) {
+                break;
+            }
+            int total = row.getInt("total");
+            pages = (total-1)/20+1;
+            DataSet<DataRow> set = row.getSet("results");
+            if(null == set || set.isEmpty()) {
+                break;
+            }
+            for(DataRow item:set) {
+                Coordinate coordinate = new Coordinate();
+                parse(coordinate, item);
+                if(!maps.containsKey(coordinate.getId())) {
+                    coordinates.add(coordinate);
+                }
+                maps.put(coordinate.getId(), coordinate);
+            }
+        }
+        log.warn("[查询结果:{}]", coordinates.size());
+        return coordinates;
+    }
+    private Coordinate poi(Coordinate coordinate, DataRow row) {
+        coordinate.setAddress(row.getString("addr"));
+        coordinate.setTitle(row.getString("name"));
+        coordinate.setPoiCategoryName(row.getString("tag"));
+        coordinate.setTel(row.getString("tel"));
+        coordinate.setId(row.getString("uid"));
+        DataRow point = row.getRow("point");
+        if(null != point) {
+            coordinate.setLng(point.getDouble("x"));
+            coordinate.setLat(point.getDouble("y"));
+        }
+        coordinate.setSuccess(true);
+        coordinate.setMetadata(row);
+        return coordinate;
+    }
+
+    private Coordinate parse(Coordinate coordinate, DataRow row) {
+        coordinate.setId(row.getString("uid"));
+        coordinate.setTitle(row.getString("name"));
+
+        DataRow point = row.getRow("location");
+        if(null != point) {
+            coordinate.setLng(point.getDouble("lng"));
+            coordinate.setLat(point.getDouble("lat"));
+        }
+        String address = row.getString("address");
+        if(BasicUtil.isEmpty(address)) {
+            address = row.getString("formatted_address");
+        }
+        coordinate.setAddress(address);
+        coordinate.setTel(row.getString("telephone"));
+        DataRow adr = row.getRow("result","addressComponent");
+        if(null == adr){
+            adr = row;
+        }
+        String adcode = adr.getString("adcode");
+        String provinceCode = adcode.substring(0,2);
+        String cityCode = adcode.substring(0,4);
+        coordinate.setProvinceCode(provinceCode);
+        coordinate.setProvinceName(adr.getString("province"));
+        coordinate.setCityCode(cityCode);
+        coordinate.setCityName(adr.getString("city"));
+        coordinate.setCountyName(adr.getString("district"));
+        coordinate.setCountyCode(adr.getString("adcode"));
+        coordinate.setTownCode(adr.getString("town_code"));
+        coordinate.setTownName(adr.getString("town"));
+
+        String street = adr.getString("street");
+        coordinate.setStreet(street);
+        String number = adr.getString("street_number");
+        if(null != number && null != street) {
+            number = number.replace(street,"");
+        }
+        coordinate.setStreet(street);
+        coordinate.setStreetNumber(number);
+        coordinate.setSuccess(true);
+        coordinate.setMetadata(row);
+        return coordinate;
+    }
 
     private DataRow api(String api, Map<String, Object> params) {
         if(limit()) {

@@ -194,7 +194,7 @@ public class HuaweiMapClient extends AbstractMapClient implements MapClient {
 		return null;
 	}
 	/**
-	 * 附近poi https://lbs.qq.com/service/webService/webServiceGuide/search/webServiceSearch
+	 * 附近poi
 	 * @param lng 经度
 	 * @param lat 经度
 	 * @param radius 半径
@@ -275,37 +275,33 @@ public class HuaweiMapClient extends AbstractMapClient implements MapClient {
 		headers.put("Accept", "application/json");
 		HttpResponse response = HttpUtil.post(headers, host + api + "?key="+config.SECRET,"UTF-8", entity);
 		int status = response.getStatus();
-		if(status == 200) {
-			String txt = response.getText();
-			if(null != HuaweiMapConfig.CACHE_DIR) {
-				File dir = new File(HuaweiMapConfig.CACHE_DIR, config.SECRET+"/"+api.replace("/","_")+"/"+DateUtil.format("yyyyMMddHH"));
-				File file = new File(dir, System.currentTimeMillis()+"_"+BasicUtil.getRandomString(8)+".txt");
-				FileUtil.write(body+"\r\n"+txt, file);
-			}
-			row = DataRow.parseJson(txt);
-			String code = row.getString("returnCode");
-			if (!"0".equalsIgnoreCase(code)) {
-				// [逆地理编码][执行失败][code:10044][info:USER_DAILY_QUERY_OVER_LIMIT]
-				log.warn("[{}][执行失败][code:{}][info:{}]", api, row.getString("INFOCODE"), row.getString("INFO"));
-				log.warn("[{}}][response:{}]", txt);
-				String info_code = row.getString("INFOCODE");
-				if ("010024".equals(info_code)) {
-					last_limit = DateUtil.format("yyyy-MM-dd");
-					throw new AnylineException("API_OVER_LIMIT", "访问已超出日访问量(或接口欠费)");
-				} else if ("010037".equals(info_code)) {
-					log.warn("并发量已达到上限,sleep 100 ...");
-					try {
-						Thread.sleep(100);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-					return post(host, api, params);
-				} else {
-					throw new AnylineException(status, row.getString("returnDesc"));
+		String txt = response.getText();
+		row = DataRow.parseJson(txt);
+		String code = row.getString("returnCode");
+		if(null != HuaweiMapConfig.CACHE_DIR) {
+			File dir = new File(HuaweiMapConfig.CACHE_DIR, config.SECRET+"/"+api.replace("/","_")+"/"+DateUtil.format("yyyyMMddHH"));
+			File file = new File(dir, System.currentTimeMillis()+"_"+BasicUtil.getRandomString(8)+".txt");
+			FileUtil.write(body+"\r\n"+txt, file);
+		}
+		if (!"0".equalsIgnoreCase(code)) {
+			// [逆地理编码][执行失败][code:10044][info:USER_DAILY_QUERY_OVER_LIMIT]
+			log.warn("[{}][执行失败][code:{}][info:{}]", api, row.getString("INFOCODE"), row.getString("INFO"));
+			log.warn("[{}}][response:{}]", txt);
+			String info_code = row.getString("INFOCODE");
+			if ("010024".equals(info_code)) {
+				last_limit = DateUtil.format("yyyy-MM-dd");
+				throw new AnylineException("API_OVER_LIMIT", "访问已超出日访问量(或接口欠费)");
+			} else if ("010037".equals(info_code)) {
+				log.warn("并发量已达到上限,sleep 100 ...");
+				try {
+					Thread.sleep(100);
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
+				return post(host, api, params);
+			} else {
+				throw new AnylineException(status, row.getString("returnDesc"));
 			}
-		}else{
-			throw new AnylineException(status, "api执行异常");
 		}
 		return row;
 	}
