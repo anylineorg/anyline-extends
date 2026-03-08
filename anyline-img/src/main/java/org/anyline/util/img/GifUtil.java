@@ -46,12 +46,12 @@ public class GifUtil {
      * @param dir 解压目录 
      * @return List
      */ 
-    public static List<File> split(File file, File dir){
+    public static List<File> split(File file, File dir) {
     	List<File> files = new ArrayList<>();
     	FileImageInputStream in = null; 
     	FileImageOutputStream out = null; 
     	try {
-    		if(null != dir && !dir.exists()){
+    		if(null != dir && !dir.exists()) {
     			dir.mkdirs(); 
     		} 
     		in = new FileImageInputStream(file); 
@@ -67,7 +67,7 @@ public class GifUtil {
     			writer.setOutput(out); 
     			writer.write(gifReader.read(i)); 
     		} 
-    	}catch(Exception e){
+    	}catch(Exception e) {
     		e.printStackTrace(); 
     	} 
     	return files; 
@@ -80,14 +80,14 @@ public class GifUtil {
      */ 
     public synchronized static void create(int delay, String tar, String ... srcs) {
     	List<File> list = new ArrayList<>();
-    	for(String src:srcs){
+    	for(String src:srcs) {
     		list.add(new File(src)); 
     	}
 		create(delay, new File(tar), list);
     } 
     public synchronized static void create(int delay, String tar, List<String> srcs) {
     	List<File> list = new ArrayList<>();
-    	for(String src:srcs){
+    	for(String src:srcs) {
     		list.add(new File(src)); 
     	}
 		create(delay, new File(tar), list);
@@ -106,7 +106,7 @@ public class GifUtil {
         try {
         	long fr = 0; 
         	File dir = tar.getParentFile(); 
-        	if(null != dir && !dir.exists()){
+        	if(null != dir && !dir.exists()) {
         		dir.mkdirs(); 
         	} 
             AnimatedGifEncoder e = new AnimatedGifEncoder();
@@ -120,7 +120,7 @@ public class GifUtil {
                 e.setDelay(delay); // 设置播放的延迟时间   
                 src[i] = ImageIO.read(item); // 读入需要播放的jpg文件   
                 e.addFrame(src[i]);  // 添加到帧中   
-                if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
+                if(ConfigTable.IS_DEBUG && log.isWarnEnabled()) {
                 	log.warn("[合成 gif][第{}/{}帧][gif:{}][源文件:{}][耗时:{}]",i+1,size,tar.getAbsolutePath(), item.getAbsoluteFile(), DateUtil.format(System.currentTimeMillis()-fr));
                 } 
             }   
@@ -141,7 +141,7 @@ public class GifUtil {
         try {
         	long fr = 0; 
         	File dir = tar.getParentFile(); 
-        	if(null != dir && !dir.exists()){
+        	if(null != dir && !dir.exists()) {
         		dir.mkdirs(); 
         	} 
             AnimatedGifEncoder e = new AnimatedGifEncoder();  
@@ -156,7 +156,7 @@ public class GifUtil {
                 e.setDelay(delay); // 设置播放的延迟时间   
                 src[i] = ImageIO.read(item); // 读入需要播放的jpg文件   
                 e.addFrame(src[i]);  // 添加到帧中   
-                if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
+                if(ConfigTable.IS_DEBUG && log.isWarnEnabled()) {
                 	log.warn("[合成 gif][第{}/{}帧][gif:{}][源文件:{}][耗时:{}]", i+1, size, tar.getAbsoluteFile(), item.getAbsoluteFile(), DateUtil.format(System.currentTimeMillis()-fr));
                 } 
             }   

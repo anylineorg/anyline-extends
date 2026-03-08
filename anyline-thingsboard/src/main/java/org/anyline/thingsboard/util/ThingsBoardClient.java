@@ -50,25 +50,25 @@ public class ThingsBoardClient extends RestClient {
 
     static {
         Hashtable<String, AnylineConfig> configs = ThingsBoardConfig.getInstances();
-        for(String key:configs.keySet()){
+        for(String key:configs.keySet()) {
             instances.put(key, getInstance(key));
         }
     }
 
 
-    public static Hashtable<String, ThingsBoardClient> getInstances(){
+    public static Hashtable<String, ThingsBoardClient> getInstances() {
         return instances;
     }
 
-    public static ThingsBoardClient getInstance(){
+    public static ThingsBoardClient getInstance() {
         return getInstance(ThingsBoardConfig.DEFAULT_INSTANCE_KEY);
     }
-    public static ThingsBoardClient getInstance(String key){
-        if(BasicUtil.isEmpty(key)){
+    public static ThingsBoardClient getInstance(String key) {
+        if(BasicUtil.isEmpty(key)) {
             key = ThingsBoardConfig.DEFAULT_INSTANCE_KEY;
         }
         ThingsBoardClient client = instances.get(key);
-        if(null == client){
+        if(null == client) {
             ThingsBoardConfig config = ThingsBoardConfig.getInstance(key);
             if(null != config) {
                 client = new ThingsBoardClient(config.HOST);
@@ -77,7 +77,7 @@ public class ThingsBoardClient extends RestClient {
                 try {
                     client.login(config.ACCOUNT, config.PASSWORD);
                     log.info("[client login][success]");
-                }catch (Exception e){
+                }catch (Exception e) {
                     e.printStackTrace();
                 }
                 instances.put(key, client);
@@ -107,7 +107,7 @@ public class ThingsBoardClient extends RestClient {
      */
     public boolean saveEntityTelemetry(EntityType type, String id, String scope, Long ttl, List<Map<?,?>> maps) {
         String url = baseURL + "/api/plugins/telemetry/{type}/{id}/timeseries/{scope}";
-        if(null != ttl && ttl > 0){
+        if(null != ttl && ttl > 0) {
             url += "/{ttl}";
         }
         ResponseEntity response = restTemplate.postForEntity(url, maps, Object.class, type.name(), id, scope, ttl);
@@ -253,7 +253,7 @@ public class ThingsBoardClient extends RestClient {
                     },
                     params).getBody();
             return pivot(timeseries);
-        }catch (Exception e){
+        }catch (Exception e) {
             log.warn("[get timeseries error][url:{}][params:{}]",urlBuilder.toString(), BeanUtil.map2json(params));
             throw e;
         }
@@ -307,16 +307,16 @@ public class ThingsBoardClient extends RestClient {
      * @param scope CLIENT_SCOPE, SERVER_SCOPE, SHARED_SCOPE
      * @return List
      */
-    public List<String> getDeviceAttributeKeys(String id, String scope){
+    public List<String> getDeviceAttributeKeys(String id, String scope) {
         return getAttributeKeys(EntityType.DEVICE, id, scope);
     }
 
-    public List<String> getDeviceAttributeKeys(String id){
+    public List<String> getDeviceAttributeKeys(String id) {
         return getAttributeKeys(EntityType.DEVICE, id, null);
     }
 
 
-    public List<String> getAttributeKeys(EntityType type, String id){
+    public List<String> getAttributeKeys(EntityType type, String id) {
         return getAttributeKeys(type, id, null);
     }
 
@@ -327,9 +327,9 @@ public class ThingsBoardClient extends RestClient {
      * @param scope CLIENT_SCOPE, SERVER_SCOPE, SHARED_SCOPE
      * @return List
      */
-    public List<String> getAttributeKeys(EntityType type, String id, String scope){
+    public List<String> getAttributeKeys(EntityType type, String id, String scope) {
         String url = baseURL + "/api/plugins/telemetry/{entityType}/{entityId}/keys/attributes";
-        if(BasicUtil.isNotEmpty(scope)){
+        if(BasicUtil.isNotEmpty(scope)) {
             url += "/{scope}";
         }
         return restTemplate.exchange(url,
@@ -418,7 +418,7 @@ public class ThingsBoardClient extends RestClient {
      * @param timeseries 按属性分组的遥测数据
      * @return DataSet
      */
-    private DataSet<DataRow> pivot(Map<String, List<JsonNode>> timeseries){
+    private DataSet<DataRow> pivot(Map<String, List<JsonNode>> timeseries) {
         DataSet<DataRow> set = new DataSet();
         try {
             List<TsKvEntry> list = RestJsonConverter.toTimeseries(timeseries);
@@ -431,16 +431,16 @@ public class ThingsBoardClient extends RestClient {
                 tmps.add(row);
             }
             DataSet<DataRow> groups = tmps.group("ts");
-            for(DataRow group:groups){
+            for(DataRow group:groups) {
                 DataSet<DataRow> items = group.getItems();
                 DataRow row = new DataRow();
                 row.put("ts", group.get("ts"));
-                for(DataRow item:items){
+                for(DataRow item:items) {
                     row.put(false, null, item.getString("key"), item.get("value"), false, false);
                 }
                 set.add(row);
             }
-        }catch (Exception e){
+        }catch (Exception e) {
             e.printStackTrace();
             throw e;
         }

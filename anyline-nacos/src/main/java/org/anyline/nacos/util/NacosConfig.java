@@ -77,21 +77,21 @@ public class NacosConfig extends AnylineConfig{
 	public String cloudGroup;
 
 
-	public static Hashtable<String,AnylineConfig>getInstances(){
+	public static Hashtable<String,AnylineConfig>getInstances() {
 		return instances;
 	}
 	static{
 		init(); 
 		debug(); 
 	}
-	public NacosConfig(){
+	public NacosConfig() {
 		auto();
 	}
-	public void auto(){
-		if(BasicUtil.isNotEmpty(bootAddress)){
+	public void auto() {
+		if(BasicUtil.isNotEmpty(bootAddress)) {
 			register("boot", bootAddress, 8848, bootGroup, bootNamespace, true, scanPackpage, scanClass);
 		}
-		if(BasicUtil.isNotEmpty(cloudAddress)){
+		if(BasicUtil.isNotEmpty(cloudAddress)) {
 			register("cloud", cloudAddress, 8848, cloudGroup, cloudNamespace, true, scanPackpage, scanClass);
 		}
 	}
@@ -99,7 +99,7 @@ public class NacosConfig extends AnylineConfig{
 	 * 解析配置文件内容
 	 * @param content 配置文件内容
 	 */
-	public static void parse(String content){
+	public static void parse(String content) {
 		parse(NacosConfig.class, content, instances ,compatibles);
 	}
 	/**
@@ -110,15 +110,15 @@ public class NacosConfig extends AnylineConfig{
 		load();
 	} 
  
-	public static NacosConfig getInstance(){
+	public static NacosConfig getInstance() {
 		return getInstance(DEFAULT_INSTANCE_KEY);
 	} 
-	public static NacosConfig getInstance(String key){
-		if(BasicUtil.isEmpty(key)){
+	public static NacosConfig getInstance(String key) {
+		if(BasicUtil.isEmpty(key)) {
 			key = DEFAULT_INSTANCE_KEY;
 		} 
  
-		if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - NacosConfig.lastLoadTime)/1000 > ConfigTable.getReload() ){
+		if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - NacosConfig.lastLoadTime)/1000 > ConfigTable.getReload() ) {
 			// 重新加载 
 			load(); 
 		}
@@ -174,6 +174,6 @@ public class NacosConfig extends AnylineConfig{
 	public static NacosConfig register(String address, int port, String pack, String clazz) {
 		return register(DEFAULT_GROUP, address, port, DEFAULT_GROUP, DEFAULT_NAMESPACE, DEFAULT_AUTO_SCAN, pack, clazz);
 	}
-	private static void debug(){
+	private static void debug() {
 	} 
 }

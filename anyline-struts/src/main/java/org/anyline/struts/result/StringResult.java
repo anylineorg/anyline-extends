@@ -41,11 +41,11 @@ public class StringResult extends StrutsResultSupport {
         try {
         	// 提取Action的传入值
         	data = invocation.getStack().findValue("data"); 
-        	if(null == data){
+        	if(null == data) {
         		data = ""; 
         	} 
         	writer.print(data.toString()); 
-        }catch(Exception e){
+        }catch(Exception e) {
         	e.printStackTrace(); 
         }finally {
             if (writer != null) {

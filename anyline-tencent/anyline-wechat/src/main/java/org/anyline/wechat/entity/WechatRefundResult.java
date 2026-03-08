@@ -44,11 +44,11 @@ public class WechatRefundResult {
 	private String coupon_refund_fee_$n		; // 单个代金券退款金额		// 否	Int	100	代金券退款金额<=退款金额,退款金额-代金券或立减优惠退款金额为现金,说明详见代金券或立减优惠 
 	private String coupon_refund_count		; // 退款代金券使用数量		// 否	Int	1	退款代金券使用数量 
 	private String coupon_refund_id_$n		; // 退款代金券ID			// 否	String(20)	10000 	退款代金券ID, $n为下标,从0开始编号 
-	public WechatRefundResult(){
+	public WechatRefundResult() {
 		 
 	} 
-	public WechatRefundResult(boolean result, String msg){
-		if(result){
+	public WechatRefundResult(boolean result, String msg) {
+		if(result) {
 			this.return_code = "SUCCESS"; 
 		}else{
 			this.return_code = "FAIL"; 

@@ -162,7 +162,7 @@ public class SMUtil {
         public String getPublicKey() {
             return publicKey;
         }
-        public byte[] getPublicBytes(){
+        public byte[] getPublicBytes() {
             return NumberUtil.hex2bytes(publicKey);
         }
 
@@ -325,7 +325,7 @@ public class SMUtil {
             if (!data.startsWith("04")) {
                 data = "04" + data;
             }
-            if(privateKey.contains(" ")){
+            if(privateKey.contains(" ")) {
                 privateKey = privateKey.replace(" ", "");
             }
             byte[] cipherDataByte = Hex.decode(data);

@@ -41,7 +41,7 @@ public class WechatUserInfo {
     private boolean result;
 
     public WechatUserInfo(){}
-    public WechatUserInfo(boolean result, String msg){
+    public WechatUserInfo(boolean result, String msg) {
         this.result = result;
         this.errmsg = msg;
     }

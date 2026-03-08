@@ -60,26 +60,26 @@ public class TemplateResult extends StrutsResultSupport {
 		HttpServletRequest request = ServletActionContext.getRequest(); 
 		String template = (String)request.getAttribute(Constant.REQUEST_ATTR_TEMPLATE_LAYOUT_PATH);
 		// action中设置模板 
-		if(null != template){
-			if(template.startsWith("/")){
+		if(null != template) {
+			if(template.startsWith("/")) {
 				// 从根目录开始 
 			}else{
 				// 根据内容页相对目录 
 				int idx = contentPage.indexOf("/page/"); 
-				if(idx > 0){
+				if(idx > 0) {
 					template = contentPage.substring(0,idx)+"/template/layout/" + template; 
 				} 
 			} 
 		} 
 		// 根据内容页构建模板path 
-		if(null == template){
+		if(null == template) {
 			int idx = contentPage.indexOf("/page/"); 
-			if(idx > 0){
+			if(idx > 0) {
 				template = contentPage.substring(0,idx)+"/template/layout/default.jsp"; 
 			} 
 		} 
 		// 根据配置文件读取固定模板path 
-		if(null == template){
+		if(null == template) {
 			template = ConfigTable.getString("TEMPLET_FILE_PATH_WEB"); 
 			if (WebUtil.isWap(request)) {
 				template = ConfigTable.getString("TEMPLET_FILE_PATH_WAP"); 

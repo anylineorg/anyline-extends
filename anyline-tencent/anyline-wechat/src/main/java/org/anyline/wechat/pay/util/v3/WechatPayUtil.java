@@ -54,37 +54,37 @@ public class WechatPayUtil {
 
     static {
         Hashtable<String, AnylineConfig> configs = WechatPayConfig.getInstances();
-        for(String key:configs.keySet()){
+        for(String key:configs.keySet()) {
             instances.put(key, getInstance(key));
         }
     }
-    public static Hashtable<String, WechatPayUtil> getInstances(){
+    public static Hashtable<String, WechatPayUtil> getInstances() {
         return instances;
     }
 
-    public static WechatPayUtil getInstance(){
+    public static WechatPayUtil getInstance() {
         return getInstance(WechatPayConfig.DEFAULT_INSTANCE_KEY);
     }
-    public WechatPayUtil(WechatPayConfig config){
+    public WechatPayUtil(WechatPayConfig config) {
         this.config = config;
     }
-    public WechatPayUtil(String key, DataRow config){
+    public WechatPayUtil(String key, DataRow config) {
         WechatPayConfig conf = WechatPayConfig.parse(key, config);
         this.config = conf;
         instances.put(key, this);
     }
-    public static WechatPayUtil reg(String key, DataRow config){
+    public static WechatPayUtil reg(String key, DataRow config) {
         WechatPayConfig conf = WechatPayConfig.register(key, config);
         WechatPayUtil util = new WechatPayUtil(conf);
         instances.put(key, util);
         return util;
     }
-    public static WechatPayUtil getInstance(String key){
-        if(BasicUtil.isEmpty(key)){
+    public static WechatPayUtil getInstance(String key) {
+        if(BasicUtil.isEmpty(key)) {
             key = WechatPayConfig.DEFAULT_INSTANCE_KEY;
         }
         WechatPayUtil util = instances.get(key);
-        if(null == util){
+        if(null == util) {
             WechatPayConfig config = WechatPayConfig.getInstance(key);
             util = new WechatPayUtil(config);
             instances.put(key, util);
@@ -95,7 +95,7 @@ public class WechatPayUtil {
     public WechatPayConfig getConfig() {
         return config;
     }
-    public WechatPrePayResult unifiedorder(WechatPayConfig.TRADE_TYPE type, WechatPrePayOrder order){
+    public WechatPrePayResult unifiedorder(WechatPayConfig.TRADE_TYPE type, WechatPrePayOrder order) {
         return transactions(type,order);
     }
 
@@ -105,12 +105,12 @@ public class WechatPayUtil {
      * @param order 订单
      * @return 结果主要包含prepay_id
      */
-    public WechatPrePayResult transactions(WechatPayConfig.TRADE_TYPE type, WechatPrePayOrder order){
+    public WechatPrePayResult transactions(WechatPayConfig.TRADE_TYPE type, WechatPrePayOrder order) {
         WechatPrePayResult result = new WechatPrePayResult();
-        if(BasicUtil.isEmpty(order.getMchid())){
+        if(BasicUtil.isEmpty(order.getMchid())) {
             order.setMchid(config.MCH_ID);
         }
-        if(BasicUtil.isEmpty(order.getNotify_url())){
+        if(BasicUtil.isEmpty(order.getNotify_url())) {
             order.setNotify_url(config.NOTIFY_URL);
         }
         String url = "https://api.mch.weixin.qq.com/v3/pay/transactions/"+type.getApi();
@@ -128,7 +128,7 @@ public class WechatPayUtil {
      * @param prepayid 预支付id(由统一下单接口返回)
      * @return DataRow
      */
-    public DataRow callUpParam(String appid, String prepayid){
+    public DataRow callUpParam(String appid, String prepayid) {
         String timestamp = System.currentTimeMillis()/1000+"";
         String random = BasicUtil.getRandomUpperString(32);
 
@@ -148,11 +148,11 @@ public class WechatPayUtil {
             builder.append(pkg).append("\n");
             String sign = sign(builder.toString().getBytes("UTF-8"));
             params.put("paySign", sign);
-        }catch (Exception e){
+        }catch (Exception e) {
             e.printStackTrace();
         }
         DataRow row = new DataRow(params);
-        if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
+        if(ConfigTable.IS_DEBUG && log.isWarnEnabled()) {
             log.warn("[jsapi调起微信支付][参数:{}]", row.toJSON());
         }
         return row;
@@ -173,10 +173,10 @@ public class WechatPayUtil {
      * @param transfer  transfer
      * @return WechatEnterpriseTransferResult
      */
-    public WechatEnterpriseTransferResult transfer(WechatEnterpriseTransfer transfer){
+    public WechatEnterpriseTransferResult transfer(WechatEnterpriseTransfer transfer) {
         return null;
     }
-    private DataRow api(String url, String json){
+    private DataRow api(String url, String json) {
        DataRow row = new DataRow();
         try {
             String authorization = "WECHATPAY2-SHA256-RSA2048 " + authorization("POST", url.replace("https://api.mch.weixin.qq.com",""), json);
@@ -192,7 +192,7 @@ public class WechatPayUtil {
             row = DataRow.parseJson(txt);
             row.put("REQUEST_ID", requestId);
             row.put("REQUEST_STATUS", http.getStatus());
-        }catch (Exception e){
+        }catch (Exception e) {
             e.printStackTrace();
         }
        return row;
@@ -227,12 +227,12 @@ public class WechatPayUtil {
             sign.initSign(getPrivateKey(config.MCH_PRIVATE_SECRET_FILE));
             sign.update(message);
             result = Base64.getEncoder().encodeToString(sign.sign());
-        }catch (Exception e){
+        }catch (Exception e) {
             e.printStackTrace();
         }
         return result;
     }
-    public boolean verifySign(){
+    public boolean verifySign() {
         boolean result = false;
         return result;
     }

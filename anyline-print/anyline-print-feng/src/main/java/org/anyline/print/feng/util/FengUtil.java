@@ -40,29 +40,29 @@ public class FengUtil {
     private FengConfig config = null;
 
     private static Hashtable<String, FengUtil> instances = new Hashtable<String, FengUtil>();
-    public static FengUtil getInstance(){
+    public static FengUtil getInstance() {
         return getInstance(FengConfig.DEFAULT_INSTANCE_KEY);
     }
-    public FengUtil(FengConfig config){
+    public FengUtil(FengConfig config) {
         this.config = config;
     }
-    public FengUtil(String key, DataRow config){
+    public FengUtil(String key, DataRow config) {
         FengConfig conf = FengConfig.parse(key, config);
         this.config = conf;
         instances.put(key, this);
     }
-    public static FengUtil reg(String key, DataRow config){
+    public static FengUtil reg(String key, DataRow config) {
         FengConfig conf = FengConfig.reg(key, config);
         FengUtil util = new FengUtil(conf);
         instances.put(key, util);
         return util;
     }
-    public static FengUtil getInstance(String key){
-        if(BasicUtil.isEmpty(key)){
+    public static FengUtil getInstance(String key) {
+        if(BasicUtil.isEmpty(key)) {
             key = FengConfig.DEFAULT_INSTANCE_KEY;
         }
         FengUtil util = instances.get(key);
-        if(null == util){
+        if(null == util) {
             FengConfig config = FengConfig.getInstance(key);
             if(null != config) {
                 util = new FengUtil(config);
@@ -75,7 +75,7 @@ public class FengUtil {
     public FengConfig getConfig() {
         return config;
     }
-    private DataRow api(FengConfig.URL api, Map<String, Object> data){
+    private DataRow api(FengConfig.URL api, Map<String, Object> data) {
         DataRow result = null;
         long time = System.currentTimeMillis()/1000;
         String nonce = BasicUtil.getRandomNumberString(6);
@@ -94,7 +94,7 @@ public class FengUtil {
         String txt = HttpUtil.post(header, url, "UTF-8", new StringEntity(body, "UTF-8")).getText();
         log.info("[invoice api][result:{}]", txt);
         DataRow row = DataRow.parseJson(txt);
-        if(row.getInt("code",-1) == 200){
+        if(row.getInt("code",-1) == 200) {
             result = row;
             result.put("success", true);
         }else{
@@ -110,7 +110,7 @@ public class FengUtil {
      * @param code 打印机imei编号
      * @return 打印结果
      */
-    public DataRow captcha(String code){
+    public DataRow captcha(String code) {
         Map<String, Object> params = new HashMap<>();
         params.put("printerId", code);
         return api(URL.CAPTCHA, params);
@@ -126,7 +126,7 @@ public class FengUtil {
         params.put("printerId", code);
         params.put("captcha", captcha);
         DataRow row = api(FengConfig.URL.ADD_PRINTER, params);
-        if(!row.getBoolean("success",false)){
+        if(!row.getBoolean("success",false)) {
             throw new Exception(row.getString("error"));
         }
         return row.getString("data");
@@ -144,7 +144,7 @@ public class FengUtil {
         params.put("printerId", code);
         params.put("shareCode", share);
         DataRow row = api(FengConfig.URL.DELETE_PRINTER, params);
-        if(!row.getBoolean("success",false)){
+        if(!row.getBoolean("success",false)) {
             throw new Exception(row.getString("error"));
         }
         //0标识解绑失败，1标识解绑成功
@@ -183,7 +183,7 @@ public class FengUtil {
         try {
             byte[] bytes = MD5Util.bytes(data + nonce + config.APP_SECRET);
             result = Base64.getEncoder().encodeToString(bytes);
-        }catch (Exception e){
+        }catch (Exception e) {
             e.printStackTrace();
         }
         return result;

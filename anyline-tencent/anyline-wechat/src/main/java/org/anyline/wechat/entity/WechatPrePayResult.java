@@ -59,11 +59,11 @@ public class WechatPrePayResult {
 	public void setCode_url(String code_url) {
 		this.code_url = code_url;
 	}
-	public WechatPrePayResult(){
+	public WechatPrePayResult() {
 		 
 	} 
-	public WechatPrePayResult(boolean result, String msg){
-		if(result){
+	public WechatPrePayResult(boolean result, String msg) {
+		if(result) {
 			this.return_code = "SUCCESS"; 
 		}else{
 			this.return_code = "FAIL"; 

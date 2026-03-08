@@ -25,7 +25,7 @@ public class Department {
     private String parentCode;
     private String leaderCode;
     public Department(){}
-    public Department(String openid){
+    public Department(String openid) {
         this.openid = openid;
     }
     public String getOpenid() {

@@ -42,9 +42,9 @@ public class SpiderClient {
      * @param charset 编码
      * @param files js脚本
      */
-    public void script(Charset charset, List<File> files){
-        for(File file:files){
-            if(file.isDirectory()){
+    public void script(Charset charset, List<File> files) {
+        for(File file:files) {
+            if(file.isDirectory()) {
                 List<File> items = FileUtil.getAllChildrenFile(file,".js");
                 script(charset, items);
             }else {
@@ -59,13 +59,13 @@ public class SpiderClient {
         }
     }
 
-    public void script(Charset charset, File ... files){
+    public void script(Charset charset, File ... files) {
         script(charset, BeanUtil.array2list(files));
     }
-    public void script(Charset charset, String ... files){
-        for(String file:files){
+    public void script(Charset charset, String ... files) {
+        for(String file:files) {
             File f = null;
-            if(null == home){
+            if(null == home) {
                 f = new File(file);
             }else{
                 f = new File(home, file);
@@ -73,16 +73,16 @@ public class SpiderClient {
             script(charset, f);
         }
     }
-    public void script(File ... files){
+    public void script(File ... files) {
         script(Charset.defaultCharset(), files);
     }
-    public void script(String ... files){
+    public void script(String ... files) {
         script(Charset.defaultCharset(), files);
     }
 
-    public void script(String charset, List<File> files){
+    public void script(String charset, List<File> files) {
         Charset c = null;
-        if(null == charset){
+        if(null == charset) {
             c = Charset.defaultCharset();
         }else{
             c = Charset.forName(charset);
@@ -91,7 +91,7 @@ public class SpiderClient {
     }
 
 
-    public void script(String charset, File ... files){
+    public void script(String charset, File ... files) {
         script(charset, BeanUtil.array2list(files));
     }
 

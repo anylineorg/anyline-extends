@@ -36,23 +36,23 @@ public class WechatOpenUtil {
 
 	static {
 		Hashtable<String, AnylineConfig> configs = WechatOpenConfig.getInstances();
-		for(String key:configs.keySet()){
+		for(String key:configs.keySet()) {
 			instances.put(key, getInstance(key));
 		}
 	}
 
 
-	public WechatOpenUtil(WechatOpenConfig config){
+	public WechatOpenUtil(WechatOpenConfig config) {
 		this.config = config; 
 	} 
  
-	public WechatOpenUtil(String key, DataRow config){
+	public WechatOpenUtil(String key, DataRow config) {
 		WechatOpenConfig conf = WechatOpenConfig.parse(key, config);
 		this.config = conf; 
 		instances.put(key, this); 
 	} 
  
-	public static WechatOpenUtil reg(String key, DataRow config){
+	public static WechatOpenUtil reg(String key, DataRow config) {
 		WechatOpenConfig conf = WechatOpenConfig.parse(key, config);
 		WechatOpenUtil util = new WechatOpenUtil(conf);
 		instances.put(key, util); 
@@ -60,19 +60,19 @@ public class WechatOpenUtil {
 	}
 
 
-	public static Hashtable<String, WechatOpenUtil> getInstances(){
+	public static Hashtable<String, WechatOpenUtil> getInstances() {
 		return instances;
 	}
 
-	public static WechatOpenUtil getInstance(){
+	public static WechatOpenUtil getInstance() {
 		return getInstance(WechatOpenConfig.DEFAULT_INSTANCE_KEY);
 	} 
-	public static WechatOpenUtil getInstance(String key){
-		if(BasicUtil.isEmpty(key)){
+	public static WechatOpenUtil getInstance(String key) {
+		if(BasicUtil.isEmpty(key)) {
 			key = WechatOpenConfig.DEFAULT_INSTANCE_KEY;
 		} 
 		WechatOpenUtil util = instances.get(key);
-		if(null == util){
+		if(null == util) {
 			WechatOpenConfig config = WechatOpenConfig.getInstance(key);
 			if(null != config) {
 				util = new WechatOpenUtil(config);
@@ -81,22 +81,22 @@ public class WechatOpenUtil {
 		} 
 		return util; 
 	} 
-	public WechatOpenConfig getConfig(){
+	public WechatOpenConfig getConfig() {
 		return config; 
 	} 
 
 
-	public WechatAuthInfo getAuthInfo(String code){
+	public WechatAuthInfo getAuthInfo(String code) {
 		return WechatUtil.getAuthInfo(config, code);
 	}
-	public String getOpenId(String code){
+	public String getOpenId(String code) {
 		WechatAuthInfo info = getAuthInfo(code);
-		if(null != info && info.isResult()){
+		if(null != info && info.isResult()) {
 			return info.getOpenid();
 		}
 		return null;
 	}
-	public WechatUserInfo getUserInfo(String openid){
+	public WechatUserInfo getUserInfo(String openid) {
 		return WechatUtil.getUserInfo(config,openid);
 	}
 	public String getUnionId(String openid) {

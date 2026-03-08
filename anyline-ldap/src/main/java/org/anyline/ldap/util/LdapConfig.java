@@ -49,7 +49,7 @@ public class LdapConfig extends AnylineConfig{
 	public int CONNECT_TIMEOUT 				= DEFAULT_CONNECT_TIMEOUT			;
 	public int READ_TIMEOUT 				= DEFAULT_READ_TIMEOUT				;
 
-	public static Hashtable<String,AnylineConfig>getInstances(){
+	public static Hashtable<String,AnylineConfig>getInstances() {
 		return instances;
 	}
 	static{
@@ -60,7 +60,7 @@ public class LdapConfig extends AnylineConfig{
 	 * 解析配置文件内容
 	 * @param content 配置文件内容
 	 */
-	public static void parse(String content){
+	public static void parse(String content) {
 		parse(LdapConfig.class, content, instances ,compatibles);
 	}
 	/**
@@ -71,20 +71,20 @@ public class LdapConfig extends AnylineConfig{
 		load();
 	} 
  
-	public static LdapConfig getInstance(){
+	public static LdapConfig getInstance() {
 		return getInstance(DEFAULT_INSTANCE_KEY);
 	} 
-	public static LdapConfig getInstance(String key){
-		if(BasicUtil.isEmpty(key)){
+	public static LdapConfig getInstance(String key) {
+		if(BasicUtil.isEmpty(key)) {
 			key = DEFAULT_INSTANCE_KEY;
 		} 
  
-		if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - LdapConfig.lastLoadTime)/1000 > ConfigTable.getReload() ){
+		if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - LdapConfig.lastLoadTime)/1000 > ConfigTable.getReload() ) {
 			// 重新加载 
 			load(); 
 		}
 		LdapConfig config = (LdapConfig)instances.get(key);
-		if(null == config.URL){
+		if(null == config.URL) {
 			config.URL = "ldap://" + config.ADDRESS + ":" + config.PORT;
 		}
 		return config;
@@ -96,14 +96,14 @@ public class LdapConfig extends AnylineConfig{
 		load(instances, LdapConfig.class, CONFIG_NAME);
 		LdapConfig.lastLoadTime = System.currentTimeMillis();
 	} 
-	private static void debug(){
+	private static void debug() {
 	}
-	public static LdapConfig register(String instance, DataRow row){
+	public static LdapConfig register(String instance, DataRow row) {
 		LdapConfig config = parse(LdapConfig.class, instance, row, instances, compatibles);
 		LdapUtil.getInstance(instance);
 		return config;
 	}
-	public static LdapConfig register(DataRow row){
+	public static LdapConfig register(DataRow row) {
 		return register(DEFAULT_INSTANCE_KEY, row);
 	}
 }

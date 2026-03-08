@@ -38,14 +38,14 @@ public class BaiduSeoConfig extends AnylineConfig {
         init();
         debug();
     }
-    public static Hashtable<String,AnylineConfig>getInstances(){
+    public static Hashtable<String,AnylineConfig>getInstances() {
         return instances;
     }
     /**
      * 解析配置文件内容
      * @param content 配置文件内容
      */
-    public static void parse(String content){
+    public static void parse(String content) {
         parse(BaiduSeoConfig.class, content, instances ,compatibles);
     }
     /**
@@ -56,15 +56,15 @@ public class BaiduSeoConfig extends AnylineConfig {
         load();
     }
 
-    public static BaiduSeoConfig getInstance(){
+    public static BaiduSeoConfig getInstance() {
         return getInstance(DEFAULT_INSTANCE_KEY);
     }
-    public static BaiduSeoConfig getInstance(String key){
-        if(BasicUtil.isEmpty(key)){
+    public static BaiduSeoConfig getInstance(String key) {
+        if(BasicUtil.isEmpty(key)) {
             key = DEFAULT_INSTANCE_KEY;
         }
 
-        if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - BaiduSeoConfig.lastLoadTime)/1000 > ConfigTable.getReload() ){
+        if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - BaiduSeoConfig.lastLoadTime)/1000 > ConfigTable.getReload() ) {
             // 重新加载 
             load();
         }
@@ -79,23 +79,23 @@ public class BaiduSeoConfig extends AnylineConfig {
         load(instances, BaiduSeoConfig.class, CONFIG_NAME);
         BaiduSeoConfig.lastLoadTime = System.currentTimeMillis();
     }
-    private static void debug(){
+    private static void debug() {
     }
-    public static BaiduSeoConfig register(String instance, DataRow row){
+    public static BaiduSeoConfig register(String instance, DataRow row) {
         BaiduSeoConfig config = parse(BaiduSeoConfig.class, instance, row, instances, compatibles);
         BaiduSeoClient.getInstance(instance);
         return config;
     }
-    public static BaiduSeoConfig register(DataRow row){
+    public static BaiduSeoConfig register(DataRow row) {
         return register(DEFAULT_INSTANCE_KEY, row);
     }
-    public static BaiduSeoConfig register(String instance, String site, String token){
+    public static BaiduSeoConfig register(String instance, String site, String token) {
         DataRow row = new DataRow();
         row.put("SITE", site);
         row.put("TOKEN", token);
         return register(instance, row);
     }
-    public static BaiduSeoConfig register(String site, String token){
+    public static BaiduSeoConfig register(String site, String token) {
         return register(DEFAULT_INSTANCE_KEY, site, token);
     }
 }

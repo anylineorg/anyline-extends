@@ -38,7 +38,7 @@ public class TDMapBean implements InitializingBean {
     @Override
     public void afterPropertiesSet()  {
         KEY = BasicUtil.evl(KEY, TDMapConfig.DEFAULT_KEY);
-        if(BasicUtil.isEmpty(KEY)){
+        if(BasicUtil.isEmpty(KEY)) {
             return;
         }
         TDMapConfig config = TDMapConfig.register(KEY, BasicUtil.evl(SECRET, TDMapConfig.DEFAULT_SECRET)
@@ -48,7 +48,7 @@ public class TDMapBean implements InitializingBean {
         }
     }
     @Bean("anyline.tdmap.init.client")
-    public TDMapClient instance(){
+    public TDMapClient instance() {
         return TDMapClient.getInstance();
     }
 }

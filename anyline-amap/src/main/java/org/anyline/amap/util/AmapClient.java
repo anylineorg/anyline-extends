@@ -41,11 +41,11 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 	public AmapConfig config = null;
 	private static Hashtable<String, AmapClient> instances = new Hashtable<>();
 
-	public static Hashtable<String, AmapClient> getInstances(){
+	public static Hashtable<String, AmapClient> getInstances() {
 		return instances;
 	}
 
-	public AmapConfig getConfig(){
+	public AmapConfig getConfig() {
 		return config;
 	}
 	public static AmapClient getInstance() {
@@ -79,28 +79,28 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 	 * @param extras  extras
 	 * @return String
 	 */
-	public String create(String name, int loctype, String lng, String lat, String address, Map<String, Object> extras){
+	public String create(String name, int loctype, String lng, String lat, String address, Map<String, Object> extras) {
 		String url = AmapConfig.DEFAULT_YUNTU_HOST + "/datamanage/data/create";
 		Map<String, Object> params = new HashMap<>();
 		params.put("key", config.KEY);
 		params.put("tableId", config.TABLE);
 		params.put("loctype", loctype+"");
 		Map<String, Object> data = new HashMap<>();
-		if(null != extras){
+		if(null != extras) {
 			Iterator<String> keys = extras.keySet().iterator();
-			while(keys.hasNext()){
+			while(keys.hasNext()) {
 				String key = keys.next();
 				Object value = extras.get(key);
-				if(BasicUtil.isNotEmpty(value)){
+				if(BasicUtil.isNotEmpty(value)) {
 					data.put(key, value);
 				}
 			}
 		}
 		data.put("_name", name);
-		if(BasicUtil.isNotEmpty(lng) && BasicUtil.isNotEmpty(lat)){
+		if(BasicUtil.isNotEmpty(lng) && BasicUtil.isNotEmpty(lat)) {
 			data.put("_location", lng+","+lat);
 		}
-		if(BasicUtil.isNotEmpty(address)){
+		if(BasicUtil.isNotEmpty(address)) {
 			data.put("_address", address);
 		}
 		params.put("data", BeanUtil.map2json(data));
@@ -110,9 +110,9 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 		String id = null;
 		try{
 			DataRow row = DataRow.parseJson(txt);
-			if(row.containsKey("status")){
+			if(row.containsKey("status")) {
 				String status = row.getString("status");
-				if("1".equals(status) && row.containsKey("_id")){
+				if("1".equals(status) && row.containsKey("_id")) {
 					id = row.getString("_id");
 					log.info("[添加标注完成][id:{}][name:{}]", id, name);
 				}else{
@@ -120,27 +120,27 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 					log.warn("[param:{}]",BeanUtil.map2string(params));
 				}
 			}
-		}catch(Exception e){
+		}catch(Exception e) {
 			e.printStackTrace();
 		}
 		return id;
 	}
-	public String create(String name, String lng, String lat, String address, Map<String, Object> extras){
+	public String create(String name, String lng, String lat, String address, Map<String, Object> extras) {
 		return create(name, 1, lng, lat, address, extras);
 	}
-	public String create(String name, String lng, String lat, Map<String, Object> extras){
+	public String create(String name, String lng, String lat, Map<String, Object> extras) {
 		return create(name, 1, lng, lat, null, extras);
 	}
-	public String create(String name, int loctype, String lng, String lat, String address){
+	public String create(String name, int loctype, String lng, String lat, String address) {
 		return create(name, loctype, lng, lat, address, null);
 	}
-	public String create(String name, String lng, String lat, String address){
+	public String create(String name, String lng, String lat, String address) {
 		return create(name, lng, lat, address, null);
 	}
-	public String create(String name, String lng, String lat){
+	public String create(String name, String lng, String lat) {
 		return create(name, lng, lat, null, null);
 	}
-	public String create(String name, String address){
+	public String create(String name, String address) {
 		return create(name, null, null, address);
 	}
 
@@ -150,30 +150,30 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 	 * @param ids  ids
 	 * @return int
 	 */
-	public long delete(String ... ids){
-		if(null == ids){
+	public long delete(String ... ids) {
+		if(null == ids) {
 			return 0;
 		}
 		List<String> list = new ArrayList<>();
-		for(String id:ids){
+		for(String id:ids) {
 			list.add(id);
 		}
 		return delete(list);
 	}
-	public long delete(List<String> ids){
+	public long delete(List<String> ids) {
 		long cnt = 0;
-		if(null == ids || ids.isEmpty()){
+		if(null == ids || ids.isEmpty()) {
 			return cnt;
 		}
 		String param = "";
 		int size = ids.size();
 		// 一次删除最多50条 大于50打后拆分数据
-		if(size > 50){
+		if(size > 50) {
 			int navi = (size-1)/50 + 1;
-			for(int i=0; i<navi; i++){
+			for(int i=0; i<navi; i++) {
 				int fr = i*50;
 				int to = i*50 + 49;
-				if(to > size-1){
+				if(to > size-1) {
 					to = size - 1;
 				}
 				List<String> clds = ids.subList(fr, to);
@@ -182,8 +182,8 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 			return cnt;
 		}
 
-		for(int i=0; i<size; i++){
-			if(i==0){
+		for(int i=0; i<size; i++) {
+			if(i==0) {
 				param += ids.get(i);
 			}else{
 				param += "," + ids.get(i);
@@ -196,21 +196,21 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 		params.put("sig", sign(params));
 		String url = AmapConfig.DEFAULT_YUNTU_HOST + "/datamanage/data/delete";
 		String txt = HttpUtil.post(url, "UTF-8", params).getText();
-		if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
+		if(ConfigTable.IS_DEBUG && log.isWarnEnabled()) {
 			log.info("[删除标注][param:{}]", BeanUtil.map2string(params));
 		}
 		try{
 			DataRow json = DataRow.parseJson(txt);
-			if(json.containsKey("status")){
+			if(json.containsKey("status")) {
 				String status = json.getString("status");
-				if("1".equals(status)){
+				if("1".equals(status)) {
 					cnt = json.getInt("success");
 					log.info("[删除标注完成][success:{}][fail:{}]", cnt, json.getInt("fail"));
 				}else{
 					log.info("[删除标注失败][info:{}]", json.getString("info"));
 				}
 			}
-		}catch(Exception e){
+		}catch(Exception e) {
 			e.printStackTrace();
 			cnt = -1;
 		}
@@ -227,7 +227,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 	 * @param extras  extras
 	 * @return int 0:更新失败,没有对应的id  1:更新完成  -1:异常
 	 */
-	public long update(String id, String name, int loctype, String lng, String lat, String address, Map<String, Object> extras){
+	public long update(String id, String name, int loctype, String lng, String lat, String address, Map<String, Object> extras) {
 		long cnt = 0;
 		String url = AmapConfig.DEFAULT_YUNTU_HOST + "/datamanage/data/update";
 		Map<String, Object> params = new HashMap<>();
@@ -236,9 +236,9 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 		params.put("loctype", loctype+"");
 
 		Map<String, Object> data = new HashMap<>();
-		if(null != extras){
+		if(null != extras) {
 			Iterator<String> keys = extras.keySet().iterator();
-			while(keys.hasNext()){
+			while(keys.hasNext()) {
 				String key = keys.next();
 				Object value = extras.get(key);
 				data.put(key, value);
@@ -246,23 +246,23 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 		}
 		data.put("_id", id);
 		data.put("_name", name);
-		if(BasicUtil.isNotEmpty(lng) && BasicUtil.isNotEmpty(lat)){
+		if(BasicUtil.isNotEmpty(lng) && BasicUtil.isNotEmpty(lat)) {
 			data.put("_location", lng+","+lat);
 		}
-		if(BasicUtil.isNotEmpty(address)){
+		if(BasicUtil.isNotEmpty(address)) {
 			data.put("_address", address);
 		}
 		params.put("data", BeanUtil.map2json(data));
 		params.put("sig", sign(params));
 		String txt = HttpUtil.post(url, "UTF-8", params).getText();
-		if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
+		if(ConfigTable.IS_DEBUG && log.isWarnEnabled()) {
 			log.info("[更新标注][param:{}]",BeanUtil.map2string(params));
 		}
 		try{
 			DataRow json = DataRow.parseJson(txt);
-			if(json.containsKey("status")){
+			if(json.containsKey("status")) {
 				String status = json.getString("status");
-				if("1".equals(status)){
+				if("1".equals(status)) {
 					cnt = 1;
 					log.info("[更新标注完成][id:{}][name:{}]",id,name);
 				}else{
@@ -270,31 +270,31 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 					cnt = 0;
 				}
 			}
-		}catch(Exception e){
+		}catch(Exception e) {
 			e.printStackTrace();
 			cnt = -1;
 		}
 		return cnt;
 	}
-	public long update(String id, String name, String lng, String lat, String address, Map<String, Object> extras){
+	public long update(String id, String name, String lng, String lat, String address, Map<String, Object> extras) {
 		return update(id, name, 1, lng, lat, address, extras);
 	}
-	public long update(String id, String name, String lng, String lat, Map<String, Object> extras){
+	public long update(String id, String name, String lng, String lat, Map<String, Object> extras) {
 		return update(id, name, 1, lng, lat, null, extras);
 	}
-	public long update(String id, String name, int loctype, String lng, String lat, String address){
+	public long update(String id, String name, int loctype, String lng, String lat, String address) {
 		return update(id, name, loctype, lng, lat, address, null);
 	}
-	public long update(String id, String name, String lng, String lat, String address){
+	public long update(String id, String name, String lng, String lat, String address) {
 		return update(id, name, lng, lat, address, null);
 	}
-	public long update(String id, String name, String lng, String lat){
+	public long update(String id, String name, String lng, String lat) {
 		return update(id, name, lng, lat, null, null);
 	}
-	public long update(String id, String name, String address){
+	public long update(String id, String name, String address) {
 		return update(id, name, null, null, address);
 	}
-	public long update(String id, String name){
+	public long update(String id, String name) {
 		return update(id, name, null);
 	}
 
@@ -303,7 +303,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 	 * @param name  name
 	 * @return String
 	 */
-	public String createTable(String name){
+	public String createTable(String name) {
 		String tableId = null;
 		String url = AmapConfig.DEFAULT_YUNTU_HOST + "/datamanage/table/create";
 		Map<String, Object> params = new HashMap<>();
@@ -313,7 +313,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 		params.put("sig", sign);
 		String txt = HttpUtil.post(url, "UTF-8", params).getText();
 		DataRow json = DataRow.parseJson(txt);
-		if(json.containsKey("tableId")){
+		if(json.containsKey("tableId")) {
 			tableId = json.getString("tableId");
 			log.info("[创建地图完成][tableId:{}]", tableId);
 		}else{
@@ -332,14 +332,14 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 	 * @param page  page
 	 * @return DataSet
 	 */
-	public DataSet<DataRow> local(String keywords, String city, String filter, String sortrule, int limit, int page){
+	public DataSet<DataRow> local(String keywords, String city, String filter, String sortrule, int limit, int page) {
 		DataSet<DataRow> set = null;
 		String url = AmapConfig.DEFAULT_YUNTU_HOST + "/datasearch/local";
 		Map<String, Object> params = new HashMap<>();
 		params.put("key", config.KEY);
 		params.put("tableId", config.TABLE);
 		params.put("keywords", keywords);
-		if(BasicUtil.isEmpty(city)){
+		if(BasicUtil.isEmpty(city)) {
 			city = "全国";
 		}
 		params.put("city", city);
@@ -357,10 +357,10 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 		navi.setPageRows(limit);
 		try{
 			DataRow json = DataRow.parseJson(txt);
-			if(json.containsKey("count")){
+			if(json.containsKey("count")) {
 				navi.setTotalRow(json.getInt("count"));
 			}
-			if(json.containsKey("datas")){
+			if(json.containsKey("datas")) {
 				set = json.getSet("datas");
 			}else{
 				set = new DataSet();
@@ -368,7 +368,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 				log.info("[本地搜索失败][params:{}]",BeanUtil.map2string(params));
 				set.setException(new Exception(json.getString("info")));
 			}
-		}catch(Exception e){
+		}catch(Exception e) {
 			log.warn("[本地搜索失败][info:{}]",e.toString());
 			set = new DataSet();
 			set.setException(e);
@@ -389,7 +389,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 	 * @param page 第几页
 	 * @return DataSet
 	 */
-	public DataSet<DataRow> around(String center, int radius, String keywords, Map<String, String> filters, String sortrule, int limit, int page){
+	public DataSet<DataRow> around(String center, int radius, String keywords, Map<String, String> filters, String sortrule, int limit, int page) {
 		DataSet<DataRow> set = null;
 		String url = AmapConfig.DEFAULT_YUNTU_HOST + "/datasearch/around";
 		Map<String, Object> params = new HashMap<>();
@@ -397,30 +397,30 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 		params.put("tableId", config.TABLE);
 		params.put("center", center);
 		params.put("radius", radius+"");
-		if(BasicUtil.isNotEmpty(keywords)){
+		if(BasicUtil.isNotEmpty(keywords)) {
 			params.put("keywords", keywords);
 		}
 		// 过滤条件
-		if(null != filters && !filters.isEmpty()){
+		if(null != filters && !filters.isEmpty()) {
 			String filter = "";
 			Iterator<String> keys = filters.keySet().iterator();
-			while(keys.hasNext()){
+			while(keys.hasNext()) {
 				String key = keys.next();
 				String value = filters.get(key);
-				if(BasicUtil.isEmpty(value)){
+				if(BasicUtil.isEmpty(value)) {
 					continue;
 				}
-				if("".equals(filter)){
+				if("".equals(filter)) {
 					filter = key + ":" + value;
 				}else{
 					filter = filter + "+" + key + ":" + value;
 				}
 			}
-			if(!"".equals(filter)){
+			if(!"".equals(filter)) {
 				params.put("filter", filter);
 			}
 		}
-		if(BasicUtil.isNotEmpty(sortrule)){
+		if(BasicUtil.isNotEmpty(sortrule)) {
 			params.put("sortrule", sortrule);
 		}
 		limit = NumberUtil.min(limit, 100);
@@ -435,10 +435,10 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 		navi.setPageRows(limit);
 		try{
 			DataRow json = DataRow.parseJson(txt);
-			if(json.containsKey("count")){
+			if(json.containsKey("count")) {
 				navi.setTotalRow(json.getInt("count"));
 			}
-			if(json.containsKey("datas")){
+			if(json.containsKey("datas")) {
 				set = json.getSet("datas");
 			}else{
 				log.warn("[周边搜索失败][info:{}]",json.getString("info"));
@@ -446,7 +446,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 				set = new DataSet();
 				set.setException(new Exception(json.getString("info")));
 			}
-		}catch(Exception e){
+		}catch(Exception e) {
 			log.warn("[周边搜索失败][error:{}]",e.toString());
 			e.printStackTrace();
 			set = new DataSet();
@@ -457,33 +457,33 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 		return set;
 	}
 
-	public DataSet<DataRow> around(String center, int radius, Map<String, String> filters, String sortrule, int limit, int page){
+	public DataSet<DataRow> around(String center, int radius, Map<String, String> filters, String sortrule, int limit, int page) {
 		return around(center, radius, null, filters, sortrule, limit, page);
 	}
-	public DataSet<DataRow> around(String center, int radius, Map<String, String> filters, int limit, int page){
+	public DataSet<DataRow> around(String center, int radius, Map<String, String> filters, int limit, int page) {
 		return around(center, radius, null, filters, null, limit, page);
 	}
-	public DataSet<DataRow> around(String center, int radius, Map<String, String> filters, int limit){
+	public DataSet<DataRow> around(String center, int radius, Map<String, String> filters, int limit) {
 		return around(center, radius, null, filters, null, limit, 1);
 	}
-	public DataSet<DataRow> around(String center, int radius, String keywords, String sortrule, int limit, int page){
+	public DataSet<DataRow> around(String center, int radius, String keywords, String sortrule, int limit, int page) {
 		Map<String, String> filter = new HashMap<String, String>();
 		return around(center, radius, keywords, filter, sortrule, limit, page);
 	}
 
-	public DataSet<DataRow> around(String center, int radius, String keywords, int limit, int page){
+	public DataSet<DataRow> around(String center, int radius, String keywords, int limit, int page) {
 		return around(center, radius, keywords, "", limit, page);
 	}
-	public DataSet<DataRow> around(String center, int radius, int limit, int page){
+	public DataSet<DataRow> around(String center, int radius, int limit, int page) {
 		return around(center, radius, "", limit, page);
 	}
-	public DataSet<DataRow> around(String center, int radius, int limit){
+	public DataSet<DataRow> around(String center, int radius, int limit) {
 		return around(center, radius, "", limit, 1);
 	}
-	public DataSet<DataRow> around(String center, int radius){
+	public DataSet<DataRow> around(String center, int radius) {
 		return around(center, radius, "", 100, 1);
 	}
-	public DataSet<DataRow> around(String center){
+	public DataSet<DataRow> around(String center) {
 		return around(center, ConfigTable.getInt("AMAP_MAX_RADIUS"));
 	}
 	/**
@@ -500,14 +500,14 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 	 * @param page 当前页数 &gt;=1
 	 * @return DataSet
 	 */
-	public DataSet<DataRow> list(String filter, String sortrule, int limit, int page){
+	public DataSet<DataRow> list(String filter, String sortrule, int limit, int page) {
 		DataSet<DataRow> set = null;
 		String url = AmapConfig.DEFAULT_YUNTU_HOST + "/datamanage/data/list";
 		Map<String, Object> params = new HashMap<>();
 		params.put("key", config.KEY);
 		params.put("tableId", config.TABLE);
 		params.put("filter", filter);
-		if(BasicUtil.isNotEmpty(sortrule)){
+		if(BasicUtil.isNotEmpty(sortrule)) {
 			params.put("sortrule", sortrule);
 		}
 		limit = NumberUtil.min(limit, 100);
@@ -522,12 +522,12 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 		navi.setPageRows(limit);
 		try{
 			DataRow json = DataRow.parseJson(txt);
-			if(json.containsKey("count")){
+			if(json.containsKey("count")) {
 				navi.setTotalRow(json.getInt("count"));
 			}
-			if(json.containsKey("datas")){
+			if(json.containsKey("datas")) {
 				set = json.getSet("datas");
-				if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
+				if(ConfigTable.IS_DEBUG && log.isWarnEnabled()) {
 					log.info("[条件搜索][结果数量:{}]",set.size());
 				}
 			}else{
@@ -536,7 +536,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 				log.warn("[条件搜索失败][params:{}]",BeanUtil.map2string(params));
 				set.setException(new Exception(json.getString("info")));
 			}
-		}catch(Exception e){
+		}catch(Exception e) {
 			log.warn("[条件搜索失败][error:{}]",e.toString());
 			set = new DataSet();
 			set.setException(e);
@@ -552,7 +552,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 	 * @param id  id
 	 * @return DataRow
 	 */
-	public DataRow info(String id){
+	public DataRow info(String id) {
 		DataRow row = null;
 		String url = AmapConfig.DEFAULT_YUNTU_HOST + "/datasearch/id";
 		Map<String, Object> params = new HashMap<>();
@@ -564,16 +564,16 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 		String txt = HttpUtil.post(url, "UTF-8", params).getText();
 		try{
 			DataRow json = DataRow.parseJson(txt);
-			if(json.containsKey("datas")){
+			if(json.containsKey("datas")) {
 				DataSet<DataRow> set = json.getSet("datas");
-				if(set.size() > 0){
+				if(set.size() > 0) {
 					row = set.getRow(0);
 				}
 			}else{
 				log.warn("[周边搜索失败][info:{}]",json.getString("info"));
 				log.warn("[周边搜索失败][params:{}]",BeanUtil.map2string(params));
 			}
-		}catch(Exception e){
+		}catch(Exception e) {
 			log.warn("[周边搜索失败][error:{}]",e.toString());
 			e.printStackTrace();
 		}
@@ -587,7 +587,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 	 * @param filter 条件
 	 * @return DataSet
 	 */
-	public DataSet<DataRow> statByProvince(String keywords, String country, String filter){
+	public DataSet<DataRow> statByProvince(String keywords, String country, String filter) {
 		DataSet<DataRow> set = null;
 		String url = AmapConfig.DEFAULT_YUNTU_HOST + "/datasearch/statistics/province";
 		Map<String, Object> params = new HashMap<>();
@@ -602,7 +602,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 		String txt = HttpUtil.post(url, "UTF-8", params).getText();
 		try{
 			DataRow json = DataRow.parseJson(txt);
-			if(json.containsKey("datas")){
+			if(json.containsKey("datas")) {
 				set = json.getSet("datas");
 			}else{
 				set = new DataSet();
@@ -610,7 +610,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 				log.warn("[数据分布检索失败][params:{}]",BeanUtil.map2string(params));
 				set.setException(new Exception(json.getString("info")));
 			}
-		}catch(Exception e){
+		}catch(Exception e) {
 			log.warn("[数据分布检索失败][error:{}]",e.toString());
 			set = new DataSet();
 			set.setException(e);
@@ -626,7 +626,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 	 * @param filter 条件
 	 * @return DataSet
 	 */
-	public DataSet<DataRow> statByCity(String keywords, String province, String filter){
+	public DataSet<DataRow> statByCity(String keywords, String province, String filter) {
 		DataSet<DataRow> set = null;
 		String url = AmapConfig.DEFAULT_YUNTU_HOST + "/datasearch/statistics/city";
 		Map<String, Object> params = new HashMap<>();
@@ -641,7 +641,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 		String txt = HttpUtil.post(url, "UTF-8", params).getText();
 		try{
 			DataRow json = DataRow.parseJson(txt);
-			if(json.containsKey("datas")){
+			if(json.containsKey("datas")) {
 				set = json.getSet("datas");
 			}else{
 				set = new DataSet();
@@ -649,7 +649,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 				log.warn("[数据分布检索失败][params:{}]",BeanUtil.map2string(params));
 				set.setException(new Exception(json.getString("info")));
 			}
-		}catch(Exception e){
+		}catch(Exception e) {
 			log.warn("[数据分布检索失败][error:{}]",e.toString());
 			set = new DataSet();
 			set.setException(e);
@@ -666,7 +666,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 	 * @param filter 条件
 	 * @return DataSet
 	 */
-	public DataSet<DataRow> statByDistrict(String keywords, String province, String city, String filter){
+	public DataSet<DataRow> statByDistrict(String keywords, String province, String city, String filter) {
 		DataSet<DataRow> set = null;
 		String url = AmapConfig.DEFAULT_YUNTU_HOST + "/datasearch/statistics/province";
 		Map<String, Object> params = new HashMap<>();
@@ -681,7 +681,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 		String txt = HttpUtil.post(url, "UTF-8", params).getText();
 		try{
 			DataRow json = DataRow.parseJson(txt);
-			if(json.containsKey("datas")){
+			if(json.containsKey("datas")) {
 				set = json.getSet("datas");
 			}else{
 				set = new DataSet();
@@ -689,7 +689,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 				log.warn("[数据分布检索失败][params:{}]",BeanUtil.map2string(params));
 				set.setException(new Exception(json.getString("info")));
 			}
-		}catch(Exception e){
+		}catch(Exception e) {
 			log.warn("[数据分布检索失败][error:{}]",e.toString());
 			set = new DataSet();
 			set.setException(e);
@@ -704,7 +704,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 	 * @param timerange  timerange
 	 * @return DataSet
 	 */
-	public DataSet<DataRow> nearby(String center, String radius, int limit, int timerange ){
+	public DataSet<DataRow> nearby(String center, String radius, int limit, int timerange ) {
 		DataSet<DataRow> set = null;
 		String url = AmapConfig.DEFAULT_YUNTU_HOST + "/datasearch/statistics/province";
 		Map<String, Object> params = new HashMap<>();
@@ -719,7 +719,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 		String txt = HttpUtil.post(url, "UTF-8", params).getText();
 		try{
 			DataRow json = DataRow.parseJson(txt);
-			if(json.containsKey("datas")){
+			if(json.containsKey("datas")) {
 				set = json.getSet("datas");
 			}else{
 				set = new DataSet();
@@ -727,7 +727,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 				log.warn("[附近检索失败][params:{}]",BeanUtil.map2string(params));
 				set.setException(new Exception(json.getString("info")));
 			}
-		}catch(Exception e){
+		}catch(Exception e) {
 			log.warn("[附近检索失败][error:{}]",e.toString());
 			set = new DataSet();
 			set.setException(e);
@@ -764,20 +764,20 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 		params.put("location", _lng + "," +_lat);
 
 		Map<String, Object> ps = coordinate.getParams();
-		if(null != ps){
-			if(ps.containsKey("poitype")){
+		if(null != ps) {
+			if(ps.containsKey("poitype")) {
 				params.put("poitype", ps.get("poitype"));
 			}
-			if(ps.containsKey("radius")){
+			if(ps.containsKey("radius")) {
 				params.put("radius", ps.get("radius"));
 			}
-			if(ps.containsKey("extensions")){
+			if(ps.containsKey("extensions")) {
 				params.put("extensions", ps.get("extensions"));
 			}
-			if(ps.containsKey("homeorcorp")){
+			if(ps.containsKey("homeorcorp")) {
 				params.put("homeorcorp", ps.get("homeorcorp"));
 			}
-			if(ps.containsKey("roadlevel")){
+			if(ps.containsKey("roadlevel")) {
 				params.put("roadlevel", ps.get("roadlevel"));
 			}
 		}
@@ -825,20 +825,20 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 	 * @param coordinate 有可能是oi
 	 * @param result 返回内容
 	 */
-	private void parse(Coordinate coordinate, DataRow result){
+	private void parse(Coordinate coordinate, DataRow result) {
 		coordinate.setMetadata(result);
 		coordinate.setId(result.getString("id"));
 		coordinate.setTitle(result.getString("name"));
 		Object tel = result.get("tel");
-		if(tel instanceof Collection){
-			if(!((Collection)tel).isEmpty()){
+		if(tel instanceof Collection) {
+			if(!((Collection)tel).isEmpty()) {
 				coordinate.setTel(tel.toString());
 			}
-		}else if(tel instanceof String){
+		}else if(tel instanceof String) {
 			coordinate.setTel((String) tel);
 		}
 		String ad_code = result.getString("adcode");
-		if(null != ad_code){
+		if(null != ad_code) {
 			String provinceCode = ad_code.substring(0, 2);
 			String cityCode = ad_code.substring(0, 4);
 			coordinate.setProvinceCode(provinceCode);
@@ -866,7 +866,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 			coordinate.setAddress(result.getString("address"));
 		}
 		String location = result.getString("location");
-		if(null != location && location.contains(",")){
+		if(null != location && location.contains(",")) {
 			String[] locations = location.split(",");
 			coordinate.setLng(locations[0]);
 			coordinate.setLat(locations[1]);
@@ -880,25 +880,25 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 	 * @return Coordinate
 	 */
 	@Override
-	public Coordinate geo(String address, String city){
+	public Coordinate geo(String address, String city) {
 		Coordinate coordinate = new Coordinate();
 		coordinate.setAddress(address);
-		if(null != address){
+		if(null != address) {
 			address = address.replace(" ","");
 		}
 		String api = "/v3/geocode/geo";
 		Map<String, Object> params = new HashMap<>();
 		params.put("key", config.KEY);
 		params.put("address", address);
-		if(BasicUtil.isNotEmpty(city)){
+		if(BasicUtil.isNotEmpty(city)) {
 			params.put("city", city);
 		}
 		DataRow row = get(AmapConfig.DEFAULT_HOST, api, params);
 		coordinate.setMetadata(row);
 		DataSet<DataRow> set = null;
-		if(row.containsKey("geocodes")){
+		if(row.containsKey("geocodes")) {
 			set = row.getSet("geocodes");
-			if(set.size()>0){
+			if(set.size()>0) {
 				DataRow first = set.getRow(0);
 				String adcode = first.getString("ADCODE");
 				coordinate.setLocation(first.getString("LOCATION"));
@@ -913,7 +913,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 				coordinate.setLevel(first.getInt("LEVEL",0));
 				String street = first.getString("STREET");
 				String number = first.getString("NUMBER");
-				if(null != number && null != street){
+				if(null != number && null != street) {
 					number = number.replace(street,"");
 				}
 				coordinate.setStreet(street);
@@ -946,7 +946,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 	 * @return DataRow
 	 */
 	@SuppressWarnings({"rawtypes", "unchecked" })
-	public DataRow directionDrive(String origin, String destination, String points, int strategy){
+	public DataRow directionDrive(String origin, String destination, String points, int strategy) {
 		DataRow row = null;
 		String url = "http://restapi.amap.com/v3/direction/driving";
 		Map<String, Object> params = new HashMap<>();
@@ -954,7 +954,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 		params.put("origin", origin);
 		params.put("destination", destination);
 		params.put("strategy", strategy+"");
-		if(BasicUtil.isNotEmpty(points)){
+		if(BasicUtil.isNotEmpty(points)) {
 			params.put("points", points);
 		}
 		String sign = sign(params);
@@ -963,32 +963,32 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 		try{
 			row = DataRow.parseJson(txt);
 			DataRow route = row.getRow("route");
-			if(null != route){
+			if(null != route) {
 				List paths = route.getList("PATHS");
-				if(paths.size()>0){
+				if(paths.size()>0) {
 					DataRow path = (DataRow)paths.get(0);
 					row = path;
 					List<DataRow> steps = (List<DataRow>)path.getList("steps");
 					List<String> polylines = new ArrayList<>();
-					for(DataRow step:steps){
+					for(DataRow step:steps) {
 						String polyline = step.getString("polyline");
 						String[] tmps = polyline.split(";");
-						for(String tmp:tmps){
+						for(String tmp:tmps) {
 							polylines.add(tmp);
 						}
 					}
 					row.put("polylines", polylines);
 				}
 			}
-		}catch(Exception e){
+		}catch(Exception e) {
 			log.warn("[线路规划失败][error:{}]",e.toString());
 		}
 		return row;
 	}
-	public DataRow directionDrive(String origin, String destination){
+	public DataRow directionDrive(String origin, String destination) {
 		return directionDrive(origin, destination, null, 0);
 	}
-	public DataRow directionDrive(String origin, String destination, String points){
+	public DataRow directionDrive(String origin, String destination, String points) {
 		return directionDrive(origin, destination, points, 0);
 	}
 
@@ -999,15 +999,15 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 	 * @param keyword 关键定
 	 * @return List
 	 */
-	public List<Coordinate> poi(String city, String category, String keyword){
+	public List<Coordinate> poi(String city, String category, String keyword) {
 		List<Coordinate> coordinates = new ArrayList<>();
 		String api = "/v3/place/text";
 
 		Map<String, Object> params = new HashMap<>();
-		if(BasicUtil.isNotEmpty(keyword)){
+		if(BasicUtil.isNotEmpty(keyword)) {
 			params.put("keywords", keyword);
 		}
-		if(BasicUtil.isNotEmpty(category)){
+		if(BasicUtil.isNotEmpty(category)) {
 			params.put("types", category);
 		}
 		params.put("city", city);
@@ -1016,20 +1016,20 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 		params.put("key", config.KEY);
 		int page = 1;
 		Map<String, Coordinate> maps = new HashMap<>();
-		while (true){
+		while (true) {
 			params.put("page", page++);
 			DataRow row = get(AmapConfig.DEFAULT_HOST, api, params);
-			if(null == row){
+			if(null == row) {
 				break;
 			}
 			DataSet<DataRow> set = row.getSet("pois");
 			int exists = 0;
-			if(null == set || set.isEmpty()){
+			if(null == set || set.isEmpty()) {
 				break;
 			}
-			for(DataRow item:set){
+			for(DataRow item:set) {
 				Coordinate coordinate = poi(item);
-				if(maps.containsKey(coordinate.getId())){
+				if(maps.containsKey(coordinate.getId())) {
 					exists++;
 				}else{
 					coordinates.add(coordinate);
@@ -1037,11 +1037,11 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 				maps.put(coordinate.getId(), coordinate);
 			}
 			//最后一页小于20个
-			if(set.size() < 25){
+			if(set.size() < 25) {
 				break;
 			}
 			//有10个以上重复的中断(算成最后一页)
-			if(exists > 10){
+			if(exists > 10) {
 				break;
 			}
 		}
@@ -1064,13 +1064,13 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 		String api = "/v3/place/around";
 
 		Map<String, Object> params = new HashMap<>();
-		if(BasicUtil.isNotEmpty(keyword)){
+		if(BasicUtil.isNotEmpty(keyword)) {
 			params.put("keywords", keyword);
 		}
 		params.put("location", lng + "," + lat);
 		params.put("radius", radius);
 		//filter=category= 241000,241100
-		if(BasicUtil.isNotEmpty(category)){
+		if(BasicUtil.isNotEmpty(category)) {
 			params.put("types", category);
 		}
 		params.put("extensions", "all");
@@ -1078,20 +1078,20 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 		params.put("key", config.KEY);
 		int page = 1;
 		Map<String, Coordinate> maps = new HashMap<>();
-		while (true){
+		while (true) {
 			params.put("page", page++);
 			DataRow row = get(AmapConfig.DEFAULT_HOST, api, params);
-			if(null == row){
+			if(null == row) {
 				break;
 			}
 			DataSet<DataRow> set = row.getSet("pois");
 			int exists = 0;
-			if(null == set || set.isEmpty()){
+			if(null == set || set.isEmpty()) {
 				break;
 			}
-			for(DataRow item:set){
+			for(DataRow item:set) {
 				Coordinate coordinate = poi(item);
-				if(maps.containsKey(coordinate.getId())){
+				if(maps.containsKey(coordinate.getId())) {
 					exists++;
 				}else{
 					coordinates.add(coordinate);
@@ -1099,18 +1099,18 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 				maps.put(coordinate.getId(), coordinate);
 			}
 			//最后一页小于20个
-			if(set.size() < 25){
+			if(set.size() < 25) {
 				break;
 			}
 			//有10个以上重复的中断(算成最后一页)
-			if(exists > 10){
+			if(exists > 10) {
 				break;
 			}
 		}
 		log.warn("[查询结果:{}]", coordinates.size());
 		return coordinates;
 	}
-	private Coordinate poi(DataRow row){
+	private Coordinate poi(DataRow row) {
 		Coordinate coordinate = new Coordinate();
 		coordinate.setPoiCategoryName(row.getString("type"));
 		coordinate.setPoiCategoryCode(row.getString("typecode"));
@@ -1130,7 +1130,10 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 		coordinate.setMetadata(row);
 		return coordinate;
 	}
-	public DataRow get(String host, String api, Map<String, Object> params){
+	public DataRow get(String host, String api, Map<String, Object> params) {
+		if(limit()) {
+			return null;
+		}
 		DataRow row = null;
 		sign(params);
 		/*try {
@@ -1140,20 +1143,20 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 					params.put(key, URLEncoder.encode(value.toString(), "UTF-8"));
 				}
 			}
-		}catch (Exception e){
+		}catch (Exception e) {
 			e.printStackTrace();
 		}*/
 		HttpResponse response = HttpUtil.get(host + api,"UTF-8", params);
 		int status = response.getStatus();
 		if(status == 200) {
 			String txt = response.getText();
-			if(null != AmapConfig.CACHE_DIR){
+			if(null != AmapConfig.CACHE_DIR) {
 				File dir = new File(AmapConfig.CACHE_DIR, config.KEY+"/"+api.replace("/","_")+"/"+DateUtil.format("yyyyMMddHH"));
 				File file = new File(dir, System.currentTimeMillis()+"_"+BasicUtil.getRandomString(8)+".txt");
 				FileUtil.write(BeanUtil.map2json(params) + "\r\n" + txt, file);
 			}
 			row = DataRow.parseJson(txt);
-			if(null == row){
+			if(null == row) {
 				throw new AnylineException(status, row.getString("INFO"));
 			}
 			status = row.getInt("STATUS", 0);
@@ -1187,7 +1190,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 	 * @param params  params
 	 * @return String
 	 */
-	public String sign(Map<String, Object> params){
+	public String sign(Map<String, Object> params) {
 		params.remove("sig");
 		String sign = "";
 		sign = BeanUtil.map2string(params) + config.SECRET;

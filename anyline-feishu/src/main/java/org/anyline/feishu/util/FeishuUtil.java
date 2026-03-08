@@ -44,37 +44,37 @@ public class FeishuUtil {
 
 	static {
 		Hashtable<String, AnylineConfig> configs = FeishuConfig.getInstances();
-		for(String key:configs.keySet()){
+		for(String key:configs.keySet()) {
 			instances.put(key, getInstance(key));
 		}
 	}
 
-	public FeishuUtil(){
+	public FeishuUtil() {
 
 	}
-	public FeishuUtil(FeishuConfig config){
+	public FeishuUtil(FeishuConfig config) {
 		this.config = config;
 		client = Client.newBuilder(config.APP_ID, config.APP_SECRET).build();
 	}
-	public static Hashtable<String, FeishuUtil> getInstances(){
+	public static Hashtable<String, FeishuUtil> getInstances() {
 		return instances;
 	}
-	public Client client(){
+	public Client client() {
 		return client;
 	}
-	public void client(Client client){
+	public void client(Client client) {
 		this.client = client;
 	}
 
-	public static FeishuUtil getInstance(){
+	public static FeishuUtil getInstance() {
 		return getInstance(FeishuConfig.DEFAULT_INSTANCE_KEY);
 	} 
-	public static FeishuUtil getInstance(String key){
-		if(BasicUtil.isEmpty(key)){
+	public static FeishuUtil getInstance(String key) {
+		if(BasicUtil.isEmpty(key)) {
 			key = FeishuConfig.DEFAULT_INSTANCE_KEY;
 		} 
 		FeishuUtil util = instances.get(key); 
-		if(null == util){
+		if(null == util) {
 			FeishuConfig config = FeishuConfig.getInstance(key);
 			if(null != config) {
 				util = new FeishuUtil(config);
@@ -83,29 +83,29 @@ public class FeishuUtil {
 		}
 		return util; 
 	}
-	public static FeishuUtil reg(String key, DataRow config){
+	public static FeishuUtil reg(String key, DataRow config) {
 		FeishuConfig conf = FeishuConfig.register(key, config);
 		FeishuUtil util = new FeishuUtil(conf);
 		instances.put(key, util);
 		return util;
 	}
-	public static FeishuUtil reg(String key, String id, String secret){
+	public static FeishuUtil reg(String key, String id, String secret) {
 		FeishuConfig conf = FeishuConfig.register(key, id, secret);
 		FeishuUtil util = new FeishuUtil(conf);
 		instances.put(key, util);
 		return util;
 	}
-	public static FeishuUtil reg(String key, String id, String secret, String redirect){
+	public static FeishuUtil reg(String key, String id, String secret, String redirect) {
 		FeishuConfig conf = FeishuConfig.register(key, id, secret, redirect);
 		FeishuUtil util = new FeishuUtil(conf);
 		instances.put(key, util);
 		return util;
 	}
-	public FeishuConfig config(){
+	public FeishuConfig config() {
 		return config;
 	}
-	public String tenant_access_token(){
-		if(null == tenant_access_token || (System.currentTimeMillis()-tenant_access_token_time)/1000 >7000){
+	public String tenant_access_token() {
+		if(null == tenant_access_token || (System.currentTimeMillis()-tenant_access_token_time)/1000 >7000) {
 			flushToken();
 		}
 		return tenant_access_token;
@@ -116,7 +116,7 @@ public class FeishuUtil {
 	 * @param code 用户授权确认后重定向中的code
 	 * @return DataRow
 	 */
-	public DataRow access_token(String code){
+	public DataRow access_token(String code) {
 		DataRow token = null;
 		String url = "https://open.feishu.cn/open-apis/authen/v1/oidc/access_token";
 		Map<String, String> header = new Hashtable<>();
@@ -132,11 +132,11 @@ public class FeishuUtil {
 		token = row.getRow("data");
 		return token;
 	}
-	public User user(String code){
+	public User user(String code) {
 		User user = user(access_token(code));
 		return user;
 	}
-	public User user(DataRow token){
+	public User user(DataRow token) {
 		User user = new User();
 		String url = "https://open.feishu.cn/open-apis/authen/v1/user_info";
 		Map<String, String> header = new Hashtable<>();
@@ -149,14 +149,14 @@ public class FeishuUtil {
 		user = info(data);
 		return user;
 	}
-	public static User info(DataRow data){
+	public static User info(DataRow data) {
 		User user = new User();
 		user.setName(data.getString("name"));
 		user.setEnName(data.getString("en_name"));
-		if(data.isNotEmpty("avatar")){
+		if(data.isNotEmpty("avatar")) {
 			//批量获取用户列表
 			DataRow avators = data.getRow("avatar");
-			if(null != avators){
+			if(null != avators) {
 				user.setAvatarBig(data.getString("AVATAR_640"));
 				user.setAvatarUrl(data.getString("AVATAR_ORIGIN"));
 				user.setAvatarThumb(data.getString("AVATAR_72"));
@@ -169,16 +169,16 @@ public class FeishuUtil {
 			user.setAvatarThumb(data.getString("avatar_thumb"));
 			user.setAvatarMiddle(data.getString("avatar_middle"));
 		}
-		if(data.isNotEmpty("status")){
+		if(data.isNotEmpty("status")) {
 			DataRow status = data.getRow("status");
-			if(null != status){
+			if(null != status) {
 				user.setActivateStatus(status.getBoolean("is_activated", null));	//激活
 				user.setFrozenStatus(status.getBoolean("is_frozen", null));		//冻结
 				user.setResignStatus(status.getBoolean("is_resigned", null));		//离职
 			}
 		}
 		Long joinTime = data.getLong("join_time", 0);
-		if(joinTime > 0){
+		if(joinTime > 0) {
 			Date date = DateUtil.parse(joinTime*1000);
 			user.setJoinTime(date);
 			user.setJoinYmd(DateUtil.format(date, "yyyy-MM-dd"));
@@ -204,7 +204,7 @@ public class FeishuUtil {
 	 * 所有可访问用户
 	 * @return List
 	 */
-	public List<User> users(){
+	public List<User> users() {
 		List<User> users = new ArrayList<>();
 		String url ="https://open.feishu.cn/open-apis/contact/v3/scopes";
 		Map<String,String> header = new HashMap<>();
@@ -220,7 +220,7 @@ public class FeishuUtil {
 		}
 		return users;
 	}
-	public List<User> users(List<String> ids){
+	public List<User> users(List<String> ids) {
 		List<User> users = new ArrayList<>();
 		Map<String,String> header = new HashMap<>();
 		header.put("Authorization", "Bearer " + tenant_access_token());
@@ -237,20 +237,20 @@ public class FeishuUtil {
 		}
 		return users;
 	}
-	public List<User> users(Department department){
+	public List<User> users(Department department) {
 		List<User> users = new ArrayList<>();
 		Map<String,String> header = new HashMap<>();
 		header.put("Authorization", "Bearer " + tenant_access_token());
 		Map<String, Object> params = new HashMap<>();
 		params.put("department_id", "0");
 		params.put("page_size", 50);
-		if(null != department){
+		if(null != department) {
 			String id = department.getCode();
 			String openid = department.getOpenid();
-			if(BasicUtil.isNotEmpty(id)){
+			if(BasicUtil.isNotEmpty(id)) {
 				params.put("department_id_type", "department_id");
 				params.put("department_id", id);
-			}else if(BasicUtil.isNotEmpty(openid)){
+			}else if(BasicUtil.isNotEmpty(openid)) {
 				params.put("department_id_type", "open_department_id");
 				params.put("department_id", openid);
 			}
@@ -268,7 +268,7 @@ public class FeishuUtil {
 					}
 				}
 				params.put("page_token", data.getString("page_token"));
-				if(!data.getBoolean("has_more", false)){
+				if(!data.getBoolean("has_more", false)) {
 					break;
 				}
 			}else{
@@ -316,7 +316,7 @@ public class FeishuUtil {
 							departments.add(department);
 						}
 					}
-					if(!data.getBoolean("has_more")){
+					if(!data.getBoolean("has_more")) {
 						break;
 					}
 					params.put("page_token", data.getString("page_token"));
@@ -332,7 +332,7 @@ public class FeishuUtil {
 	}
 
 
-	private void flushToken(){
+	private void flushToken() {
 		String url = "https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal/";
 		Map<String, String> header = new Hashtable<>();
 		header.put("Content-Type","application/json; charset=utf-8");
@@ -343,13 +343,13 @@ public class FeishuUtil {
 			String json = BeanUtil.map2json(params);
 			String body = HttpUtil.post(header, url, new StringEntity(json, "UTF-8")).getText();
 			DataRow row = DataRow.parseJson(body);
-			if("0".equals(row.getString("code"))){
+			if("0".equals(row.getString("code"))) {
 				tenant_access_token = row.getString("tenant_access_token");
 				tenant_access_token_time = System.currentTimeMillis();
 			}else {
 				log.warn("[flush token][response:{}]", body);
 			}
-		}catch (Exception e){
+		}catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -361,11 +361,11 @@ public class FeishuUtil {
 	 * @param state state
 	 * @return String
 	 */
-	public String createAuthUrl(String callback, String scope, String state){
+	public String createAuthUrl(String callback, String scope, String state) {
 		StringBuilder builder = new StringBuilder();
 		//https://open.feishu.cn/open-apis/authen/v1/authorize?app_id=cli_a69b4944f47b100e&redirect_uri=https%3A%2F%2Ffs.deepbit.cn&scope=contact:contact%20bitable:app:readonly&state=213
 		builder.append("https://open.feishu.cn/open-apis/authen/v1/authorize?app_id=").append(config.APP_ID);
-		if(BasicUtil.isEmpty(callback)){
+		if(BasicUtil.isEmpty(callback)) {
 			callback = config.OAUTH_REDIRECT_URL;
 		}
 		builder.append("&redirect_uri=").append(HttpUtil.encode(callback, false, true));
@@ -376,10 +376,10 @@ public class FeishuUtil {
 		}
 		return builder.toString();
 	}
-	public String createAuthUrl(String callback, String state){
+	public String createAuthUrl(String callback, String state) {
 		return createAuthUrl(callback, "contact:contact.base:readonly", state);
 	}
-	public String createAuthUrl(String state){
+	public String createAuthUrl(String state) {
 		return createAuthUrl(config.OAUTH_REDIRECT_URL, state);
 	}
 } 

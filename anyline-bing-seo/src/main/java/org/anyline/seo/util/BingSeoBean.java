@@ -35,13 +35,13 @@ public class BingSeoBean implements InitializingBean {
     @Override
     public void afterPropertiesSet()  {
         SITE = BasicUtil.evl(SITE, BingSeoConfig.DEFAULT_SITE);
-        if(BasicUtil.isEmpty(SITE)){
+        if(BasicUtil.isEmpty(SITE)) {
             return;
         }
         BingSeoConfig.register(SITE, BasicUtil.evl(KEY, BingSeoConfig.DEFAULT_KEY));
     }
     @Bean("anyline.bing.seo.init.client")
-    public BingSeoClient instance(){
+    public BingSeoClient instance() {
         return BingSeoClient.getInstance();
     }
 }

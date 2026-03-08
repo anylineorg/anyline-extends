@@ -38,15 +38,15 @@ public class BaiduSeoClient {
 
     static {
         Hashtable<String, AnylineConfig> configs = BaiduSeoConfig.getInstances();
-        for(String key:configs.keySet()){
+        for(String key:configs.keySet()) {
             instances.put(key, getInstance(key));
         }
     }
-    public static Hashtable<String, BaiduSeoClient> getInstances(){
+    public static Hashtable<String, BaiduSeoClient> getInstances() {
         return instances;
     }
 
-    public BaiduSeoConfig getConfig(){
+    public BaiduSeoConfig getConfig() {
         return config;
     }
     public static BaiduSeoClient getInstance() {
@@ -77,13 +77,13 @@ public class BaiduSeoClient {
     public PushResponse push(List<String> urls) {
         String api = "http://data.zz.baidu.com/urls?site="+config.SITE+"&token="+config.TOKEN;
         StringBuilder builder = new StringBuilder();
-        for(String url:urls){
+        for(String url:urls) {
             builder.append(url).append("\n");
         }
         HttpResponse response = HttpUtil.post(api, "UTF-8" ,new StringEntity(builder.toString(),"utf-8"));
         return response(response);
     }
-    public PushResponse push(String url){
+    public PushResponse push(String url) {
         List<String> urls = new ArrayList<>();
         urls.add(url);
         return push(urls);
@@ -101,10 +101,10 @@ public class BaiduSeoClient {
         HttpResponse response = HttpUtil.post(api, "UTF-8" , new StringEntity(FileUtil.read(file).toString(),"utf-8"));
         return response(response);
     }
-    private PushResponse response(HttpResponse response){
+    private PushResponse response(HttpResponse response) {
         PushResponse result = new PushResponse();
         result.setStatus(response.getStatus());
-        if(response.getStatus() == 200){
+        if(response.getStatus() == 200) {
             result.setResult(true);
             String txt = response.getText();
             DataRow row = DataRow.parseJson(txt);

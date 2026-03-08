@@ -46,34 +46,34 @@ public class WechatProgramUtil extends WechatUtil {
 
 	static {
 		Hashtable<String, AnylineConfig> configs = WechatProgramConfig.getInstances();
-		for(String key:configs.keySet()){
+		for(String key:configs.keySet()) {
 			instances.put(key, getInstance(key));
 		}
 	}
 
-	public static WechatProgramUtil getInstance(){
+	public static WechatProgramUtil getInstance() {
 		return getInstance(WechatProgramConfig.DEFAULT_INSTANCE_KEY);
 	}
-	public WechatProgramUtil(WechatProgramConfig config){
+	public WechatProgramUtil(WechatProgramConfig config) {
 		this.config = config;
 	}
-	public WechatProgramUtil(String key, DataRow config){
+	public WechatProgramUtil(String key, DataRow config) {
 		WechatProgramConfig conf = WechatProgramConfig.parse(key, config);
 		this.config = conf;
 		instances.put(key, this);
 	}
-	public static WechatProgramUtil reg(String key, DataRow config){
+	public static WechatProgramUtil reg(String key, DataRow config) {
 		WechatProgramConfig conf = WechatProgramConfig.reg(key, config);
 		WechatProgramUtil util = new WechatProgramUtil(conf);
 		instances.put(key, util);
 		return util;
 	}
-	public static WechatProgramUtil getInstance(String key){
-		if(BasicUtil.isEmpty(key)){
+	public static WechatProgramUtil getInstance(String key) {
+		if(BasicUtil.isEmpty(key)) {
 			key = WechatProgramConfig.DEFAULT_INSTANCE_KEY;
 		}
 		WechatProgramUtil util = instances.get(key);
-		if(null == util){
+		if(null == util) {
 			WechatProgramConfig config = WechatProgramConfig.getInstance(key);
 			if(null != config) {
 				util = new WechatProgramUtil(config);
@@ -88,28 +88,28 @@ public class WechatProgramUtil extends WechatUtil {
 	}
 
 
-	public String sessionKey(String code){
+	public String sessionKey(String code) {
 		DataRow session = jscode2session(code);
 		return session.getString("session_key");
 	}
-	public String openid(String code){
+	public String openid(String code) {
 		DataRow session = jscode2session(code);
 		return session.getString("openid");
 	}
-	public String unionid(String code){
+	public String unionid(String code) {
 		DataRow session = jscode2session(code);
 		return session.getString("unionid");
 	}
-	public DataRow jscode2session(String code){
+	public DataRow jscode2session(String code) {
 		String url = "https://api.weixin.qq.com/sns/jscode2session?appid="+config.APP_ID+"&secret="+config.APP_SECRET+"&js_code="+code+"&grant_type=authorization_code";
 		String json = HttpUtil.get(url).getText();
 		DataRow session = DataRow.parseJson(json);
-		if(session.isEmpty("session_key")){
+		if(session.isEmpty("session_key")) {
 			log.warn("[jscode2session][result:fail][json:{}]",json);
 		}
 		return session;
 	}
-	public String getAccessToken(){
+	public String getAccessToken() {
 		return getAccessToken(config);
 	}
 	/**
@@ -124,37 +124,37 @@ public class WechatProgramUtil extends WechatUtil {
 		String url = "https://api.weixin.qq.com/cgi-bin/wxaapp/createwxaqrcode?access_token="+access_token;
 		Map<String, Object> params = new HashMap<>();
 		params.put("path",path);
-		if(width>0){
+		if(width>0) {
 			params.put("width", width);
 		}
 		String json = BeanUtil.map2json(params);
 		InputStream is = HttpUtil.stream(url,"UTF-8", new StringEntity(json, "UTF-8")).getInputStream();
 		return is;
 	}
-	public boolean createQRCode(String path, int width, File file){
+	public boolean createQRCode(String path, int width, File file) {
 		try {
 			InputStream is = createQRCode(path, width);
 			FileUtil.write(is, file);
-		}catch(Exception e){
+		}catch(Exception e) {
 			e.printStackTrace();
 			return false;
 		}
 		return true;
 	}
-	public boolean createQRCode(String path, int width, OutputStream os){
+	public boolean createQRCode(String path, int width, OutputStream os) {
 		try {
 			InputStream is = createQRCode(path, width);
 			FileUtil.write(is, os);
-		}catch(Exception e){
+		}catch(Exception e) {
 			e.printStackTrace();
 			return false;
 		}
 		return true;
 	}
-	public boolean createQRCode(String path, File file){
+	public boolean createQRCode(String path, File file) {
 		return createQRCode(path, 0, file);
 	}
-	public boolean createQRCode(String path, OutputStream os){
+	public boolean createQRCode(String path, OutputStream os) {
 		return createQRCode(path, 0, os);
 	}
 	public InputStream createQRCode(String path) throws Exception{
@@ -170,12 +170,12 @@ public class WechatProgramUtil extends WechatUtil {
 	 * @param hyaline 是否需要透明底色,为 true 时,生成透明底色的小程序
 	 * @return InputStream
 	 */
-	public InputStream createWXCode(String path, int width, boolean autoColor, String color, boolean hyaline){
+	public InputStream createWXCode(String path, int width, boolean autoColor, String color, boolean hyaline) {
 		String access_token = getAccessToken(config);
 		String url = "https://api.weixin.qq.com/wxa/getwxacode?access_token="+access_token;
 		Map<String, Object> params = new HashMap<>();
 		params.put("path",path);
-		if(width>0){
+		if(width>0) {
 			params.put("width", width);
 		}
 		params.put("auto_color", autoColor);
@@ -198,31 +198,31 @@ public class WechatProgramUtil extends WechatUtil {
 	 * @param file 写入文件
 	 * @return boolean
 	 */
-	public boolean createWXCode(String path, int width, boolean autoColor, String color, boolean hyaline, File file){
+	public boolean createWXCode(String path, int width, boolean autoColor, String color, boolean hyaline, File file) {
 		try{
 			InputStream is = createWXCode(path, width, autoColor, color, hyaline);
 			FileUtil.write(is, file);
-		}catch (Exception e){
+		}catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}
 		return true;
 	}
-	public boolean createWXCode(String path, int width, boolean autoColor, String color, boolean hyaline, OutputStream os){
+	public boolean createWXCode(String path, int width, boolean autoColor, String color, boolean hyaline, OutputStream os) {
 		try{
 			InputStream is = createWXCode(path, width, autoColor, color, hyaline);
 			FileUtil.write(is, os);
-		}catch (Exception e){
+		}catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}
 		return true;
 	}
 
-	public boolean createWXCode(String path, File file){
+	public boolean createWXCode(String path, File file) {
 		return createWXCode(path, 0, true, null, false, file);
 	}
-	public boolean createWXCode(String path, OutputStream os){
+	public boolean createWXCode(String path, OutputStream os) {
 		return createWXCode(path, 0, true, null, false, os);
 	}
 
@@ -236,12 +236,12 @@ public class WechatProgramUtil extends WechatUtil {
 	 * @param hyaline 是否需要透明底色,为 true 时,生成透明底色的小程序
 	 * @return InputStream
 	 */
-	public InputStream createWXCodeUnlimit(String path, String scene, int width, boolean autoColor, String color, boolean hyaline){
+	public InputStream createWXCodeUnlimit(String path, String scene, int width, boolean autoColor, String color, boolean hyaline) {
 		String access_token = getAccessToken(config);
 		String url = "https://api.weixin.qq.com/wxa/getwxacode?access_token="+access_token;
 		Map<String, Object> params = new HashMap<>();
 		params.put("path",path);
-		if(width>0){
+		if(width>0) {
 			params.put("width", width);
 		}
 
@@ -268,31 +268,31 @@ public class WechatProgramUtil extends WechatUtil {
 	 * @param file 写入文件
 	 * @return  boolean
 	 */
-	public boolean createWXCodeUnlimit(String path, String scene, int width, boolean autoColor, String color, boolean hyaline, File file){
+	public boolean createWXCodeUnlimit(String path, String scene, int width, boolean autoColor, String color, boolean hyaline, File file) {
 		try{
 			InputStream is = createWXCodeUnlimit(path, scene, width, autoColor, color, hyaline);
 			FileUtil.write(is, file);
-		}catch (Exception e){
+		}catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}
 		return true;
 	}
-	public boolean createWXCodeUnlimit(String path, String scene, int width, boolean autoColor, String color, boolean hyaline, OutputStream os){
+	public boolean createWXCodeUnlimit(String path, String scene, int width, boolean autoColor, String color, boolean hyaline, OutputStream os) {
 		try{
 			InputStream is = createWXCodeUnlimit(path, scene, width, autoColor, color, hyaline);
 			FileUtil.write(is, os);
-		}catch (Exception e){
+		}catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}
 		return true;
 	}
 
-	public boolean createWXCodeUnlimit(String path, String scene, File file){
+	public boolean createWXCodeUnlimit(String path, String scene, File file) {
 		return createWXCodeUnlimit(path, scene, 0, true, null, false, file);
 	}
-	public boolean createWXCodeUnlimit(String path, String scene, OutputStream os){
+	public boolean createWXCodeUnlimit(String path, String scene, OutputStream os) {
 		return createWXCodeUnlimit(path, scene, 0, true, null, false, os);
 	}
 

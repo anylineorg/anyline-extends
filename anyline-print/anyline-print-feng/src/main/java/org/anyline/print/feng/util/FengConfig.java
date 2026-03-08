@@ -56,7 +56,7 @@ public class FengConfig extends AnylineConfig {
         public abstract String getCode();
     };
 
-    public static Hashtable<String,AnylineConfig>getInstances(){
+    public static Hashtable<String,AnylineConfig>getInstances() {
         return instances;
     }
     static{
@@ -67,7 +67,7 @@ public class FengConfig extends AnylineConfig {
      * 解析配置文件内容
      * @param content 配置文件内容
      */
-    public static void parse(String content){
+    public static void parse(String content) {
         parse(FengConfig.class, content, instances ,compatibles);
     }
     /**
@@ -77,29 +77,29 @@ public class FengConfig extends AnylineConfig {
         // 加载配置文件
         load();
     }
-    public static FengConfig getInstance(){
+    public static FengConfig getInstance() {
         return getInstance(DEFAULT_INSTANCE_KEY);
     }
-    public static FengConfig getInstance(String key){
-        if(BasicUtil.isEmpty(key)){
+    public static FengConfig getInstance(String key) {
+        if(BasicUtil.isEmpty(key)) {
             key = DEFAULT_INSTANCE_KEY;
         }
 
-        if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - FengConfig.lastLoadTime)/1000 > ConfigTable.getReload() ){
+        if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - FengConfig.lastLoadTime)/1000 > ConfigTable.getReload() ) {
             // 重新加载
             load();
         }
         return (FengConfig)instances.get(key);
     }
 
-    public static FengConfig reg(String key, DataRow row){
+    public static FengConfig reg(String key, DataRow row) {
         return parse(FengConfig.class, key, row, instances,compatibles);
     }
-    public static FengConfig parse(String key, DataRow row){
+    public static FengConfig parse(String key, DataRow row) {
         return parse(FengConfig.class, key, row, instances,compatibles);
     }
-    public static Hashtable<String,AnylineConfig> parse(String column, DataSet<DataRow> set){
-        for(DataRow row:set){
+    public static Hashtable<String,AnylineConfig> parse(String column, DataSet<DataRow> set) {
+        for(DataRow row:set) {
             String key = row.getString(column);
             parse(key, row);
         }
@@ -114,16 +114,16 @@ public class FengConfig extends AnylineConfig {
         load(instances, FengConfig.class,CONFIG_NAME ,compatibles);
         FengConfig.lastLoadTime = System.currentTimeMillis();
     }
-    private static void debug(){
+    private static void debug() {
     }
-    public FengConfig register(String instance, DataRow row){
+    public FengConfig register(String instance, DataRow row) {
         FengConfig config = parse(FengConfig.class, instance, row, instances, compatibles);
         return config;
     }
-    public FengConfig register(DataRow row){
+    public FengConfig register(DataRow row) {
         return register(DEFAULT_INSTANCE_KEY, row);
     }
-    public FengConfig register(String app, String secret){
+    public FengConfig register(String app, String secret) {
         DataRow row = new DataRow();
         row.put("APP_ID", app);
         row.put("APP_SECRET",secret);

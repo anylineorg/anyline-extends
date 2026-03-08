@@ -37,7 +37,7 @@ public class WechatCheck extends BaseBodyTag {
 	public int doEndTag() throws JspException {
 		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
 		try{
-			if(WebUtil.isWechat(request)){
+			if(WebUtil.isWechat(request)) {
 				JspWriter out = pageContext.getOut();
 				out.println(body);
 			}

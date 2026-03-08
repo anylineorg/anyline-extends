@@ -48,11 +48,11 @@ public class Pop3Util {
 
 	static {
 		Hashtable<String, AnylineConfig> configs = MailConfig.getInstances();
-		for(String key:configs.keySet()){
+		for(String key:configs.keySet()) {
 			instances.put(key, getInstance(key));
 		}
 	}
-	public static Hashtable<String, Pop3Util> getInstances(){
+	public static Hashtable<String, Pop3Util> getInstances() {
 		return instances;
 	}
 
@@ -110,7 +110,7 @@ public class Pop3Util {
 
 		return true;
 	}
-	public int getMailQty(){
+	public int getMailQty() {
 		int qty = -1;
 		Session session = Session.getInstance(props);
 		Store store = null;
@@ -121,17 +121,17 @@ public class Pop3Util {
 			// 收件箱
 			folder = store.getFolder("INBOX");
 			qty = folder.getMessageCount();
-		}catch(Exception e){
+		}catch(Exception e) {
 			e.printStackTrace();
 		}finally{
 			// 释放资源
 			try {
-				if(null != folder){
+				if(null != folder) {
 					folder.close(true);
 				}
 			} catch (MessagingException e) {}
 			try {
-				if(null != store){
+				if(null != store) {
 					store.close();
 				}
 			} catch (MessagingException e) {}
@@ -142,13 +142,13 @@ public class Pop3Util {
 		return send(config.USERNAME, to, title, content);
 	}
 
-	public List<Mail> receive(int qty){
+	public List<Mail> receive(int qty) {
 		return receive(false, false, qty);
 	}
-	public List<Mail> receive(boolean read, boolean delete){
+	public List<Mail> receive(boolean read, boolean delete) {
 		return receive(read, delete,1,-1);
 	}
-	public List<Mail> receive(boolean read, boolean delete, int qty){
+	public List<Mail> receive(boolean read, boolean delete, int qty) {
 		return receive(read, delete, 1, qty);
 	}
 	/**
@@ -159,7 +159,7 @@ public class Pop3Util {
 	 * @param to -1:全部
 	 * @return List
 	 */
-	public List<Mail> receive(boolean read, boolean delete, int fr, int to){
+	public List<Mail> receive(boolean read, boolean delete, int fr, int to) {
 		List<Mail> mails = new ArrayList<Mail>();
 		Session session = Session.getInstance(props);
 		Store store = null;
@@ -172,29 +172,29 @@ public class Pop3Util {
 			folder.open(Folder.READ_WRITE);
 			// 得到收件箱中的所有邮件,并解析
 			int cnt = folder.getMessageCount();
-			if(to == -1 || to > cnt){
+			if(to == -1 || to > cnt) {
 				to = cnt;
 			}
-			if(fr == 0){
+			if(fr == 0) {
 				fr = 1;
 				to = to +1;
 			}
-			if(to >cnt){
+			if(to >cnt) {
 				to = cnt;
 			}
 			Message[] messages = folder.getMessages(fr, to);
 			mails = parse(read, delete, messages);
-		}catch(Exception e){
+		}catch(Exception e) {
 			e.printStackTrace();
 		}finally{
 			// 释放资源
 			try {
-				if(null != folder){
+				if(null != folder) {
 					folder.close(true);
 				}
 			} catch (MessagingException e) {}
 			try {
-				if(null != store){
+				if(null != store) {
 					store.close();
 				}
 			} catch (MessagingException e) {}
@@ -209,7 +209,7 @@ public class Pop3Util {
 	 * @param messages   要解析的邮件列表
 	 * @return List
 	 */
-	public List<Mail> parse( boolean setRead, boolean delete, Message... messages){
+	public List<Mail> parse( boolean setRead, boolean delete, Message... messages) {
 		List<Mail> mails = new ArrayList<Mail>();
 		try{
 		for (Message item:messages) {
@@ -224,22 +224,22 @@ public class Pop3Util {
 			mail.setSubject(subject);
 			mail.setSendTime(sendTime);
 			mail.setReceiveTime(receiveTime);
-			if(config.AUTO_DOWNLOAD_ATTACHMENT){
+			if(config.AUTO_DOWNLOAD_ATTACHMENT) {
 				if (isContainerAttachment) {
 					String dir = config.ATTACHMENT_DIR.replace("${ymd}", DateUtil.format(sendTime,"yyyyMMdd"));
 					List<File> attachments = downloadAttachment(msg, dir , sendTime, null);
 					mail.setAttachments(attachments);
 				}
 			}
-			if(!isSeen && setRead){
+			if(!isSeen && setRead) {
 				seen(msg);
 			}
-			if(delete){
+			if(delete) {
 				delete(msg);
 			}
 			mails.add(mail);
 		}
-		}catch(Exception e){
+		}catch(Exception e) {
 			e.printStackTrace();
 		}
 		return mails;
@@ -249,7 +249,7 @@ public class Pop3Util {
      * 删除邮件
      * @param messages  messages
      */
-    public static void delete(Message ...messages){
+    public static void delete(Message ...messages) {
         for (int i = 0, count = messages.length; i < count; i++) {
             Message message = messages[i];
             String subject;
@@ -296,7 +296,7 @@ public class Pop3Util {
      * @param msg 邮件内容
      * @return 姓名 &lt;Email地址&gt;
      */
-    public static String getFrom(MimeMessage msg){
+    public static String getFrom(MimeMessage msg) {
         String from = "";
         Address[] froms;
 		try {
@@ -321,7 +321,7 @@ public class Pop3Util {
 	 * @param msg   邮件内容
 	 * @return 如果邮件已读返回true,否则返回false
 	 */
-	public static boolean isSeen(MimeMessage msg){
+	public static boolean isSeen(MimeMessage msg) {
 		try {
 			return msg.getFlags().contains(Flags.Flag.SEEN);
 		} catch (MessagingException e) {
@@ -403,7 +403,7 @@ public class Pop3Util {
 				String disp = bodyPart.getDisposition();
 				String name = decode(bodyPart.getFileName());
 				String path = null;
-				if(dir.contains("${file}")){
+				if(dir.contains("${file}")) {
 					path = dir.replace("${file}", name);
 				}else{
 					path = FileUtil.merge(dir, name);
@@ -413,7 +413,7 @@ public class Pop3Util {
 					result = FileUtil.save(bodyPart.getInputStream(), file);
 				} else if (bodyPart.isMimeType("multipart/*")) {
 					downloadAttachment(bodyPart, dir, sendTime, files);
-				} else if(BasicUtil.isNotEmpty(name)){
+				} else if(BasicUtil.isNotEmpty(name)) {
 					String contentType = bodyPart.getContentType();
 					if (contentType.indexOf("name") != -1 || contentType.indexOf("application") != -1) {
 						result = FileUtil.save(bodyPart.getInputStream(), file);

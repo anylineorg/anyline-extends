@@ -54,7 +54,7 @@ public class WechatPayBean implements InitializingBean {
     @Override
     public void afterPropertiesSet()  {
         MCH_ID = BasicUtil.evl(MCH_ID, WechatPayConfig.DEFAULT_MCH_ID);
-        if(BasicUtil.isEmpty(MCH_ID)){
+        if(BasicUtil.isEmpty(MCH_ID)) {
             return;
         }
         DataRow row = new DataRow();
@@ -74,7 +74,7 @@ public class WechatPayBean implements InitializingBean {
     }
 
     @Bean("anyline.wechat.pay.init.util")
-    public WechatPayUtil instance(){
+    public WechatPayUtil instance() {
         return WechatPayUtil.getInstance();
     }
 }

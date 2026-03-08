@@ -39,7 +39,7 @@ public class WechatProgramConfig extends WechatConfig{
 	 * 解析配置文件内容
 	 * @param content 配置文件内容
 	 */
-	public static void parse(String content){
+	public static void parse(String content) {
 		parse(WechatProgramConfig.class, content, instances ,compatibles);
 	}
 	/**
@@ -50,34 +50,34 @@ public class WechatProgramConfig extends WechatConfig{
 		load(); 
 	}
 
-	public static Hashtable<String,AnylineConfig>getInstances(){
+	public static Hashtable<String,AnylineConfig>getInstances() {
 		return instances;
 	}
-	public static WechatProgramConfig getInstance(){
+	public static WechatProgramConfig getInstance() {
 		return getInstance(DEFAULT_INSTANCE_KEY);
 	} 
-	public static WechatProgramConfig getInstance(String key){
-		if(BasicUtil.isEmpty(key)){
+	public static WechatProgramConfig getInstance(String key) {
+		if(BasicUtil.isEmpty(key)) {
 			key = DEFAULT_INSTANCE_KEY;
 		} 
  
-		if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - WechatProgramConfig.lastLoadTime)/1000 > ConfigTable.getReload() ){
+		if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - WechatProgramConfig.lastLoadTime)/1000 > ConfigTable.getReload() ) {
 			// 重新加载 
 			load(); 
 		} 
 		return (WechatProgramConfig)instances.get(key);
 	} 
  
-	public static WechatProgramConfig reg(String key, DataRow row){
+	public static WechatProgramConfig reg(String key, DataRow row) {
 		return parse(WechatProgramConfig.class, key, row, instances,compatibles);
 	} 
-	public static WechatProgramConfig parse(String instance, DataRow row){
+	public static WechatProgramConfig parse(String instance, DataRow row) {
 		WechatProgramConfig config = parse(WechatProgramConfig.class, instance, row, instances,compatibles);
 		WechatProgramUtil.getInstance(instance);
 		return config;
 	} 
-	public static Hashtable<String,AnylineConfig> parse(String column, DataSet<DataRow> set){
-		for(DataRow row:set){
+	public static Hashtable<String,AnylineConfig> parse(String column, DataSet<DataRow> set) {
+		for(DataRow row:set) {
 			String key = row.getString(column); 
 			parse(key, row); 
 		} 
@@ -92,13 +92,13 @@ public class WechatProgramConfig extends WechatConfig{
 		load(instances, WechatProgramConfig.class, CONFIG_NAME,compatibles);
 		WechatProgramConfig.lastLoadTime = System.currentTimeMillis();
 	} 
-	private static void debug(){
+	private static void debug() {
 	}
 
-	public static WechatProgramConfig register(String key, DataRow row){
+	public static WechatProgramConfig register(String key, DataRow row) {
 		return parse(WechatProgramConfig.class, key, row, instances,compatibles);
 	}
-	public static WechatProgramConfig register(DataRow row){
+	public static WechatProgramConfig register(DataRow row) {
 		return register(DEFAULT_INSTANCE_KEY, row);
 	}
 } 

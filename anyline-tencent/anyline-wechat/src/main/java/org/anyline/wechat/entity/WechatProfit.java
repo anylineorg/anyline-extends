@@ -35,7 +35,7 @@ public class WechatProfit {
     private String out_order_no			;  // 商户分账单号		是	string(64)	P20150806125346	服务商系统内部的分账单号,在服务商系统内部唯一（单次分账、多次分账、完结分账应使用不同的商户分账单号）,同一分账单号多次请求等同一次.只能是数字、大小写字母_-|*@ 
     private List<WechatProfitReceiver> receivers = new ArrayList<WechatProfitReceiver>();//接收方列表
 
-    public WechatProfit addReceiver(WechatProfitReceiver receiver){
+    public WechatProfit addReceiver(WechatProfitReceiver receiver) {
         receivers.add(receiver);
         return this;
     }

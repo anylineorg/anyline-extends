@@ -62,10 +62,10 @@ public class JSONResult extends StrutsResultSupport {
         	// JsonConfig config = new JsonConfig(); 
         	String dataType   = null; 	// 数据类型
         	Map<String, Object> map = new HashMap<>(); 
-        	if(null == data){
+        	if(null == data) {
         		message = (String)BasicUtil.nvl(message, "没有返回数据"); 
         		data = false; 
-        	}else if(data instanceof Iterable){
+        	}else if(data instanceof Iterable) {
 				dataType = "list"; 
         	}else if (data instanceof DataSet) {
         		DataSet<DataRow> set = (DataSet)data; 
@@ -76,12 +76,12 @@ public class JSONResult extends StrutsResultSupport {
 				map.put("navi", set.getNavi()); 
 			}else if (data instanceof DataRow) {
 				dataType = "map"; 
-			}else if(data instanceof Map){
+			}else if(data instanceof Map) {
 				dataType = "map"; 
-			}else if(data instanceof String){
+			}else if(data instanceof String) {
 				dataType = "string"; 
 				data = convertJSONChar(data.toString()); 
-			}else if(data instanceof Number){
+			}else if(data instanceof Number) {
 				dataType = "number"; 
 				data = convertJSONChar(data.toString()); 
 			}else{
@@ -99,7 +99,7 @@ public class JSONResult extends StrutsResultSupport {
         	map.put("response_time_to", System.currentTimeMillis());
     		String str = BeanUtil.map2json(map);
         	writer.print(str); 
-        }catch(Exception e){
+        }catch(Exception e) {
         	e.printStackTrace(); 
         }finally {
             if (writer != null) {

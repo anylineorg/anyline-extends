@@ -26,13 +26,13 @@ public class Menu {
     private String menuid;
     private MenuMatchrule matchrule;
     private List<MenuItem> button = new ArrayList<MenuItem>();
-    public Menu addButton(MenuItem item){
+    public Menu addButton(MenuItem item) {
 
         button.add(item);
         return this;
     }
 
-    public Menu addButton(String type, String name, String key, String url){
+    public Menu addButton(String type, String name, String key, String url) {
         MenuItem item = new MenuItem(type, name, key, url);
         button.add(item);
         return this;
@@ -61,7 +61,7 @@ public class Menu {
     public void setButton(List<MenuItem> button) {
         this.button = button;
     }
-    public String toJson(){
+    public String toJson() {
         return BeanUtil.object2json(this);
     }
 }

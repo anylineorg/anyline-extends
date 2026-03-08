@@ -36,38 +36,38 @@ public class WechatPayUtil {
 
     static {
         Hashtable<String, AnylineConfig> configs = WechatPayConfig.getInstances();
-        for(String key:configs.keySet()){
+        for(String key:configs.keySet()) {
             instances.put(key, getInstance(key));
         }
     }
 
-    public static Hashtable<String, WechatPayUtil> getInstances(){
+    public static Hashtable<String, WechatPayUtil> getInstances() {
         return instances;
     }
 
-    public static WechatPayUtil getInstance(){
+    public static WechatPayUtil getInstance() {
         return getInstance(WechatPayConfig.DEFAULT_INSTANCE_KEY);
     }
-    public WechatPayUtil(WechatPayConfig config){
+    public WechatPayUtil(WechatPayConfig config) {
         this.config = config;
     }
-    public WechatPayUtil(String key, DataRow config){
+    public WechatPayUtil(String key, DataRow config) {
         WechatPayConfig conf = WechatPayConfig.parse(key, config);
         this.config = conf;
         instances.put(key, this);
     }
-    public static WechatPayUtil reg(String key, DataRow config){
+    public static WechatPayUtil reg(String key, DataRow config) {
         WechatPayConfig conf = WechatPayConfig.register(key, config);
         WechatPayUtil util = new WechatPayUtil(conf);
         instances.put(key, util);
         return util;
     }
-    public static WechatPayUtil getInstance(String key){
-        if(BasicUtil.isEmpty(key)){
+    public static WechatPayUtil getInstance(String key) {
+        if(BasicUtil.isEmpty(key)) {
             key = WechatPayConfig.DEFAULT_INSTANCE_KEY;
         }
         WechatPayUtil util = instances.get(key);
-        if(null == util){
+        if(null == util) {
             WechatPayConfig config = WechatPayConfig.getInstance(key);
             if(null != config) {
                 util = new WechatPayUtil(config);

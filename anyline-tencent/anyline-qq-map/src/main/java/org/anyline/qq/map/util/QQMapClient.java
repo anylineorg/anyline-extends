@@ -43,14 +43,14 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
 
     static {
         Hashtable<String, AnylineConfig> configs = QQMapConfig.getInstances();
-        for(String key:configs.keySet()){
+        for(String key:configs.keySet()) {
             instances.put(key, getInstance(key));
         }
     }
-    public static Hashtable<String, QQMapClient> getInstances(){
+    public static Hashtable<String, QQMapClient> getInstances() {
         return instances;
     }
-    public QQMapConfig getConfig(){
+    public QQMapConfig getConfig() {
         return config;
     }
     public static QQMapClient getInstance() {
@@ -87,18 +87,18 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
         params.put("ip", ip);
         params.put("key", config.KEY);
         DataRow row = api(api, params);
-        if(null != row){
+        if(null != row) {
             coordinate = new Coordinate();
             coordinate.setMetadata(row);
             DataRow result = row.getRow("result");
             if(null != result) {
                 DataRow point = result.getRow("location");
-                if(null != point){
+                if(null != point) {
                     coordinate.setLng(point.getDouble("lng", -1.0));
                     coordinate.setLat(point.getDouble("lat", -1.d));
                 }
                 DataRow ad = result.getRow("ad_info");
-                if(null != ad){
+                if(null != ad) {
                     coordinate.setProvinceName(ad.getString("province"));
                     coordinate.setCityName(ad.getString("city"));
                     coordinate.setCountyName(ad.getString("district"));
@@ -123,12 +123,12 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
      * @return Coordinate
      */
     @Override
-    public Coordinate geo(String address, String city){
+    public Coordinate geo(String address, String city) {
         Coordinate coordinate = new Coordinate();
         coordinate.setAddress(address);
-        if(null != address){
+        if(null != address) {
             address = address.replace(" ","");
-            if(null != city && !address.contains(city)){
+            if(null != city && !address.contains(city)) {
                 address = city + address;
             }
         }
@@ -136,10 +136,10 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
         Map<String, Object> params = new HashMap<>();
         params.put("address", address);
         DataRow row = api(api, params);
-        if(null != row){
+        if(null != row) {
             DataRow result = row.getRow("result");
             DataRow location = row.getRow("result","location");
-            if(null != location){
+            if(null != location) {
                 coordinate.setLat(location.getString("lat"));
                 coordinate.setLng(location.getString("lng"));
             }
@@ -152,7 +152,7 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
                 String street = adr.getString("street");
                 coordinate.setStreet(street);
                 String number = adr.getString("street_number");
-                if(null != number && null != street){
+                if(null != number && null != street) {
                     number = number.replace(street,"");
                 }
                 coordinate.setStreetNumber(number);
@@ -184,7 +184,7 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
      * @return Coordinate
      */
     @Override
-    public Coordinate regeo(Coordinate coordinate){
+    public Coordinate regeo(Coordinate coordinate) {
         String api = "/ws/geocoder/v1";
 
         SRS _type = coordinate.getSrs();
@@ -197,27 +197,27 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
         Map<String, Object> params = new HashMap<>();
         params.put("location", _lat +"," + _lng);        // 这里是纬度在前
         Map<String, Object> ps = coordinate.getParams();
-        if(null != ps){
-            if(ps.containsKey("radius")){
+        if(null != ps) {
+            if(ps.containsKey("radius")) {
                 params.put("radius", ps.get("radius"));
             }
-            if(ps.containsKey("get_poi")){
+            if(ps.containsKey("get_poi")) {
                 params.put("get_poi", ps.get("get_poi"));
             }
-            if(ps.containsKey("poi_options")){
+            if(ps.containsKey("poi_options")) {
                 params.put("poi_options", ps.get("poi_options"));
             }
         }
         DataRow row = api(api, params);
-        if(null != row){
+        if(null != row) {
             DataRow result = row.getRow("result");
             if(null != result) {
                 parse(coordinate, result);
                 //附近poi
                 DataSet<DataRow> pois = result.getSet("pois");
-                if(null != pois){
+                if(null != pois) {
                     List<Coordinate> poi_coordinates = new ArrayList<>();
-                    for(DataRow poi : pois){
+                    for(DataRow poi : pois) {
                         Coordinate poi_coordinate = new Coordinate();
                         parse(poi_coordinate, poi);
                         poi_coordinates.add(poi_coordinate);
@@ -239,7 +239,7 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
      * @param coordinate 有可能是oi
      * @param result 返回内容
      */
-    private void parse(Coordinate coordinate, DataRow result){
+    private void parse(Coordinate coordinate, DataRow result) {
         coordinate.setMetadata(result);
         coordinate.setAddress(result.getString("address"));
         coordinate.setId(result.getString("id")); //poi时有id值
@@ -252,7 +252,7 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
             String street = address_component.getString("street");
             coordinate.setStreet(street);
             String number = address_component.getString("street_number");
-            if(null != number && null != street){
+            if(null != number && null != street) {
                 number = number.replace(street,"");
             }
         }
@@ -281,12 +281,12 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
         }
         //相对参考
         DataRow address_reference = result.getRow("address_reference","town");
-        if(null != address_reference){
+        if(null != address_reference) {
             coordinate.setTownCode(address_reference.getString("id"));
             coordinate.setTownName(address_reference.getString("title"));
         }
         DataRow location = result.getRow("location");
-        if(null != location){
+        if(null != location) {
             coordinate.setLng(location.getString("lng"));
             coordinate.setLat(location.getString("lat"));
         }
@@ -310,13 +310,13 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
         String api = "/ws/place/v1/search";
 
         Map<String, Object> params = new HashMap<>();
-        if(BasicUtil.isNotEmpty(keyword)){
+        if(BasicUtil.isNotEmpty(keyword)) {
             params.put("keyword", keyword);
         }
         String boundary = "region("+city+",0)";
         params.put("boundary", boundary);
         //filter=category= 241000,241100
-        if(BasicUtil.isNotEmpty(category)){
+        if(BasicUtil.isNotEmpty(category)) {
             String filter = "category="+category;
             params.put("filter", filter);
         }
@@ -324,20 +324,20 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
         params.put("added_fields", "category_code");
         int page = 1;
         Map<String, Coordinate> maps = new HashMap<>();
-        while (true){
+        while (true) {
             params.put("page_index", page++);
             DataRow row = api(api, params);
-            if(null == row){
+            if(null == row) {
                 break;
             }
             DataSet<DataRow> set = row.getSet("data");
             int exists = 0;
-            if(null == set || set.isEmpty()){
+            if(null == set || set.isEmpty()) {
                 break;
             }
-            for(DataRow item:set){
+            for(DataRow item:set) {
                 Coordinate coordinate = poi(item);
-                if(maps.containsKey(coordinate.getId())){
+                if(maps.containsKey(coordinate.getId())) {
                     exists++;
                 }else{
                     coordinates.add(coordinate);
@@ -345,11 +345,11 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
                 maps.put(coordinate.getId(), coordinate);
             }
             //最后一页小于20个
-            if(set.size() < 20){
+            if(set.size() < 20) {
                 break;
             }
             //有10个以上重复的中断(算成最后一页)
-            if(exists > 10){
+            if(exists > 10) {
                 break;
             }
 
@@ -374,13 +374,13 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
         String api = "/ws/place/v1/search";
 
         Map<String, Object> params = new HashMap<>();
-        if(BasicUtil.isNotEmpty(keyword)){
+        if(BasicUtil.isNotEmpty(keyword)) {
             params.put("keyword", keyword);
         }
         String boundary = "nearby("+lng+","+lat+","+radius+",1)";
         params.put("boundary", boundary);
         //filter=category= 241000,241100
-        if(BasicUtil.isNotEmpty(category)){
+        if(BasicUtil.isNotEmpty(category)) {
             String filter = "category="+category;
             params.put("filter", filter);
         }
@@ -388,20 +388,20 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
         params.put("added_fields", "category_code");
         int page = 1;
         Map<String, Coordinate> maps = new HashMap<>();
-        while (true){
+        while (true) {
             params.put("page_index", page++);
             DataRow row = api(api, params);
-            if(null == row){
+            if(null == row) {
                 break;
             }
             DataSet<DataRow> set = row.getSet("data");
             int exists = 0;
-            if(null == set || set.isEmpty()){
+            if(null == set || set.isEmpty()) {
                 break;
             }
-            for(DataRow item:set){
+            for(DataRow item:set) {
                 Coordinate coordinate = poi(item);
-                if(maps.containsKey(coordinate.getId())){
+                if(maps.containsKey(coordinate.getId())) {
                     exists++;
                 }else{
                     coordinates.add(coordinate);
@@ -409,18 +409,18 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
                 maps.put(coordinate.getId(), coordinate);
             }
             //最后一页小于20个
-            if(set.size() < 20){
+            if(set.size() < 20) {
                 break;
             }
             //有10个以上重复的中断(算成最后一页)
-            if(exists >= set.size()-1 || exists > 10){
+            if(exists >= set.size()-1 || exists > 10) {
                 break;
             }
         }
         log.warn("[查询结果:{}]", coordinates.size());
         return coordinates;
     }
-    private Coordinate poi(DataRow row){
+    private Coordinate poi(DataRow row) {
         Coordinate coordinate = new Coordinate();
         coordinate.setMetadata(row);
         coordinate.setId(row.getString("id"));
@@ -458,24 +458,24 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
         List<Ring> rings = new ArrayList<>();
         String api = "/ws/district/v1/search";
         Map<String, Object> params = new HashMap<>();
-        if(BasicUtil.isNotEmpty(keyword)){
+        if(BasicUtil.isNotEmpty(keyword)) {
             params.put("keyword", keyword);
         }
         params.put("get_polygon", 2);
         params.put("max_offset", 100);
         DataRow row = api(api, params);
         List list = row.getList("result");
-        if(null != list && !list.isEmpty()){
+        if(null != list && !list.isEmpty()) {
             Object obj = list.get(0);
-            if(obj instanceof DataSet){
+            if(obj instanceof DataSet) {
                 DataSet<DataRow> set = (DataSet<DataRow>) obj;
                 for (DataRow item : set) {
                     List polygons = (List)item.get("polygon");
-                    if(null != polygons && !polygons.isEmpty()){
+                    if(null != polygons && !polygons.isEmpty()) {
                         for (Object polygon : polygons) {
                             Ring ring = new Ring();
                             rings.add(ring);
-                            if(polygon instanceof List){
+                            if(polygon instanceof List) {
                                 List polygonPoints = (List)polygon;
                                 int size = polygonPoints.size();
                                 //lng,lat,lng,lat格式
@@ -500,7 +500,7 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
      * @param params 参数
      * @return String
      */
-    private String sign(String api, Map<String, Object> params){
+    private String sign(String api, Map<String, Object> params) {
         params.put("key", config.KEY);
         params.remove("sig");
         String sign = null;
@@ -509,20 +509,23 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
         params.put("sig", sign);
         return sign;
     }
-    private DataRow api(String api, Map<String, Object> params){
+    private DataRow api(String api, Map<String, Object> params) {
+        if(limit()) {
+            return null;
+        }
         DataRow row = null;
         sign(api, params);
         HttpResponse response = HttpUtil.get(QQMapConfig.HOST + api,"UTF-8", params);
         int status = response.getStatus();
-        if(status == 200){
+        if(status == 200) {
             String txt = response.getText();
-            if(null != QQMapConfig.CACHE_DIR){
+            if(null != QQMapConfig.CACHE_DIR) {
                 File dir = new File(QQMapConfig.CACHE_DIR, config.KEY+"/"+api.replace("/","_")+"/"+ DateUtil.format("yyyyMMddHH"));
                 File file = new File(dir, System.currentTimeMillis()+"_"+BasicUtil.getRandomString(8)+".txt");
                 FileUtil.write(BeanUtil.map2string(params) + "\r\n" + txt, file);
             }
             row = DataRow.parseJson(txt);
-            if(null != row){
+            if(null != row) {
                 status = row.getInt("status",-1);
                 if(status != 0) {
                     log.warn("[{}][执行失败][status:{}][info:{}]", api , status, row.getString("message"));

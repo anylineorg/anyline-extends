@@ -38,7 +38,7 @@ public final class SerialUtil {
      * @return 可用端口名称列表
      */
     @SuppressWarnings("unchecked")
-    public static List<String> ports(){
+    public static List<String> ports() {
         List<String> ports = new ArrayList<>();
         // 获得系统可用的端口
         Enumeration<CommPortIdentifier> portList = CommPortIdentifier.getPortIdentifiers();
@@ -163,7 +163,7 @@ public final class SerialUtil {
         String str = null;
         try {
             str = new String(bytes, encode);
-        }catch (Exception e){
+        }catch (Exception e) {
             e.printStackTrace();
         }
         return str;

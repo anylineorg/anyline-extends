@@ -39,14 +39,14 @@ public class QQMapConfig extends AnylineConfig {
         init();
         debug();
     }
-    public static Hashtable<String,AnylineConfig>getInstances(){
+    public static Hashtable<String,AnylineConfig>getInstances() {
         return instances;
     }
     /**
      * 解析配置文件内容
      * @param content 配置文件内容
      */
-    public static void parse(String content){
+    public static void parse(String content) {
         parse(QQMapConfig.class, content, instances ,compatibles);
     }
     /**
@@ -57,15 +57,15 @@ public class QQMapConfig extends AnylineConfig {
         load();
     }
 
-    public static QQMapConfig getInstance(){
+    public static QQMapConfig getInstance() {
         return getInstance(DEFAULT_INSTANCE_KEY);
     }
-    public static QQMapConfig getInstance(String key){
-        if(BasicUtil.isEmpty(key)){
+    public static QQMapConfig getInstance(String key) {
+        if(BasicUtil.isEmpty(key)) {
             key = DEFAULT_INSTANCE_KEY;
         }
 
-        if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - QQMapConfig.lastLoadTime)/1000 > ConfigTable.getReload() ){
+        if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - QQMapConfig.lastLoadTime)/1000 > ConfigTable.getReload() ) {
             // 重新加载 
             load();
         }
@@ -80,23 +80,23 @@ public class QQMapConfig extends AnylineConfig {
         load(instances, QQMapConfig.class, CONFIG_NAME);
         QQMapConfig.lastLoadTime = System.currentTimeMillis();
     }
-    private static void debug(){
+    private static void debug() {
     }
-    public static QQMapConfig register(String instance, DataRow row){
+    public static QQMapConfig register(String instance, DataRow row) {
         QQMapConfig config = parse(QQMapConfig.class, instance, row, instances, compatibles);
         QQMapClient.getInstance(instance);
         return config;
     }
-    public static QQMapConfig register(DataRow row){
+    public static QQMapConfig register(DataRow row) {
         return register(DEFAULT_INSTANCE_KEY, row);
     }
-    public static QQMapConfig register(String instance, String key, String secret){
+    public static QQMapConfig register(String instance, String key, String secret) {
         DataRow row = new DataRow();
         row.put("KEY", key);
         row.put("SECRET", secret);
         return register(instance, row);
     }
-    public static QQMapConfig register(String ak, String sk){
+    public static QQMapConfig register(String ak, String sk) {
         return register(DEFAULT_INSTANCE_KEY, ak, sk);
     }
 }

@@ -42,7 +42,7 @@ public class COSBean implements InitializingBean {
     @Override
     public void afterPropertiesSet()  {
         SECRET_ID = BasicUtil.evl(SECRET_ID, COSConfig.DEFAULT_SECRET_ID);
-        if(BasicUtil.isEmpty(SECRET_ID)){
+        if(BasicUtil.isEmpty(SECRET_ID)) {
             return;
         }
         DataRow row = new DataRow();
@@ -56,7 +56,7 @@ public class COSBean implements InitializingBean {
     }
 
     /*@Bean("anyline.tencent.cos.init.bean")
-    public COSUtil instance(){
+    public COSUtil instance() {
         return COSUtil.getInstance();
     }*/
 }

@@ -35,13 +35,13 @@ public class BaiduMapBean implements InitializingBean {
     @Override
     public void afterPropertiesSet()  {
         AK = BasicUtil.evl(AK, BaiduMapConfig.DEFAULT_AK);
-        if(BasicUtil.isEmpty(AK)){
+        if(BasicUtil.isEmpty(AK)) {
             return;
         }
         BaiduMapConfig.register(AK, BasicUtil.evl(SK, BaiduMapConfig.DEFAULT_SK));
     }
     @Bean("anyline.baidu.map.init.client")
-    public BaiduMapClient instance(){
+    public BaiduMapClient instance() {
         return BaiduMapClient.getInstance();
     }
 }

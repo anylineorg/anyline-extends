@@ -48,43 +48,43 @@ public class Config extends BaseBodyTag {
 		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
 		try{
 			WechatMPUtil util = WechatMPUtil.getInstance(key);
-			if(null == util && null != config){
+			if(null == util && null != config) {
 				util = WechatMPUtil.reg(key, config);
 			}
-			if(null != util){
+			if(null != util) {
 				String url = "";
-				if("auto".equals(server)){
+				if("auto".equals(server)) {
 					server = HttpUtil.host(request.getServerName());
 					log.info("[wechat config][auto confirm server][server:{}]",server);
 				}
-				if(null != server){
-					if(server.contains("127.0.0.1") || server.contains("localhost")){
+				if(null != server) {
+					if(server.contains("127.0.0.1") || server.contains("localhost")) {
 						server = null;
 					}
 				}
-				if(BasicUtil.isEmpty(server)){
+				if(BasicUtil.isEmpty(server)) {
 					server = util.getConfig().WEB_SERVER;
 					log.info("[wechat config][config server][server:{}]",server);
 				}
-				if(BasicUtil.isEmpty(server)){
+				if(BasicUtil.isEmpty(server)) {
 					server = HttpUtil.host(request.getServerName());
 					log.info("[wechat config][server host][server:{}]",server);
 				}
 				url =  HttpUtil.mergePath(server , BasicUtil.evl(request.getAttribute("javax.servlet.forward.request_uri"),"")+"");
-				if(null != util.getConfig().WEB_SERVER && util.getConfig().WEB_SERVER.startsWith("https")){
+				if(null != util.getConfig().WEB_SERVER && util.getConfig().WEB_SERVER.startsWith("https")) {
 					url = url.replace("http:","https:");
 				}
 				String param = request.getQueryString();
-				if(BasicUtil.isNotEmpty(param)){
+				if(BasicUtil.isNotEmpty(param)) {
 					url += "?" + param;
 				}
-				if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
+				if(ConfigTable.IS_DEBUG && log.isWarnEnabled()) {
 					log.info("[config init][url:{}]", url);
 				}
 				Map<String, Object> map = util.jsapiSign(url);
 				StringBuilder builder = new StringBuilder();
 				builder.append("<script language=\"javascript\">\n");
-				if(debug){
+				if(debug) {
 					String alert = "请注意url,经过代理的应用有可能造成域名不符(如localhost,127.0.0.1等),请在anyline-wechat-mp.xml中配置WEB_SERVER=http://www.xx.com\\n,并在微信后台设置服务器IP白名单";
 					alert += "SIGN SRC: appId=" + util.getConfig().APP_ID + ",noncestr="+map.get("noncestr")
 							+",jsapi_ticket="+map.get("jsapi_ticket")+",url="+url+",timestamp="+map.get("timestamp");
@@ -100,10 +100,10 @@ public class Config extends BaseBodyTag {
 				builder.append( "jsApiList:[");
 				String apiList[] = apis.split(",");
 				int size = apiList.length;
-				for(int i=0; i<size; i++){
+				for(int i=0; i<size; i++) {
 					String api = apiList[i];
 					api = api.replace("'", "").replace("\"", "");
-					if(i>0){
+					if(i>0) {
 						builder.append( ",");
 					}
 					builder.append( "'" + api + "'");

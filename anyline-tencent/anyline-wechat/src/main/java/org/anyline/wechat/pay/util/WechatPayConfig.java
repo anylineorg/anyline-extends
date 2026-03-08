@@ -109,7 +109,7 @@ public class WechatPayConfig extends AnylineConfig{
 		public abstract String getCode();
 	};
 
-	public static Hashtable<String,AnylineConfig>getInstances(){
+	public static Hashtable<String,AnylineConfig>getInstances() {
 		return instances;
 	}
 	static{
@@ -120,7 +120,7 @@ public class WechatPayConfig extends AnylineConfig{
 	 * 解析配置文件内容
 	 * @param content 配置文件内容
 	 */
-	public static void parse(String content){
+	public static void parse(String content) {
 		parse(WechatPayConfig.class, content, instances ,compatibles);
 	}
 	/**
@@ -130,30 +130,30 @@ public class WechatPayConfig extends AnylineConfig{
 		// 加载配置文件
 		load();
 	}
-	public static WechatPayConfig getInstance(){
+	public static WechatPayConfig getInstance() {
 		return getInstance(DEFAULT_INSTANCE_KEY);
 	}
-	public static WechatPayConfig getInstance(String key){
-		if(BasicUtil.isEmpty(key)){
+	public static WechatPayConfig getInstance(String key) {
+		if(BasicUtil.isEmpty(key)) {
 			key = DEFAULT_INSTANCE_KEY;
 		}
 
-		if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - WechatPayConfig.lastLoadTime)/1000 > ConfigTable.getReload() ){
+		if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - WechatPayConfig.lastLoadTime)/1000 > ConfigTable.getReload() ) {
 			// 重新加载
 			load();
 		}
 		return (WechatPayConfig)instances.get(key);
 	}
 
-	public static WechatPayConfig parse(String instance, DataRow row){
+	public static WechatPayConfig parse(String instance, DataRow row) {
 		WechatPayConfig config = parse(WechatPayConfig.class, instance, row, instances,compatibles);
 		org.anyline.wechat.pay.util.v3.service.WechatPayUtil.getInstance(instance);
 		org.anyline.wechat.pay.util.v3.WechatPayUtil.getInstance(instance);
 		org.anyline.wechat.pay.util.WechatPayUtil.getInstance(instance);
 		return config;
 	}
-	public static Hashtable<String,AnylineConfig> parse(String column, DataSet<DataRow> set){
-		for(DataRow row:set){
+	public static Hashtable<String,AnylineConfig> parse(String column, DataSet<DataRow> set) {
+		for(DataRow row:set) {
 			String key = row.getString(column);
 			parse(key, row);
 		}
@@ -168,12 +168,12 @@ public class WechatPayConfig extends AnylineConfig{
 		load(instances, WechatPayConfig.class,CONFIG_NAME ,compatibles);
 		WechatPayConfig.lastLoadTime = System.currentTimeMillis();
 	}
-	private static void debug(){
+	private static void debug() {
 	}
-	public static WechatPayConfig register(String key, DataRow row){
+	public static WechatPayConfig register(String key, DataRow row) {
 		return parse(WechatPayConfig.class, key, row, instances,compatibles);
 	}
-	public static WechatPayConfig register(DataRow row){
+	public static WechatPayConfig register(DataRow row) {
 		return register(DEFAULT_INSTANCE_KEY, row);
 	}
 }

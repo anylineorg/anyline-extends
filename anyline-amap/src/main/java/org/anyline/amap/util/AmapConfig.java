@@ -43,7 +43,7 @@ public class AmapConfig extends AnylineConfig{
 	private static File configDir;
 	public static String CONFIG_NAME = "anyline-amap.xml";
 
-	public static Hashtable<String,AnylineConfig>getInstances(){
+	public static Hashtable<String,AnylineConfig>getInstances() {
 		return instances;
 	}
 	static{
@@ -56,7 +56,7 @@ public class AmapConfig extends AnylineConfig{
 	 * 解析配置文件内容
 	 * @param content 配置文件内容
 	 */
-	public static void parse(String content){
+	public static void parse(String content) {
 		parse(AmapConfig.class, content, instances ,compatibles); 
 	}
 	/**
@@ -66,19 +66,19 @@ public class AmapConfig extends AnylineConfig{
 		// 加载配置文件 
 		load(); 
 	} 
-	public static void setConfigDir(File dir){
+	public static void setConfigDir(File dir) {
 		configDir = dir; 
 		init(); 
 	} 
-	public static AmapConfig getInstance(){
+	public static AmapConfig getInstance() {
 		return getInstance(DEFAULT_KEY); 
 	} 
-	public static AmapConfig getInstance(String key){
-		if(BasicUtil.isEmpty(key)){
+	public static AmapConfig getInstance(String key) {
+		if(BasicUtil.isEmpty(key)) {
 			key = DEFAULT_KEY; 
 		} 
  
-		if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - AmapConfig.lastLoadTime)/1000 > ConfigTable.getReload() ){
+		if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - AmapConfig.lastLoadTime)/1000 > ConfigTable.getReload() ) {
 			// 重新加载 
 			load(); 
 		} 
@@ -91,7 +91,7 @@ public class AmapConfig extends AnylineConfig{
 		load(instances, AmapConfig.class, CONFIG_NAME);
 		AmapConfig.lastLoadTime = System.currentTimeMillis(); 
 	} 
-	private static void debug(){
+	private static void debug() {
 	}
 
 	public static AmapConfig register(String instance, DataRow row) {

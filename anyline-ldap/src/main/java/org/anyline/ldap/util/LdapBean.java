@@ -48,7 +48,7 @@ public class LdapBean implements InitializingBean {
     @Override
     public void afterPropertiesSet()  {
         ADDRESS = BasicUtil.evl(ADDRESS, LdapConfig.DEFAULT_ADDRESS);
-        if(BasicUtil.isEmpty(ADDRESS)){
+        if(BasicUtil.isEmpty(ADDRESS)) {
             return;
         }
         DataRow row = new DataRow();
@@ -63,7 +63,7 @@ public class LdapBean implements InitializingBean {
         LdapConfig.register(row);
     }
     @Bean("anyline.ldap.init.util")
-    public LdapUtil instance(){
+    public LdapUtil instance() {
         return LdapUtil.getInstance();
     }
 

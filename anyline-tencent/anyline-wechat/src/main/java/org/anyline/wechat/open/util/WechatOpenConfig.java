@@ -39,31 +39,31 @@ public class WechatOpenConfig extends WechatConfig{
 		load(); 
 	}
 
-	public static Hashtable<String,AnylineConfig>getInstances(){
+	public static Hashtable<String,AnylineConfig>getInstances() {
 		return instances;
 	}
-	public static WechatOpenConfig getInstance(){
+	public static WechatOpenConfig getInstance() {
 		return getInstance(DEFAULT_INSTANCE_KEY);
 	} 
-	public static WechatOpenConfig getInstance(String key){
-		if(BasicUtil.isEmpty(key)){
+	public static WechatOpenConfig getInstance(String key) {
+		if(BasicUtil.isEmpty(key)) {
 			key = DEFAULT_INSTANCE_KEY;
 		} 
  
-		if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - WechatOpenConfig.lastLoadTime)/1000 > ConfigTable.getReload() ){
+		if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - WechatOpenConfig.lastLoadTime)/1000 > ConfigTable.getReload() ) {
 			// 重新加载 
 			load(); 
 		} 
 		return (WechatOpenConfig)instances.get(key);
 	} 
  
-	public static WechatOpenConfig parse(String instance, DataRow row){
+	public static WechatOpenConfig parse(String instance, DataRow row) {
 		WechatOpenConfig config = parse(WechatOpenConfig.class, instance, row, instances, compatibles);
 		WechatOpenUtil.getInstance(instance);
 		return config;
 	} 
-	public static Hashtable<String,AnylineConfig> parse(String column, DataSet<DataRow> set){
-		for(DataRow row:set){
+	public static Hashtable<String,AnylineConfig> parse(String column, DataSet<DataRow> set) {
+		for(DataRow row:set) {
 			String key = row.getString(column); 
 			parse(key, row); 
 		} 
@@ -76,13 +76,13 @@ public class WechatOpenConfig extends WechatConfig{
 		load(instances, WechatOpenConfig.class, CONFIG_NAME,compatibles);
 		WechatOpenConfig.lastLoadTime = System.currentTimeMillis();
 	} 
-	private static void debug(){
+	private static void debug() {
 	}
 
-	public static WechatOpenConfig register(String key, DataRow row){
+	public static WechatOpenConfig register(String key, DataRow row) {
 		return parse(WechatOpenConfig.class, key, row, instances,compatibles);
 	}
-	public static WechatOpenConfig register(DataRow row){
+	public static WechatOpenConfig register(DataRow row) {
 		return register(DEFAULT_INSTANCE_KEY, row);
 	}
 } 

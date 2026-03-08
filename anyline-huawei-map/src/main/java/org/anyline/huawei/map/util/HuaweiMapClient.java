@@ -47,11 +47,11 @@ public class HuaweiMapClient extends AbstractMapClient implements MapClient {
 	public HuaweiMapConfig config = null;
 	private static Hashtable<String, HuaweiMapClient> instances = new Hashtable<>();
 
-	public static Hashtable<String, HuaweiMapClient> getInstances(){
+	public static Hashtable<String, HuaweiMapClient> getInstances() {
 		return instances;
 	}
 
-	public HuaweiMapConfig getConfig(){
+	public HuaweiMapConfig getConfig() {
 		return config;
 	}
 	public static HuaweiMapClient getInstance() {
@@ -111,7 +111,7 @@ public class HuaweiMapClient extends AbstractMapClient implements MapClient {
 		if (null != row) {
 			//解析附近poi
 			DataSet<DataRow> pois = row.getSet("sites");
-			if(!pois.isEmpty()){
+			if(!pois.isEmpty()) {
 				parse(coordinate, pois.getRow(0));
 			}
 		}
@@ -129,13 +129,13 @@ public class HuaweiMapClient extends AbstractMapClient implements MapClient {
 	 * @param coordinate 有可能是oi
 	 * @param result 返回内容
 	 */
-	private void parse(Coordinate coordinate, DataRow result){
+	private void parse(Coordinate coordinate, DataRow result) {
 		coordinate.setMetadata(result);
 		DataRow poi = result.getRow("poi");
-		if(null != poi){
+		if(null != poi) {
 			coordinate.setTel(poi.getString("phone"));
 			List types = poi.getList("hwPoiTypes");
-			if(null != types){
+			if(null != types) {
 				coordinate.setPoiCategoryCode(BeanUtil.concat(types));
 			}
 
@@ -144,12 +144,12 @@ public class HuaweiMapClient extends AbstractMapClient implements MapClient {
 		coordinate.setTitle(result.getString("name"));
 		coordinate.setAddress(result.getString("formatAddress"));
 		DataRow location = result.getRow("location");
-		if(null != location){
+		if(null != location) {
 			coordinate.setLng(location.getString("lng"));
 			coordinate.setLat(location.getString("lat"));
 		}
 		DataRow adr = result.getRow("address");
-		if(null != adr){
+		if(null != adr) {
 			coordinate.setProvinceName(adr.getString("adminArea"));
 			coordinate.setCityName(adr.getString("subAdminArea"));
 			coordinate.setCountyName(adr.getString("tertiaryAdminArea"));
@@ -164,10 +164,10 @@ public class HuaweiMapClient extends AbstractMapClient implements MapClient {
 	 * @return Coordinate
 	 */
 	@Override
-	public Coordinate geo(String address, String city){
+	public Coordinate geo(String address, String city) {
 		Coordinate coordinate = new Coordinate();
 		coordinate.setAddress(address);
-		if(null != address){
+		if(null != address) {
 			address = address.replace(" ","");
 		}
 		String api = "/mapApi/v1/siteService/geocode";
@@ -176,9 +176,9 @@ public class HuaweiMapClient extends AbstractMapClient implements MapClient {
 		DataRow row = post(HuaweiMapConfig.DEFAULT_HOST, api, params);
 		coordinate.setMetadata(row);
 		DataSet<DataRow> set = null;
-		if(row.containsKey("sites")){
+		if(row.containsKey("sites")) {
 			set = row.getSet("sites");
-			if(!set.isEmpty()){
+			if(!set.isEmpty()) {
 				DataRow first = set.getRow(0);
 				parse(coordinate, first);
 				coordinate.setSrs(SRS.GCJ02LL);
@@ -208,7 +208,7 @@ public class HuaweiMapClient extends AbstractMapClient implements MapClient {
 		String api = "/mapApi/v1/siteService/nearbySearch";
 
 		Map<String, Object> params = new HashMap<>();
-		if(BasicUtil.isNotEmpty(keyword)){
+		if(BasicUtil.isNotEmpty(keyword)) {
 			params.put("query", keyword);
 		}
 		Map<String, Object> location = new HashMap<>();
@@ -217,24 +217,24 @@ public class HuaweiMapClient extends AbstractMapClient implements MapClient {
 		params.put("location", location);
 		params.put("radius", radius);
 
-		if(BasicUtil.isNotEmpty(category)){
+		if(BasicUtil.isNotEmpty(category)) {
 			params.put("hwPoiTypes", category);
 		}
 		params.put("pageSize", 20);
 
 		int page = 1;
 		Map<String, Coordinate> maps = new HashMap<>();
-		while (true){
+		while (true) {
 			params.put("pageIndex", page++);
 			DataRow row = post(HuaweiMapConfig.DEFAULT_HOST, api, params);
-			if(null != row){
+			if(null != row) {
 				DataSet<DataRow> set = row.getSet("sites");
 				int exists = 0;
 				if(null != set && !set.isEmpty()) {
-					for(DataRow item:set){
+					for(DataRow item:set) {
 						Coordinate coordinate = new Coordinate();
 						parse(coordinate,item);
-						if(maps.containsKey(coordinate.getId())){
+						if(maps.containsKey(coordinate.getId())) {
 							exists++;
 						}else{
 							coordinates.add(coordinate);
@@ -242,11 +242,11 @@ public class HuaweiMapClient extends AbstractMapClient implements MapClient {
 						maps.put(coordinate.getId(), coordinate);
 					}
 					//最后一页小于20个
-					if(set.size() < 25){
+					if(set.size() < 25) {
 						break;
 					}
 					//有10个以上重复的中断(算成最后一页)
-					if(exists > 10){
+					if(exists > 10) {
 						break;
 					}
 				}else{
@@ -258,13 +258,16 @@ public class HuaweiMapClient extends AbstractMapClient implements MapClient {
 		}
 		return coordinates;
 	}
-	public DataRow post(String host, String api, Map<String, Object> params){
+	public DataRow post(String host, String api, Map<String, Object> params) {
+		if(limit()) {
+			return null;
+		}
 		DataRow row = null;
 		String body = BeanUtil.map2json(params);
 		StringEntity entity = null;
 		try{
 			entity = new StringEntity(body);
-		}catch (Exception e){
+		}catch (Exception e) {
 			e.printStackTrace();
 		}
 		Map<String, String> headers = new HashMap<>();
@@ -274,7 +277,7 @@ public class HuaweiMapClient extends AbstractMapClient implements MapClient {
 		int status = response.getStatus();
 		if(status == 200) {
 			String txt = response.getText();
-			if(null != HuaweiMapConfig.CACHE_DIR){
+			if(null != HuaweiMapConfig.CACHE_DIR) {
 				File dir = new File(HuaweiMapConfig.CACHE_DIR, config.SECRET+"/"+api.replace("/","_")+"/"+DateUtil.format("yyyyMMddHH"));
 				File file = new File(dir, System.currentTimeMillis()+"_"+BasicUtil.getRandomString(8)+".txt");
 				FileUtil.write(body+"\r\n"+txt, file);

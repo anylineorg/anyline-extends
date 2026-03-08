@@ -38,14 +38,14 @@ public class BingSeoConfig extends AnylineConfig {
         init();
         debug();
     }
-    public static Hashtable<String,AnylineConfig>getInstances(){
+    public static Hashtable<String,AnylineConfig>getInstances() {
         return instances;
     }
     /**
      * 解析配置文件内容
      * @param content 配置文件内容
      */
-    public static void parse(String content){
+    public static void parse(String content) {
         parse(BingSeoConfig.class, content, instances ,compatibles);
     }
     /**
@@ -56,15 +56,15 @@ public class BingSeoConfig extends AnylineConfig {
         load();
     }
 
-    public static BingSeoConfig getInstance(){
+    public static BingSeoConfig getInstance() {
         return getInstance(DEFAULT_INSTANCE_KEY);
     }
-    public static BingSeoConfig getInstance(String key){
-        if(BasicUtil.isEmpty(key)){
+    public static BingSeoConfig getInstance(String key) {
+        if(BasicUtil.isEmpty(key)) {
             key = DEFAULT_INSTANCE_KEY;
         }
 
-        if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - BingSeoConfig.lastLoadTime)/1000 > ConfigTable.getReload() ){
+        if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - BingSeoConfig.lastLoadTime)/1000 > ConfigTable.getReload() ) {
             // 重新加载 
             load();
         }
@@ -79,23 +79,23 @@ public class BingSeoConfig extends AnylineConfig {
         load(instances, BingSeoConfig.class, CONFIG_NAME);
         BingSeoConfig.lastLoadTime = System.currentTimeMillis();
     }
-    private static void debug(){
+    private static void debug() {
     }
-    public static BingSeoConfig register(String instance, DataRow row){
+    public static BingSeoConfig register(String instance, DataRow row) {
         BingSeoConfig config = parse(BingSeoConfig.class, instance, row, instances, compatibles);
         BingSeoClient.getInstance(instance);
         return config;
     }
-    public static BingSeoConfig register(DataRow row){
+    public static BingSeoConfig register(DataRow row) {
         return register(DEFAULT_INSTANCE_KEY, row);
     }
-    public static BingSeoConfig register(String instance, String site, String key){
+    public static BingSeoConfig register(String instance, String site, String key) {
         DataRow row = new DataRow();
         row.put("SITE", site);
         row.put("KEY", key);
         return register(instance, row);
     }
-    public static BingSeoConfig register(String site, String key){
+    public static BingSeoConfig register(String site, String key) {
         return register(DEFAULT_INSTANCE_KEY, site, key);
     }
 }

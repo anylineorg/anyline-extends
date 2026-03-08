@@ -44,15 +44,15 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
 
     static {
         Hashtable<String, AnylineConfig> configs = BaiduMapConfig.getInstances();
-        for(String key:configs.keySet()){
+        for(String key:configs.keySet()) {
             instances.put(key, getInstance(key));
         }
     }
-    public static Hashtable<String, BaiduMapClient> getInstances(){
+    public static Hashtable<String, BaiduMapClient> getInstances() {
         return instances;
     }
 
-    public BaiduMapConfig getConfig(){
+    public BaiduMapConfig getConfig() {
         return config;
     }
     public static BaiduMapClient getInstance() {
@@ -95,7 +95,7 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
         params.put("address", address);
         params.put("output", "json");
         DataRow row = api(api, params);
-        if(null != row){
+        if(null != row) {
             DataRow location = row.getRow("result","location");
             if(null != location) {
                 coordinate.setLng(location.getString("lng"));
@@ -126,7 +126,7 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
         params.put("output","json");
 
         DataRow row = api(api, params);
-        if(null != row){
+        if(null != row) {
             coordinate.setAddress(row.getString("formatted_address"));
             DataRow adr = row.getRow("result","addressComponent");
             if(null != adr) {
@@ -145,7 +145,7 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
                 String street = adr.getString("street");
                 coordinate.setStreet(street);
                 String number = adr.getString("street_number");
-                if(null != number && null != street){
+                if(null != number && null != street) {
                     number = number.replace(street,"");
                 }
                 coordinate.setStreet(street);
@@ -158,20 +158,23 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
     }
 
 
-    private DataRow api(String api, Map<String, Object> params){
+    private DataRow api(String api, Map<String, Object> params) {
+        if(limit()) {
+            return null;
+        }
         DataRow row = null;
         sign(api, params);
         HttpResponse response = HttpUtil.get(HOST + api,"UTF-8", params);
         int status = response.getStatus();
-        if(status == 200){
+        if(status == 200) {
             String txt = response.getText();
-            if(null != BaiduMapConfig.CACHE_DIR){
+            if(null != BaiduMapConfig.CACHE_DIR) {
                 File dir = new File(BaiduMapConfig.CACHE_DIR, config.AK+"/"+api.replace("/","_")+"/"+ DateUtil.format("yyyyMMddHH"));
                 File file = new File(dir, System.currentTimeMillis()+"_"+BasicUtil.getRandomString(8)+".txt");
                 FileUtil.write(BeanUtil.map2string(params) + "\r\n" + txt, file);
             }
             row = DataRow.parseJson(txt);
-            if(null != row){
+            if(null != row) {
                 status = row.getInt("status",-1);
                 if(status != 0) {
                     log.warn("[{}][执行失败][status:{}][info:{}]", api , status, row.getString("message"));
@@ -195,7 +198,7 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
         }
         return row;
     }
-    public void sign(String api, Map<String, Object> params){
+    public void sign(String api, Map<String, Object> params) {
         params.put("ak", config.AK);
         try {
             for (String key : params.keySet()) {
@@ -206,7 +209,7 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
             String str = api + "?" + BeanUtil.map2string(params) + config.SK;
             str = URLEncoder.encode(str, "UTF-8");
             params.put("sn", MD5Util.crypto(str));
-        }catch (Exception e){
+        }catch (Exception e) {
             e.printStackTrace();
         }
 

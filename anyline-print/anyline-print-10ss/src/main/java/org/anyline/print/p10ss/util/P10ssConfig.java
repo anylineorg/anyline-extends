@@ -66,7 +66,7 @@ public class P10ssConfig  extends AnylineConfig {
         public abstract String getCode();
     }
 
-    public static Hashtable<String,AnylineConfig>getInstances(){
+    public static Hashtable<String,AnylineConfig>getInstances() {
         return instances;
     }
     static{
@@ -77,7 +77,7 @@ public class P10ssConfig  extends AnylineConfig {
      * 解析配置文件内容
      * @param content 配置文件内容
      */
-    public static void parse(String content){
+    public static void parse(String content) {
         parse(P10ssConfig.class, content, instances ,compatibles);
     }
     /**
@@ -87,29 +87,29 @@ public class P10ssConfig  extends AnylineConfig {
         // 加载配置文件
         load();
     }
-    public static P10ssConfig getInstance(){
+    public static P10ssConfig getInstance() {
         return getInstance(DEFAULT_INSTANCE_KEY);
     }
-    public static P10ssConfig getInstance(String key){
-        if(BasicUtil.isEmpty(key)){
+    public static P10ssConfig getInstance(String key) {
+        if(BasicUtil.isEmpty(key)) {
             key = DEFAULT_INSTANCE_KEY;
         }
 
-        if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - P10ssConfig.lastLoadTime)/1000 > ConfigTable.getReload() ){
+        if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - P10ssConfig.lastLoadTime)/1000 > ConfigTable.getReload() ) {
             // 重新加载
             load();
         }
         return (P10ssConfig)instances.get(key);
     }
 
-    public static P10ssConfig reg(String key, DataRow row){
+    public static P10ssConfig reg(String key, DataRow row) {
         return parse(P10ssConfig.class, key, row, instances,compatibles);
     }
-    public static P10ssConfig parse(String key, DataRow row){
+    public static P10ssConfig parse(String key, DataRow row) {
         return parse(P10ssConfig.class, key, row, instances,compatibles);
     }
-    public static Hashtable<String,AnylineConfig> parse(String column, DataSet<DataRow> set){
-        for(DataRow row:set){
+    public static Hashtable<String,AnylineConfig> parse(String column, DataSet<DataRow> set) {
+        for(DataRow row:set) {
             String key = row.getString(column);
             parse(key, row);
         }
@@ -124,16 +124,16 @@ public class P10ssConfig  extends AnylineConfig {
         load(instances, P10ssConfig.class,CONFIG_NAME ,compatibles);
         P10ssConfig.lastLoadTime = System.currentTimeMillis();
     }
-    private static void debug(){
+    private static void debug() {
     }
-    public P10ssConfig register(String instance, DataRow row){
+    public P10ssConfig register(String instance, DataRow row) {
         P10ssConfig config = parse(P10ssConfig.class, instance, row, instances, compatibles);
         return config;
     }
-    public P10ssConfig register(DataRow row){
+    public P10ssConfig register(DataRow row) {
         return register(DEFAULT_INSTANCE_KEY, row);
     }
-    public P10ssConfig register(String app, String secret){
+    public P10ssConfig register(String app, String secret) {
         DataRow row = new DataRow();
         row.put("APP_ID", app);
         row.put("APP_SECRET",secret);

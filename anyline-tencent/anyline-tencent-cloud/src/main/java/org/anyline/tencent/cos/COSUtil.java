@@ -38,16 +38,16 @@ public class COSUtil {
 
     static {
         Hashtable<String, AnylineConfig> configs = COSConfig.getInstances();
-        for(String key:configs.keySet()){
+        for(String key:configs.keySet()) {
             instances.put(key, getInstance(key));
         }
     }
-    public static Hashtable<String, COSUtil> getInstances(){
+    public static Hashtable<String, COSUtil> getInstances() {
         return instances;
     }
 
     public COSUtil(){}
-    public COSUtil(String endpoint, String bucket, String id, String key){
+    public COSUtil(String endpoint, String bucket, String id, String key) {
         COSConfig config = new COSConfig();
         config.ENDPOINT = endpoint;
         config.SECRET_ID = id;
@@ -61,10 +61,10 @@ public class COSUtil {
         return getInstance(COSConfig.DEFAULT_INSTANCE_KEY);
     }
 
-    public COSConfig getConfig(){
+    public COSConfig getConfig() {
         return config;
     }
-    public void setConfig(COSConfig config){
+    public void setConfig(COSConfig config) {
         this.config = config;
     }
     @SuppressWarnings("deprecation")
@@ -94,7 +94,7 @@ public class COSUtil {
         // 如果您使用了腾讯云 cvm，可以设置内部域名
         //config.put("host", "sts.internal.tencentcloudapi.com");
 
-        if(second == 0){
+        if(second == 0) {
             second = this.config.EXPIRE_SECOND;
         }
         // 临时密钥有效时长，单位是秒，默认 1800 秒，目前主账号最长 2 小时（即 7200 秒），子账号最长 36 小时（即 129600）秒

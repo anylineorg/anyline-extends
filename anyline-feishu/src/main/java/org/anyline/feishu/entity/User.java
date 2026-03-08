@@ -104,8 +104,8 @@ public class User {
         this.frozenStatus = frozenStatus;
     }
     public void setFrozenStatus(Boolean frozenStatus) {
-        if(null != frozenStatus){
-            if(frozenStatus){
+        if(null != frozenStatus) {
+            if(frozenStatus) {
                 this.frozenStatus = 1;
             }else{
                 this.frozenStatus = 0;
@@ -122,8 +122,8 @@ public class User {
     }
 
     public void setActivateStatus(Boolean activateStatus) {
-        if(null != activateStatus){
-            if(activateStatus){
+        if(null != activateStatus) {
+            if(activateStatus) {
                 this.activateStatus = 1;
             }else{
                 this.activateStatus = 0;
@@ -157,8 +157,8 @@ public class User {
 
 
     public void setResignStatus(Boolean resignStatus) {
-        if(null != resignStatus){
-            if(resignStatus){
+        if(null != resignStatus) {
+            if(resignStatus) {
                 this.resignStatus = 1;
             }else{
                 this.resignStatus = 0;

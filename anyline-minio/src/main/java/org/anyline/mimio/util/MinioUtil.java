@@ -41,7 +41,7 @@ public class MinioUtil {
     private static Hashtable<String, MinioUtil> instances = new Hashtable<String, MinioUtil>();
 
     public MinioUtil(){}
-    public MinioUtil(String endpoint, String bucket, String key, String secret){
+    public MinioUtil(String endpoint, String bucket, String key, String secret) {
         MinioConfig config = new MinioConfig();
         config.ENDPOINT = endpoint;
         config.ACCESS_KEY = key;
@@ -57,11 +57,11 @@ public class MinioUtil {
 
     static {
         Hashtable<String, AnylineConfig> configs = MinioConfig.getInstances();
-        for(String key:configs.keySet()){
+        for(String key:configs.keySet()) {
             instances.put(key, getInstance(key));
         }
     }
-    public static Hashtable<String, MinioUtil> getInstances(){
+    public static Hashtable<String, MinioUtil> getInstances() {
         return instances;
     }
 
@@ -75,10 +75,10 @@ public class MinioUtil {
     public void setClient(MinioClient client) {
         this.client = client;
     }
-    public MinioConfig getConfig(){
+    public MinioConfig getConfig() {
         return config;
     }
-    public void setConfig(MinioConfig config){
+    public void setConfig(MinioConfig config) {
         this.config = config;
     }
     @SuppressWarnings("deprecation")

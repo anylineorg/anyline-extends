@@ -39,12 +39,12 @@ public class MapProxy {
     private static BaiduMapClient bmap;
     public static Map<String, String> over_limits = new HashMap<>();
     public MapProxy(){}
-    private static boolean enable(String api, String platform){
+    private static boolean enable(String api, String platform) {
         String ymd = over_limits.get(api+"_"+platform);
-        if(null == ymd){
+        if(null == ymd) {
             return true;
         }
-        if(DateUtil.format("yyyy-MM-dd").equals(ymd)){
+        if(DateUtil.format("yyyy-MM-dd").equals(ymd)) {
             return false;
         }
         over_limits.remove(api+"_"+platform);
@@ -58,55 +58,55 @@ public class MapProxy {
      * @param lat 纬度
      * @return Coordinate
      */
-    public static Coordinate regeo(SRS srs, double lng, double lat){
+    public static Coordinate regeo(SRS srs, double lng, double lat) {
         Coordinate coordinate = new Coordinate(srs, lng, lat);
         String api = "regeo";
         Double[] point = null;
-        if(null != amap && enable(api, "amap")){
+        if(null != amap && enable(api, "amap")) {
             try{
                 amap.regeo(coordinate);
-            }catch (AnylineException e){
-                if("API_OVER_LIMIT".equals(e.getCode())){
+            }catch (AnylineException e) {
+                if("API_OVER_LIMIT".equals(e.getCode())) {
                     over_limits.put(api+"_amap", DateUtil.format("yyyy-MM-dd"));
                 }
-            }catch (Exception e){
+            }catch (Exception e) {
             }
         }
-        if(!coordinate.isSuccess()  && null != bmap && enable(api,"bmap")){
+        if(!coordinate.isSuccess()  && null != bmap && enable(api,"bmap")) {
             try{
                 coordinate = bmap.regeo(coordinate);
-            }catch (AnylineException e){
-                if("API_OVER_LIMIT".equals(e.getCode())){
+            }catch (AnylineException e) {
+                if("API_OVER_LIMIT".equals(e.getCode())) {
                     over_limits.put(api+"_bmap", DateUtil.format("yyyy-MM-dd"));
                 }
-            }catch (Exception e){
+            }catch (Exception e) {
             }
         }
-        if(!coordinate.isSuccess() && null != qmap && enable(api,"qmap")){
+        if(!coordinate.isSuccess() && null != qmap && enable(api,"qmap")) {
             try{
                 coordinate = qmap.regeo(coordinate);
-            }catch (AnylineException e){
-                if("API_OVER_LIMIT".equals(e.getCode())){
+            }catch (AnylineException e) {
+                if("API_OVER_LIMIT".equals(e.getCode())) {
                     over_limits.put(api+"_qmap", DateUtil.format("yyyy-MM-dd"));
                 }
-            }catch (Exception e){
+            }catch (Exception e) {
             }
         }
 
         return coordinate;
     }
 
-    public static Coordinate regeo(SRS coord, String lng, String lat){
+    public static Coordinate regeo(SRS coord, String lng, String lat) {
         return regeo(coord, BasicUtil.parseDouble(lng, null), BasicUtil.parseDouble(lat,null));
     }
-    public static Coordinate regeo(SRS coord, String[] location){
+    public static Coordinate regeo(SRS coord, String[] location) {
         return regeo(coord, location[0], location[1]);
     }
-    public static Coordinate regeo(SRS coord, double[] location){
+    public static Coordinate regeo(SRS coord, double[] location) {
         return regeo(coord, location[0], location[1]);
     }
 
-    public static Coordinate regeo(Coordinate coordinate){
+    public static Coordinate regeo(Coordinate coordinate) {
         return regeo(coordinate.getSrs(), coordinate.getLng(), coordinate.getLat());
     }
 
@@ -136,17 +136,17 @@ public class MapProxy {
 
     @Autowired(required = false)
     @Qualifier("anyline.amap.init.client")
-    public void init(AmapClient amap){
+    public void init(AmapClient amap) {
         MapProxy.amap = amap;
     }
     @Autowired(required = false)
     @Qualifier("anyline.qq.map.init.client")
-    public void init(QQMapClient qmap){
+    public void init(QQMapClient qmap) {
         MapProxy.qmap = qmap;
     }
     @Autowired(required = false)
     @Qualifier("anyline.baidu.map.init.client")
-    public void init(BaiduMapClient bmap){
+    public void init(BaiduMapClient bmap) {
         MapProxy.bmap = bmap;
     }
 

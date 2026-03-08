@@ -40,7 +40,7 @@ public class P10ssBean implements InitializingBean {
     @Override
     public void afterPropertiesSet()  {
         APP_ID = BasicUtil.evl(APP_ID, P10ssConfig.DEFAULT_APP_ID);
-        if(BasicUtil.isEmpty(APP_ID)){
+        if(BasicUtil.isEmpty(APP_ID)) {
             return;
         }
         DataRow row = new DataRow();
@@ -50,7 +50,7 @@ public class P10ssBean implements InitializingBean {
         row.put("ACCESS_TOKEN_SERVER", BasicUtil.evl(ACCESS_TOKEN_SERVER, P10ssConfig.DEFAULT_ACCESS_TOKEN_SERVER));
     }
     @Bean("anyline.p10s.init.util")
-    public P10ssUtil instance(){
+    public P10ssUtil instance() {
         return P10ssUtil.getInstance();
     }
 }

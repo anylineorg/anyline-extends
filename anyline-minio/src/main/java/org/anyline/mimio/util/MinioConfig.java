@@ -52,7 +52,7 @@ public class MinioConfig extends AnylineConfig{
 
 
 
-	public static Hashtable<String,AnylineConfig>getInstances(){
+	public static Hashtable<String,AnylineConfig>getInstances() {
 		return instances;
 	}
 
@@ -64,7 +64,7 @@ public class MinioConfig extends AnylineConfig{
 	 * 解析配置文件内容
 	 * @param content 配置文件内容
 	 */
-	public static void parse(String content){
+	public static void parse(String content) {
 		parse(MinioConfig.class, content, instances ,compatibles); 
 	}
 	/**
@@ -74,19 +74,19 @@ public class MinioConfig extends AnylineConfig{
 		// 加载配置文件
 		load(); 
 	} 
-	public static void setConfigDir(File dir){
+	public static void setConfigDir(File dir) {
 		configDir = dir; 
 		init(); 
 	} 
-	public static MinioConfig getInstance(){
+	public static MinioConfig getInstance() {
 		return getInstance(DEFAULT_INSTANCE_KEY);
 	} 
-	public static MinioConfig getInstance(String key){
-		if(BasicUtil.isEmpty(key)){
+	public static MinioConfig getInstance(String key) {
+		if(BasicUtil.isEmpty(key)) {
 			key = DEFAULT_INSTANCE_KEY;
 		} 
  
-		if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - MinioConfig.lastLoadTime)/1000 > ConfigTable.getReload() ){
+		if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - MinioConfig.lastLoadTime)/1000 > ConfigTable.getReload() ) {
 			// 重新加载
 			load(); 
 		} 
@@ -101,15 +101,15 @@ public class MinioConfig extends AnylineConfig{
 		load(instances, MinioConfig.class, CONFIG_NAME);
 		MinioConfig.lastLoadTime = System.currentTimeMillis(); 
 	} 
-	private static void debug(){
+	private static void debug() {
 	}
 
-	public static MinioConfig register(String instance, DataRow row){
+	public static MinioConfig register(String instance, DataRow row) {
 		MinioConfig config = parse(MinioConfig.class, instance, row, instances, compatibles);
 		MinioUtil.getInstance(instance);
 		return config;
 	}
-	public static MinioConfig register(DataRow row){
+	public static MinioConfig register(DataRow row) {
 		return register(DEFAULT_INSTANCE_KEY, row);
 	}
 } 

@@ -47,37 +47,37 @@ public class WechatPayUtil {
 
     static {
         Hashtable<String, AnylineConfig> configs = WechatPayConfig.getInstances();
-        for(String key:configs.keySet()){
+        for(String key:configs.keySet()) {
             instances.put(key, getInstance(key));
         }
     }
 
-    public static Hashtable<String, WechatPayUtil> getInstances(){
+    public static Hashtable<String, WechatPayUtil> getInstances() {
         return instances;
     }
-    public static WechatPayUtil getInstance(){
+    public static WechatPayUtil getInstance() {
         return getInstance(WechatPayConfig.DEFAULT_INSTANCE_KEY);
     }
-    public WechatPayUtil(WechatPayConfig config){
+    public WechatPayUtil(WechatPayConfig config) {
         this.config = config;
     }
-    public WechatPayUtil(String key, DataRow config){
+    public WechatPayUtil(String key, DataRow config) {
         WechatPayConfig conf = WechatPayConfig.parse(key, config);
         this.config = conf;
         instances.put(key, this);
     }
-    public static WechatPayUtil register(String key, DataRow config){
+    public static WechatPayUtil register(String key, DataRow config) {
         WechatPayConfig conf = WechatPayConfig.register(key, config);
         WechatPayUtil util = new WechatPayUtil(conf);
         instances.put(key, util);
         return util;
     }
-    public static WechatPayUtil getInstance(String key){
-        if(BasicUtil.isEmpty(key)){
+    public static WechatPayUtil getInstance(String key) {
+        if(BasicUtil.isEmpty(key)) {
             key = WechatPayConfig.DEFAULT_INSTANCE_KEY;
         }
         WechatPayUtil util = instances.get(key);
-        if(null == util){
+        if(null == util) {
             WechatPayConfig config = WechatPayConfig.getInstance(key);
             if(null != config) {
                 util = new WechatPayUtil(config);
@@ -100,46 +100,46 @@ public class WechatPayUtil {
     public WechatPrePayResult unifiedorder(WechatPrePayOrder order) throws Exception{
         WechatPrePayResult result = null;
         order.setNonce_str(BasicUtil.getRandomLowerString(20));
-        if(null == order.getAppid()){
+        if(null == order.getAppid()) {
             throw new Exception("未设置appid");
         }
-        if("JSAPI".equals(order.getTrade_type()) && null == order.getOpenid()){
+        if("JSAPI".equals(order.getTrade_type()) && null == order.getOpenid()) {
             throw new Exception("未设置openid");
         }
-        if(BasicUtil.isEmpty(order.getMch_id())){
+        if(BasicUtil.isEmpty(order.getMch_id())) {
             order.setMch_id(config.MCH_ID);
         }
-        if(BasicUtil.isEmpty(order.getNotify_url())){
+        if(BasicUtil.isEmpty(order.getNotify_url())) {
             order.setNotify_url(config.NOTIFY_URL);
         }
-        if(BasicUtil.isEmpty(order.getNotify_url())){
+        if(BasicUtil.isEmpty(order.getNotify_url())) {
             // 	order.setNotify_url(WechatProgramConfig.getInstance().NOTIFY_URL);
         }
-        if(BasicUtil.isEmpty(order.getOut_trade_no())){
+        if(BasicUtil.isEmpty(order.getOut_trade_no())) {
             throw new Exception("未设置交易单号");
         }
         Map<String, Object> map = BeanUtil.object2map(order);
         String sign = WechatUtil.sign(config.API_SECRET,map);
         map.put("sign", sign);
-        if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
+        if(ConfigTable.IS_DEBUG && log.isWarnEnabled()) {
             log.warn("[统一下单][sign:{}}", sign);
         }
         String xml = BeanUtil.map2xml(map);
 
-        if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
+        if(ConfigTable.IS_DEBUG && log.isWarnEnabled()) {
             log.warn("[统一下单][xml:{}]", xml);
         }
         String rtn = SimpleHttpUtil.post(WechatPayConfig.API_URL_UNIFIED_ORDER, xml);
 
-        if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
+        if(ConfigTable.IS_DEBUG && log.isWarnEnabled()) {
             log.warn("[统一下单][return:{}]", rtn);
         }
         result = BeanUtil.xml2object(rtn, WechatPrePayResult.class);
-        if(BasicUtil.isNotEmpty(result.getPrepay_id())){
+        if(BasicUtil.isNotEmpty(result.getPrepay_id())) {
             result.setResult(true);
         }
 
-        if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
+        if(ConfigTable.IS_DEBUG && log.isWarnEnabled()) {
             log.warn("[统一下单][prepay id:{}]", result.getPrepay_id());
         }
         return result;
@@ -152,7 +152,7 @@ public class WechatPayUtil {
      * @param prepayid 预支付id(由统一下单接口返回)
      * @return DataRow
      */
-    public DataRow callUpParam(String appid, String prepayid){
+    public DataRow callUpParam(String appid, String prepayid) {
         String timestamp = System.currentTimeMillis()/1000+"";
         String random = BasicUtil.getRandomLowerString(20);
         String pkg = "prepay_id="+prepayid;
@@ -166,7 +166,7 @@ public class WechatPayUtil {
         params.put("paySign", sign);
 
         DataRow row = new DataRow(params);
-        if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
+        if(ConfigTable.IS_DEBUG && log.isWarnEnabled()) {
             log.warn("[jsapi调起微信支付][参数:{}]", row.toJSON());
         }
         return row;
@@ -180,11 +180,11 @@ public class WechatPayUtil {
      */
     public WechatRefundResult refund(WechatRefund refund) throws Exception{
         WechatRefundResult result = null;
-        if(null == refund.getAppid()){
+        if(null == refund.getAppid()) {
             throw new Exception("未设置appid");
         }
         refund.setNonce_str(BasicUtil.getRandomLowerString(20));
-        if(BasicUtil.isEmpty(refund.getMch_id())){
+        if(BasicUtil.isEmpty(refund.getMch_id())) {
             refund.setMch_id(config.MCH_ID);
         }
         Map<String, Object> map = BeanUtil.object2map(refund);
@@ -192,22 +192,22 @@ public class WechatPayUtil {
 
         map.put("sign", sign);
 
-        if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
+        if(ConfigTable.IS_DEBUG && log.isWarnEnabled()) {
             log.warn("[退款申请][sign:{}]", sign);
         }
         String xml = BeanUtil.map2xml(map);
 
-        if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
+        if(ConfigTable.IS_DEBUG && log.isWarnEnabled()) {
             log.warn("[退款申请][xml:{}]", xml);
             log.warn("[退款申请][证书:{}]", config.KEY_STORE_FILE);
         }
         File keyStoreFile = new File(config.KEY_STORE_FILE);
-        if(!keyStoreFile.exists()){
+        if(!keyStoreFile.exists()) {
             log.warn("[密钥文件不存在][file:{}]",config.KEY_STORE_FILE);
             return new WechatRefundResult(false,"密钥文件不存在");
         }
         String keyStorePassword = config.KEY_STORE_PASSWORD;
-        if(BasicUtil.isEmpty(keyStorePassword)){
+        if(BasicUtil.isEmpty(keyStorePassword)) {
             log.warn("未设置密钥文件密码");
             return new WechatRefundResult(false,"未设置密钥文件密码");
         }
@@ -222,11 +222,11 @@ public class WechatPayUtil {
                     .setEntity(reqEntity)
                     .build().get().getText();
             // String txt = HttpUtil.post(httpclient, WechatPayConfig.API_URL_REFUND, "UTF-8", reqEntity).getText();
-            if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
+            if(ConfigTable.IS_DEBUG && log.isWarnEnabled()) {
                 log.warn("[退款申请调用][result:{}", txt);
             }
             result = BeanUtil.xml2object(txt, WechatRefundResult.class);
-        }catch(Exception e){
+        }catch(Exception e) {
             e.printStackTrace();
             return new WechatRefundResult(false,e.toString());
         }
@@ -240,18 +240,18 @@ public class WechatPayUtil {
      */
     public WechatRedpackResult sendRedpack(WechatRedpack pack) throws Exception{
         WechatRedpackResult result = new WechatRedpackResult();
-        if(null == pack.getWxappid()){
+        if(null == pack.getWxappid()) {
             throw new Exception("未设置wxappid");
         }
-        if(null == pack.getRe_openid()){
+        if(null == pack.getRe_openid()) {
             throw new Exception("未设置reopenid");
         }
         pack.setNonce_str(BasicUtil.getRandomLowerString(20));
-        if(BasicUtil.isEmpty(pack.getMch_id())){
+        if(BasicUtil.isEmpty(pack.getMch_id())) {
             pack.setMch_id(config.MCH_ID);
         }
 
-        if(BasicUtil.isEmpty(pack.getMch_billno())){
+        if(BasicUtil.isEmpty(pack.getMch_billno())) {
             pack.setMch_billno(BasicUtil.getRandomLowerString(20));
         }
         Map<String, Object> map = BeanUtil.object2map(pack);
@@ -259,22 +259,22 @@ public class WechatPayUtil {
 
         map.put("sign", sign);
 
-        if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
+        if(ConfigTable.IS_DEBUG && log.isWarnEnabled()) {
             log.warn("[发送红包[sign:{}]", sign);
         }
         String xml = BeanUtil.map2xml(map);
-        if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
+        if(ConfigTable.IS_DEBUG && log.isWarnEnabled()) {
             log.warn("[发送红包][xml:{}]", xml);
             log.warn("[发送红包][证书:{}]", config.KEY_STORE_FILE);
         }
 
         File keyStoreFile = new File(config.KEY_STORE_FILE);
-        if(!keyStoreFile.exists()){
+        if(!keyStoreFile.exists()) {
             log.warn("[密钥文件不存在][file:{}]",config.KEY_STORE_FILE);
             return new WechatRedpackResult(false,"密钥文件不存在");
         }
         String keyStorePassword = config.KEY_STORE_PASSWORD;
-        if(BasicUtil.isEmpty(keyStorePassword)){
+        if(BasicUtil.isEmpty(keyStorePassword)) {
             log.warn("未设置密钥文件密码");
             return new WechatRedpackResult(false,"未设置密钥文件密码");
         }
@@ -289,11 +289,11 @@ public class WechatPayUtil {
                     .setEntity(reqEntity)
                     .build().get().getText();
             // String txt = HttpUtil.post(httpclient, WechatPayConfig.API_URL_SEND_REDPACK, "UTF-8", reqEntity).getText();
-            if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
+            if(ConfigTable.IS_DEBUG && log.isWarnEnabled()) {
                 log.warn("[发送红包调用][result:{}]", txt);
             }
             result = BeanUtil.xml2object(txt, WechatRedpackResult.class);
-        }catch(Exception e){
+        }catch(Exception e) {
             e.printStackTrace();
             return new WechatRedpackResult(false,e.toString());
         }
@@ -306,18 +306,18 @@ public class WechatPayUtil {
      * @throws Exception 异常  Exception
      */
     public WechatFissionRedpackResult sendRedpack(WechatFissionRedpack pack) throws Exception{
-        if(null == pack.getWxappid()){
+        if(null == pack.getWxappid()) {
             throw new Exception("未设置wxappid");
         }
-        if(null == pack.getRe_openid()){
+        if(null == pack.getRe_openid()) {
             throw new Exception("未设置reopenid");
         }
         WechatFissionRedpackResult result = new WechatFissionRedpackResult();
         pack.setNonce_str(BasicUtil.getRandomLowerString(20));
-        if(BasicUtil.isEmpty(pack.getMch_id())){
+        if(BasicUtil.isEmpty(pack.getMch_id())) {
             pack.setMch_id(config.MCH_ID);
         }
-        if(BasicUtil.isEmpty(pack.getMch_billno())){
+        if(BasicUtil.isEmpty(pack.getMch_billno())) {
             pack.setMch_billno(BasicUtil.getRandomLowerString(20));
         }
         Map<String, Object> map = BeanUtil.object2map(pack);
@@ -325,22 +325,22 @@ public class WechatPayUtil {
 
         map.put("sign", sign);
 
-        if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
+        if(ConfigTable.IS_DEBUG && log.isWarnEnabled()) {
             log.warn("[发送裂变红包][sign:{}]", sign);
         }
         String xml = BeanUtil.map2xml(map);
-        if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
+        if(ConfigTable.IS_DEBUG && log.isWarnEnabled()) {
             log.warn("[发送裂变红包][xml:{}]", xml);
             log.warn("[发送裂变红包][证书:{}]", config.KEY_STORE_FILE);
         }
 
         File keyStoreFile = new File(config.KEY_STORE_FILE);
-        if(!keyStoreFile.exists()){
+        if(!keyStoreFile.exists()) {
             log.warn("[密钥文件不存在][file:{}]", config.KEY_STORE_FILE);
             return new WechatFissionRedpackResult(false,"密钥文件不存在");
         }
         String keyStorePassword = config.KEY_STORE_PASSWORD;
-        if(BasicUtil.isEmpty(keyStorePassword)){
+        if(BasicUtil.isEmpty(keyStorePassword)) {
             log.warn("未设置密钥文件密码");
             return new WechatFissionRedpackResult(false,"未设置密钥文件密码");
         }
@@ -355,11 +355,11 @@ public class WechatPayUtil {
                     .setEntity(reqEntity)
                     .build().get().getText();
             // String txt = HttpUtil.post(httpclient, WechatPayConfig.API_URL_SEND_GROUP_REDPACK, "UTF-8", reqEntity).getText();
-            if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
+            if(ConfigTable.IS_DEBUG && log.isWarnEnabled()) {
                 log.warn("[发送裂变红包调用][result:{}]", txt);
             }
             result = BeanUtil.xml2object(txt, WechatFissionRedpackResult.class);
-        }catch(Exception e){
+        }catch(Exception e) {
             e.printStackTrace();
             return new WechatFissionRedpackResult(false,e.toString());
         }
@@ -371,13 +371,13 @@ public class WechatPayUtil {
      * @param transfer  transfer
      * @return WechatEnterpriseTransferResult
      */
-    public WechatEnterpriseTransferResult transfer(WechatEnterpriseTransfer transfer){
+    public WechatEnterpriseTransferResult transfer(WechatEnterpriseTransfer transfer) {
         WechatEnterpriseTransferResult result = new WechatEnterpriseTransferResult();
         transfer.setNonce_str(BasicUtil.getRandomLowerString(20));
-        if(BasicUtil.isEmpty(transfer.getMchid())){
+        if(BasicUtil.isEmpty(transfer.getMchid())) {
             transfer.setMchid(config.MCH_ID);
         }
-        if(BasicUtil.isEmpty(transfer.getPartner_trade_no())){
+        if(BasicUtil.isEmpty(transfer.getPartner_trade_no())) {
             transfer.setPartner_trade_no(BasicUtil.getRandomLowerString(20));
         }
         Map<String, Object> map = BeanUtil.object2map(transfer);
@@ -385,22 +385,22 @@ public class WechatPayUtil {
 
         map.put("sign", sign);
 
-        if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
+        if(ConfigTable.IS_DEBUG && log.isWarnEnabled()) {
             log.warn("[付款][sign:{}]", sign);
         }
         String xml = BeanUtil.map2xml(map);
-        if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
+        if(ConfigTable.IS_DEBUG && log.isWarnEnabled()) {
             log.warn("[付款][xml:{}]", xml);
             log.warn("[付款][证书:{}]", config.KEY_STORE_FILE);
         }
 
         File keyStoreFile = new File(config.KEY_STORE_FILE);
-        if(!keyStoreFile.exists()){
+        if(!keyStoreFile.exists()) {
             log.warn("[密钥文件不存在][file:{}]",config.KEY_STORE_FILE);
             return new WechatEnterpriseTransferResult(false,"密钥文件不存在");
         }
         String keyStorePassword = config.KEY_STORE_PASSWORD;
-        if(BasicUtil.isEmpty(keyStorePassword)){
+        if(BasicUtil.isEmpty(keyStorePassword)) {
             log.warn("未设置密钥文件密码");
             return new WechatEnterpriseTransferResult(false,"未设置密钥文件密码");
         }
@@ -415,11 +415,11 @@ public class WechatPayUtil {
                     .setEntity(reqEntity)
                     .build().get().getText();
             // String txt = HttpUtil.post(httpclient, WechatPayConfig.API_URL_COMPANY_TRANSFER, "UTF-8", reqEntity).getText();
-            if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
+            if(ConfigTable.IS_DEBUG && log.isWarnEnabled()) {
                 log.warn("[付款调用][result:{}]", txt);
             }
             result = BeanUtil.xml2object(txt, WechatEnterpriseTransferResult.class);
-        }catch(Exception e){
+        }catch(Exception e) {
             e.printStackTrace();
             return new WechatEnterpriseTransferResult(false,e.toString());
         }
@@ -430,28 +430,28 @@ public class WechatPayUtil {
      * @param transfer  transfer
      * @return WechatEnterpriseTransferBankResult
      */
-    public WechatEnterpriseTransferBankResult transfer(WechatEnterpriseTransferBank transfer){
+    public WechatEnterpriseTransferBankResult transfer(WechatEnterpriseTransferBank transfer) {
         WechatEnterpriseTransferBankResult result = new WechatEnterpriseTransferBankResult();
         transfer.setNonce_str(BasicUtil.getRandomLowerString(20));
         String enc_bank_no = transfer.getEnc_bank_no();
         String enc_true_name = transfer.getEnc_true_name();
-        if(BasicUtil.isEmpty(enc_bank_no)){
+        if(BasicUtil.isEmpty(enc_bank_no)) {
             log.warn("未提供收款卡号");
             return new WechatEnterpriseTransferBankResult(false,"未提供收款卡号");
         }
-        if(BasicUtil.isEmpty(enc_true_name)){
+        if(BasicUtil.isEmpty(enc_true_name)) {
             log.warn("未提供收款人姓名");
             return new WechatEnterpriseTransferBankResult(false,"未提供收款人姓名");
         }
         try {
             enc_bank_no = RSAUtil.encrypt(enc_bank_no, RSAUtil.createPublicKey(new File(config.BANK_RSA_PUBLIC_KEY_FILE)));
-        }catch(Exception e){
+        }catch(Exception e) {
             e.printStackTrace();
         }
-        if(BasicUtil.isEmpty(transfer.getMch_id())){
+        if(BasicUtil.isEmpty(transfer.getMch_id())) {
             transfer.setMch_id(config.MCH_ID);
         }
-        if(BasicUtil.isEmpty(transfer.getPartner_trade_no())){
+        if(BasicUtil.isEmpty(transfer.getPartner_trade_no())) {
             transfer.setPartner_trade_no(BasicUtil.getRandomLowerString(20));
         }
         Map<String, Object> map = BeanUtil.object2map(transfer);
@@ -459,22 +459,22 @@ public class WechatPayUtil {
 
         map.put("sign", sign);
 
-        if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
+        if(ConfigTable.IS_DEBUG && log.isWarnEnabled()) {
             log.warn("[付款][sign:{}]", sign);
         }
         String xml = BeanUtil.map2xml(map);
-        if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
+        if(ConfigTable.IS_DEBUG && log.isWarnEnabled()) {
             log.warn("[付款][xml:{}]", xml);
             log.warn("[付款][证书:{}]", config.KEY_STORE_FILE);
         }
 
         File keyStoreFile = new File(config.KEY_STORE_FILE);
-        if(!keyStoreFile.exists()){
+        if(!keyStoreFile.exists()) {
             log.warn("[密钥文件不存在][file:{}]",config.KEY_STORE_FILE);
             return new WechatEnterpriseTransferBankResult(false,"密钥文件不存在");
         }
         String keyStorePassword = config.KEY_STORE_PASSWORD;
-        if(BasicUtil.isEmpty(keyStorePassword)){
+        if(BasicUtil.isEmpty(keyStorePassword)) {
             log.warn("未设置密钥文件密码");
             return new WechatEnterpriseTransferBankResult(false,"未设置密钥文件密码");
         }
@@ -489,11 +489,11 @@ public class WechatPayUtil {
                     .setEntity(reqEntity)
                     .build().get().getText();
             // String txt = HttpUtil.post(httpclient, WechatPayConfig.API_URL_COMPANY_TRANSFER_BANK, "UTF-8", reqEntity).getText();
-            if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
+            if(ConfigTable.IS_DEBUG && log.isWarnEnabled()) {
                 log.warn("[付款调用][result:{}]", txt);
             }
             result = BeanUtil.xml2object(txt, WechatEnterpriseTransferBankResult.class);
-        }catch(Exception e){
+        }catch(Exception e) {
             e.printStackTrace();
             return new WechatEnterpriseTransferBankResult(false,e.toString());
         }

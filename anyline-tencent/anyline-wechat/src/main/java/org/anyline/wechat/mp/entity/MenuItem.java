@@ -30,13 +30,13 @@ public class MenuItem {
     private String pagepath;
     private List<MenuItem> sub_button = new ArrayList<MenuItem>();
 
-    public MenuItem(String type, String name, String key, String url){
+    public MenuItem(String type, String name, String key, String url) {
         this.type = type;
         this.name = name;
         this.key = key;
         this.url = url;
     }
-    public MenuItem addSubButton(MenuItem item){
+    public MenuItem addSubButton(MenuItem item) {
         sub_button.add(item);
         return this;
     }

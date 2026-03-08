@@ -33,28 +33,28 @@ public class WechatWapUtil {
 	private WechatWapConfig config;
 	 
  
-	public WechatWapUtil(WechatWapConfig config){
+	public WechatWapUtil(WechatWapConfig config) {
 		this.config = config; 
 	} 
 	 
  
-	public WechatWapUtil(String key, DataRow config){
+	public WechatWapUtil(String key, DataRow config) {
 		WechatWapConfig conf = WechatWapConfig.parse(key, config);
 		this.config = conf; 
 		instances.put(key, this); 
 	}
-	public static Hashtable<String, WechatWapUtil> getInstances(){
+	public static Hashtable<String, WechatWapUtil> getInstances() {
 		return instances;
 	}
-	public static WechatWapUtil getInstance(){
+	public static WechatWapUtil getInstance() {
 		return getInstance(WechatWapConfig.DEFAULT_INSTANCE_KEY);
 	} 
-	public static WechatWapUtil getInstance(String key){
-		if(BasicUtil.isEmpty(key)){
+	public static WechatWapUtil getInstance(String key) {
+		if(BasicUtil.isEmpty(key)) {
 			key = WechatWapConfig.DEFAULT_INSTANCE_KEY;
 		} 
 		WechatWapUtil util = instances.get(key);
-		if(null == util){
+		if(null == util) {
 			WechatWapConfig config = WechatWapConfig.getInstance(key);
 			if(null != config) {
 				util = new WechatWapUtil(config);
@@ -63,24 +63,24 @@ public class WechatWapUtil {
 		} 
 		return util; 
 	} 
-	public WechatWapConfig getConfig(){
+	public WechatWapConfig getConfig() {
 		return config; 
 	} 
 
  
 
 
-	public WechatAuthInfo getAuthInfo(String code){
+	public WechatAuthInfo getAuthInfo(String code) {
 		return WechatUtil.getAuthInfo(config, code);
 	}
-	public String getOpenId(String code){
+	public String getOpenId(String code) {
 		WechatAuthInfo info = getAuthInfo(code);
-		if(null != info && info.isResult()){
+		if(null != info && info.isResult()) {
 			return info.getOpenid();
 		}
 		return null;
 	}
-	public WechatUserInfo getUserInfo(String openid){
+	public WechatUserInfo getUserInfo(String openid) {
 		return WechatUtil.getUserInfo(config,openid);
 	}
 	public String getUnionId(String openid) {

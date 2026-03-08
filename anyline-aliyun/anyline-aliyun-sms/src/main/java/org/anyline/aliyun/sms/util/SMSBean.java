@@ -39,10 +39,10 @@ public class SMSBean implements InitializingBean {
     public static SMSListener listener;
 
     @Autowired(required=false)
-    public void setListener(SMSListener listener){
+    public void setListener(SMSListener listener) {
         SMSBean.listener = listener;
     }
-    public static SMSListener getListener(){
+    public static SMSListener getListener() {
         return listener;
     }
 
@@ -58,7 +58,7 @@ public class SMSBean implements InitializingBean {
         );
     }
     @Bean("anyline.aliyun.sms.init.util")
-    public SMSUtil instance(){
+    public SMSUtil instance() {
         return SMSUtil.getInstance();
     }
 

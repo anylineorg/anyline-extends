@@ -34,18 +34,18 @@ public class ExcelReader {
 	private String sheetName = null;
 	private InputStream is;
 
-	public static ExcelReader init(){
+	public static ExcelReader init() {
 		return new ExcelReader();
 	}
 	public DataSet<DataRow> read() throws Exception {
 		DataSet<DataRow> set = new DataSet();
-		if(null == is &&(null == file || !file.exists())){
+		if(null == is &&(null == file || !file.exists())) {
 			return set;
 		}
 		int fr = 0;
 
 		List<List<String>> list = null;
-		if(null != is){
+		if(null != is) {
 			if (sheet != -1) {
 				list = ExcelUtil.read(is, sheet, fr, foot);
 			} else {
@@ -73,13 +73,13 @@ public class ExcelReader {
 				List<String> headers = list.get(head);
 				int size = headers.size();
 				int rows = -1;
-				for(List<String> item:list){
+				for(List<String> item:list) {
 					rows ++;
-					if(rows < data || rows == head){
+					if(rows < data || rows == head) {
 						continue;
 					}
 					DataRow row = new DataRow();
-					for(int i=0; i<size; i++){
+					for(int i=0; i<size; i++) {
 						String key = headers.get(i).trim();
 						String value = item.get(i);
 						row.put(key, value);
@@ -88,14 +88,14 @@ public class ExcelReader {
 				}
 			}else{
 				int rows = -1;
-				for(List<String> item:list){
+				for(List<String> item:list) {
 					rows ++;
-					if(rows < data){
+					if(rows < data) {
 						continue;
 					}
 					DataRow row = new DataRow();
 					int size = item.size();
-					for(int i=0; i<size; i++){
+					for(int i=0; i<size; i++) {
 						String value = item.get(i);
 						row.put(i+"", value);
 					}
@@ -112,7 +112,7 @@ public class ExcelReader {
 	 * @param head 表头所在行
 	 * @return ExcelReader
 	 */
-	public ExcelReader setHead(int head){
+	public ExcelReader setHead(int head) {
 		this.head = head;
 		return this;
 	}

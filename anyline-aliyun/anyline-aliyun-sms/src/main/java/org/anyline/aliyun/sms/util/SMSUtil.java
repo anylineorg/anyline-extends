@@ -55,22 +55,22 @@ public class SMSUtil {
 
 	static {
 		Hashtable<String, AnylineConfig> configs = SMSConfig.getInstances();
-		for(String key:configs.keySet()){
+		for(String key:configs.keySet()) {
 			instances.put(key, getInstance(key));
 		}
 	}
-	public static Hashtable<String, SMSUtil> getInstances(){
+	public static Hashtable<String, SMSUtil> getInstances() {
 		return instances;
 	}
-	public static SMSUtil getInstance(){
+	public static SMSUtil getInstance() {
 		return getInstance(SMSConfig.DEFAULT_INSTANCE_KEY);
 	} 
-	public static SMSUtil getInstance(String key){
-		if(BasicUtil.isEmpty(key)){
+	public static SMSUtil getInstance(String key) {
+		if(BasicUtil.isEmpty(key)) {
 			key = SMSConfig.DEFAULT_INSTANCE_KEY;
 		} 
 		SMSUtil util = instances.get(key); 
-		if(null == util){
+		if(null == util) {
 			SMSConfig config = SMSConfig.getInstance(key);
 			if(null != config) {
 				util = new SMSUtil();
@@ -103,11 +103,11 @@ public class SMSUtil {
 	 */
 	public SMSResult send(String sign, String template, String extend, String out, String mobile, Map<String, String> params) {
 		SMSResult result = new SMSResult();
-		if(null != listener && !listener.before(config.INSTANCE_KEY, sign, template, extend, out, mobile, params)){
+		if(null != listener && !listener.before(config.INSTANCE_KEY, sign, template, extend, out, mobile, params)) {
 			return result;
 		}
 		try {
-			if(BasicUtil.isEmpty(sign)){
+			if(BasicUtil.isEmpty(sign)) {
 				sign = config.SIGN; 
 			}
 			SendSmsRequest request = new SendSmsRequest()
@@ -115,10 +115,10 @@ public class SMSUtil {
 					.setTemplateCode(template)
 					.setPhoneNumbers(mobile)
 					.setTemplateParam(BeanUtil.map2json(params));
-			if(BasicUtil.isNotEmpty(extend)){
+			if(BasicUtil.isNotEmpty(extend)) {
 				request.setSmsUpExtendCode(extend);
 			}
-			if(BasicUtil.isNotEmpty(out)){
+			if(BasicUtil.isNotEmpty(out)) {
 				request.setOutId(out);
 			}
 			RuntimeOptions runtime = new RuntimeOptions();
@@ -135,7 +135,7 @@ public class SMSUtil {
 			result.setResult(false);
 			result.setMsg(e.toString());
 		}
-		if(null != listener){
+		if(null != listener) {
 			listener.after(result, config.INSTANCE_KEY, sign, template, extend, out, mobile, params);
 		}
 		return result; 
@@ -172,8 +172,8 @@ public class SMSUtil {
          */
 	public SMSResult send(String sign, String template, List<String> mobiles, Map<String, String> params) {
 		String mobile = ""; 
-		for(String item:mobiles){
-			if("".equals(mobile)){
+		for(String item:mobiles) {
+			if("".equals(mobile)) {
 				mobile = item; 
 			}else{
 				mobile += "," + item; 
@@ -231,7 +231,7 @@ public class SMSUtil {
 	 * @throws RuntimeException RuntimeException
 	 */
 	public List<SMSResult> status(String mobile, String biz, String date, int vol, int page) throws RuntimeException{
-		if(BasicUtil.isEmpty(date)){
+		if(BasicUtil.isEmpty(date)) {
 			date = DateUtil.format("yyyyMMdd");
 		}
 		List<SMSResult> results = new ArrayList<>();
@@ -241,7 +241,7 @@ public class SMSUtil {
 			.setPageSize((long)vol)
 			.setCurrentPage((long)page);
 
-		if(BasicUtil.isNotEmpty(biz)){
+		if(BasicUtil.isNotEmpty(biz)) {
 			query.setBizId(biz);
 		}
 		try {
@@ -261,7 +261,7 @@ public class SMSUtil {
 				result.setTemplate(item.getTemplateCode());
 				results.add(result);
 			}
-		}catch (Exception e){
+		}catch (Exception e) {
 			 throw new RuntimeException(e);
 		}
 		return results;
@@ -274,18 +274,18 @@ public class SMSUtil {
 	 * @param date 发送日期
 	 * @return SMSResult 根据 SMSMResult.status 1:等待回执 2:发送失败 3:发送成功。
 	 */
-	public SMSResult status(String mobile, String biz, String date){
+	public SMSResult status(String mobile, String biz, String date) {
 		List<SMSResult> results = status(mobile, biz, date, 1,1);
-		if(results.size()>0){
+		if(results.size()>0) {
 			return results.get(0);
 		}
 		return null;
 	}
 
-	public SMSResult status(String mobile, String biz){
+	public SMSResult status(String mobile, String biz) {
 		return status(mobile, biz, DateUtil.format("yyyyMMdd"));
 	}
-	public SMSResult status(String mobile){
+	public SMSResult status(String mobile) {
 		return status(mobile, null, DateUtil.format("yyyyMMdd"));
 	}
 
@@ -294,29 +294,29 @@ public class SMSUtil {
 		return config; 
 	}
 
-	private Map<String, String> object2map(Object entity, List<String> keys){
+	private Map<String, String> object2map(Object entity, List<String> keys) {
 		Map<String, String> params = new HashMap<>();
-		if(null != keys){
-			for(String key:keys){
+		if(null != keys) {
+			for(String key:keys) {
 				String field = key;
-				if(key.contains(":")){
+				if(key.contains(":")) {
 					String[] tmps = key.split(":");
 					key = tmps[0];
 					field = tmps[1];
 				}
 				Object value = BeanUtil.getFieldValue(entity, field);
-				if(null != value){
+				if(null != value) {
 					params.put(key, value.toString());
 				}
 			}
 		}
 		return params;
 	}
-	private Map<String, String> object2map(Object entity, String ... keys){
+	private Map<String, String> object2map(Object entity, String ... keys) {
 		return object2map(entity, BeanUtil.array2list(keys));
 	}
 	public class Sign{
-		public void request(String name, int source, String remark, List<String> files){
+		public void request(String name, int source, String remark, List<String> files) {
 		}
 	}
 
@@ -339,12 +339,12 @@ public class SMSUtil {
 					.setRemark(remark);
 			try {
 				AddSmsTemplateResponse response = SMSUtil.this.client.addSmsTemplate(req);
-				if("OK".equalsIgnoreCase(response.getBody().getCode())){
+				if("OK".equalsIgnoreCase(response.getBody().getCode())) {
 					code = response.getBody().getTemplateCode();
 				}else{
 					throw new RuntimeException("模板申请失败:"+response.getBody().getCode());
 				}
-			}catch (Exception e){
+			}catch (Exception e) {
 				throw new RuntimeException(e);
 			}
 			return code;
@@ -372,7 +372,7 @@ public class SMSUtil {
 				if ("OK".equalsIgnoreCase(resp.getBody().getCode())) {
 					throw new Exception("修改失败:" + resp.getBody().getMessage());
 				}
-			}catch (Exception e){
+			}catch (Exception e) {
 				throw new RuntimeException(e);
 			}
 			return true;
@@ -381,12 +381,12 @@ public class SMSUtil {
 		 * 查询全部模板列表
 		 * @return list
 		 */
-		public List<SMSTemplate> list(){
+		public List<SMSTemplate> list() {
 			List<SMSTemplate> templates = new ArrayList<>();
 			int page = 1;
-			while (true){
+			while (true) {
 				List<SMSTemplate> list = list(page, 10);
-				if(null == list || list.isEmpty()){
+				if(null == list || list.isEmpty()) {
 					break;
 				}
 				templates.addAll(list);
@@ -400,11 +400,11 @@ public class SMSUtil {
 		 * @param status 状态
 		 * @return List
 		 */
-		public List<SMSTemplate> list(SMSTemplate.STATUS status){
+		public List<SMSTemplate> list(SMSTemplate.STATUS status) {
 			List<SMSTemplate> all = list();
 			List<SMSTemplate> templates = new ArrayList<>();
-			for(SMSTemplate item:all){
-				if(status.getCode().equals(item.getStatus())){
+			for(SMSTemplate item:all) {
+				if(status.getCode().equals(item.getStatus())) {
 					templates.add(item);
 				}
 			}
@@ -416,11 +416,11 @@ public class SMSUtil {
 		 * @param enable 是否可用
 		 * @return List
 		 */
-		public List<SMSTemplate> list(boolean enable){
+		public List<SMSTemplate> list(boolean enable) {
 			List<SMSTemplate> all = list();
 			List<SMSTemplate> templates = new ArrayList<>();
-			for(SMSTemplate item:all){
-				if(enable){
+			for(SMSTemplate item:all) {
+				if(enable) {
 					if(SMSTemplate.STATUS.AUDIT_STATE_PASS.getCode().equals(item.getStatus())) {
 						templates.add(item);
 					}
@@ -477,13 +477,13 @@ public class SMSUtil {
 						}
 						templates.add(template);
 					}
-				}catch (Exception e){
+				}catch (Exception e) {
 					throw new RuntimeException(e);
 				}
 			return templates;
 		}
 
-		public List<SMSTemplate> list(int page){
+		public List<SMSTemplate> list(int page) {
 			return list(page, 10);
 		}
 
@@ -521,7 +521,7 @@ public class SMSUtil {
 						} else if (status == 2) {
 							template.setStatus(SMSTemplate.STATUS.AUDIT_STATE_NOT_PASS);
 							template.setRejectInfo(body.getReason());
-						}else if(status == 10){
+						}else if(status == 10) {
 							template.setStatus(SMSTemplate.STATUS.AUDIT_SATE_CANCEL);
 						}else{
 							template.setStatus(SMSTemplate.STATUS.ERROR);
@@ -529,7 +529,7 @@ public class SMSUtil {
 
 					}
 				}
-			}catch (Exception e){
+			}catch (Exception e) {
 				throw new RuntimeException(e);
 			}
 			return template;
@@ -548,7 +548,7 @@ public class SMSUtil {
 				if (!"OK".equalsIgnoreCase(resp.getBody().getCode())) {
 					throw new Exception("删除失败:" + resp.getBody().getMessage());
 				}
-			}catch (Exception e){
+			}catch (Exception e) {
 				throw new RuntimeException(e);
 			}
 			return true;

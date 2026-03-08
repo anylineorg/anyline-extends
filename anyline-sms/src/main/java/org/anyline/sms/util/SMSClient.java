@@ -42,15 +42,15 @@ public class SMSClient {
 	private static Hashtable<String,SMSClient> instances = new Hashtable<String,SMSClient>(); 
 
  
-	public static SMSClient getInstance(){
+	public static SMSClient getInstance() {
 		return getInstance(SMSConfig.DEFAULT_INSTANCE_KEY);
 	} 
-	public static SMSClient getInstance(String key){
-		if(BasicUtil.isEmpty(key)){
+	public static SMSClient getInstance(String key) {
+		if(BasicUtil.isEmpty(key)) {
 			key = SMSConfig.DEFAULT_INSTANCE_KEY;
 		} 
 		SMSClient client = instances.get(key); 
-		if(null == client){
+		if(null == client) {
 			client = new SMSClient(); 
 			SMSConfig config = SMSConfig.getInstance(key); 
 			client.config = config; 
@@ -84,10 +84,10 @@ public class SMSClient {
 
 			String txt = HttpUtil.post(config.SERVER_HOST, "UTF-8", map).getText();
 			result = BeanUtil.json2oject(txt, SMSResult.class); 
-			if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
+			if(ConfigTable.IS_DEBUG && log.isWarnEnabled()) {
 				log.warn("[SMS SEND][mobile:{}][result:{}]",mobile,txt); 
 			} 
-		}catch(Exception e){
+		}catch(Exception e) {
 			result = new SMSResult(); 
 			result.setMsg(e.toString()); 
 			e.printStackTrace(); 
@@ -108,8 +108,8 @@ public class SMSClient {
 	 */
 	public SMSResult send(String sign, String template, List<String> mobiles, Map<String, String> params) {
 		String mobile = ""; 
-		for(String item:mobiles){
-			if("".equals(mobile)){
+		for(String item:mobiles) {
+			if("".equals(mobile)) {
 				mobile = item; 
 			}else{
 				mobile += "," + item; 

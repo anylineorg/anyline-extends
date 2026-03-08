@@ -56,7 +56,7 @@ public class WechatBean implements InitializingBean {
     @Override
     public void afterPropertiesSet()  {
         APP_ID = BasicUtil.evl(APP_ID, WechatConfig.DEFAULT_APP_ID);
-        if(BasicUtil.isEmpty(APP_ID)){
+        if(BasicUtil.isEmpty(APP_ID)) {
             return;
         }
         DataRow row = new DataRow();
@@ -76,19 +76,19 @@ public class WechatBean implements InitializingBean {
     }
 
     @Bean("anyline.wechat.mp.init.util")
-    public WechatMPUtil instanceMp(){
+    public WechatMPUtil instanceMp() {
         return WechatMPUtil.getInstance();
     }
     @Bean("anyline.wechat.open.init.util")
-    public WechatOpenUtil instanceOpen(){
+    public WechatOpenUtil instanceOpen() {
         return WechatOpenUtil.getInstance();
     }
     @Bean("anyline.wechat.program.init.util")
-    public WechatProgramUtil instanceProgram(){
+    public WechatProgramUtil instanceProgram() {
         return WechatProgramUtil.getInstance();
     }
     @Bean("anyline.wechat.wap.init.util")
-    public WechatWapUtil instanceWap(){
+    public WechatWapUtil instanceWap() {
         return WechatWapUtil.getInstance();
     }
 }

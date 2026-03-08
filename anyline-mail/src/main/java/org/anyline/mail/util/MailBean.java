@@ -50,7 +50,7 @@ public class MailBean implements InitializingBean {
     @Override
     public void afterPropertiesSet()  {
         ACCOUNT = BasicUtil.evl(ACCOUNT, MailConfig.DEFAULT_ACCOUNT);
-        if(BasicUtil.isEmpty(ACCOUNT)){
+        if(BasicUtil.isEmpty(ACCOUNT)) {
             return;
         }
         DataRow row = new DataRow();
@@ -67,11 +67,11 @@ public class MailBean implements InitializingBean {
     }
 
     @Bean("anyline.mail.init.mail.util")
-    public MailUtil mailInstance(){
+    public MailUtil mailInstance() {
         return MailUtil.getInstance();
     }
     @Bean("anyline.mail.init.pop3.util")
-    public Pop3Util pop3Instance(){
+    public Pop3Util pop3Instance() {
         return Pop3Util.getInstance();
     }
 }

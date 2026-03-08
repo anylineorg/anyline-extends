@@ -45,7 +45,7 @@ public class OSSConfig extends AnylineConfig{
 	public static String CONFIG_NAME = "anyline-aliyun-oss.xml";
 
 
-	public static Hashtable<String,AnylineConfig>getInstances(){
+	public static Hashtable<String,AnylineConfig>getInstances() {
 		return instances;
 	}
 	static{
@@ -58,7 +58,7 @@ public class OSSConfig extends AnylineConfig{
 	 * 解析配置文件内容
 	 * @param content 配置文件内容
 	 */
-	public static void parse(String content){
+	public static void parse(String content) {
 		parse(OSSConfig.class, content, instances ,compatibles); 
 	}
 	/**
@@ -68,19 +68,19 @@ public class OSSConfig extends AnylineConfig{
 		// 加载配置文件
 		load(); 
 	} 
-	public static void setConfigDir(File dir){
+	public static void setConfigDir(File dir) {
 		configDir = dir; 
 		init(); 
 	} 
-	public static OSSConfig getInstance(){
+	public static OSSConfig getInstance() {
 		return getInstance(DEFAULT_INSTANCE_KEY);
 	} 
-	public static OSSConfig getInstance(String key){
-		if(BasicUtil.isEmpty(key)){
+	public static OSSConfig getInstance(String key) {
+		if(BasicUtil.isEmpty(key)) {
 			key = DEFAULT_INSTANCE_KEY;
 		} 
  
-		if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - OSSConfig.lastLoadTime)/1000 > ConfigTable.getReload() ){
+		if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - OSSConfig.lastLoadTime)/1000 > ConfigTable.getReload() ) {
 			// 重新加载
 			load(); 
 		}
@@ -96,7 +96,7 @@ public class OSSConfig extends AnylineConfig{
 		load(instances, OSSConfig.class, CONFIG_NAME);
 		OSSConfig.lastLoadTime = System.currentTimeMillis(); 
 	} 
-	private static void debug(){
+	private static void debug() {
 	}
 
 

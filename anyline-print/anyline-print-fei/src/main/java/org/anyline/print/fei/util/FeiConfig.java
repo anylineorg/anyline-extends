@@ -52,7 +52,7 @@ public class FeiConfig  extends AnylineConfig {
         public abstract String getCode();
     };
 
-    public static Hashtable<String,AnylineConfig>getInstances(){
+    public static Hashtable<String,AnylineConfig>getInstances() {
         return instances;
     }
     static{
@@ -63,7 +63,7 @@ public class FeiConfig  extends AnylineConfig {
      * 解析配置文件内容
      * @param content 配置文件内容
      */
-    public static void parse(String content){
+    public static void parse(String content) {
         parse(FeiConfig.class, content, instances ,compatibles);
     }
     /**
@@ -73,29 +73,29 @@ public class FeiConfig  extends AnylineConfig {
         // 加载配置文件
         load();
     }
-    public static FeiConfig getInstance(){
+    public static FeiConfig getInstance() {
         return getInstance(DEFAULT_INSTANCE_KEY);
     }
-    public static FeiConfig getInstance(String key){
-        if(BasicUtil.isEmpty(key)){
+    public static FeiConfig getInstance(String key) {
+        if(BasicUtil.isEmpty(key)) {
             key = DEFAULT_INSTANCE_KEY;
         }
 
-        if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - FeiConfig.lastLoadTime)/1000 > ConfigTable.getReload() ){
+        if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - FeiConfig.lastLoadTime)/1000 > ConfigTable.getReload() ) {
             // 重新加载
             load();
         }
         return (FeiConfig)instances.get(key);
     }
 
-    public static FeiConfig reg(String key, DataRow row){
+    public static FeiConfig reg(String key, DataRow row) {
         return parse(FeiConfig.class, key, row, instances,compatibles);
     }
-    public static FeiConfig parse(String key, DataRow row){
+    public static FeiConfig parse(String key, DataRow row) {
         return parse(FeiConfig.class, key, row, instances,compatibles);
     }
-    public static Hashtable<String,AnylineConfig> parse(String column, DataSet<DataRow> set){
-        for(DataRow row:set){
+    public static Hashtable<String,AnylineConfig> parse(String column, DataSet<DataRow> set) {
+        for(DataRow row:set) {
             String key = row.getString(column);
             parse(key, row);
         }
@@ -110,16 +110,16 @@ public class FeiConfig  extends AnylineConfig {
         load(instances, FeiConfig.class,CONFIG_NAME ,compatibles);
         FeiConfig.lastLoadTime = System.currentTimeMillis();
     }
-    private static void debug(){
+    private static void debug() {
     }
-    public FeiConfig register(String instance, DataRow row){
+    public FeiConfig register(String instance, DataRow row) {
         FeiConfig config = parse(FeiConfig.class, instance, row, instances, compatibles);
         return config;
     }
-    public FeiConfig register(DataRow row){
+    public FeiConfig register(DataRow row) {
         return register(DEFAULT_INSTANCE_KEY, row);
     }
-    public FeiConfig register(String user, String key){
+    public FeiConfig register(String user, String key) {
         DataRow row = new DataRow();
         row.put("USER", user);
         row.put("KEY",key);

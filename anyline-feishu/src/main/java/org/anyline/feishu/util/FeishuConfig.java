@@ -41,7 +41,7 @@ public class FeishuConfig extends AnylineConfig {
     public String APP_SECRET 			= DEFAULT_APP_SECRET				; // APPKEY(应用密钥)
     public String OAUTH_REDIRECT_URL    = DEFAULT_OAUTH_REDIRECT_URL	; // 登录成功回调URL
 
-    public static Hashtable<String,AnylineConfig>getInstances(){
+    public static Hashtable<String,AnylineConfig>getInstances() {
         return instances;
     }
 
@@ -53,7 +53,7 @@ public class FeishuConfig extends AnylineConfig {
      * 解析配置文件内容
      * @param content 配置文件内容
      */
-    public static void parse(String content){
+    public static void parse(String content) {
         parse(FeishuConfig.class, content, instances ,compatibles);
     }
     /**
@@ -64,15 +64,15 @@ public class FeishuConfig extends AnylineConfig {
         load();
     }
 
-    public static FeishuConfig getInstance(){
+    public static FeishuConfig getInstance() {
         return getInstance(DEFAULT_INSTANCE_KEY);
     }
-    public static FeishuConfig getInstance(String key){
-        if(BasicUtil.isEmpty(key)){
+    public static FeishuConfig getInstance(String key) {
+        if(BasicUtil.isEmpty(key)) {
             key = DEFAULT_INSTANCE_KEY;
         }
 
-        if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - FeishuConfig.lastLoadTime)/1000 > ConfigTable.getReload() ){
+        if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - FeishuConfig.lastLoadTime)/1000 > ConfigTable.getReload() ) {
             // 重新加载
             load();
         }
@@ -87,27 +87,27 @@ public class FeishuConfig extends AnylineConfig {
         load(instances, FeishuConfig.class, CONFIG_NAME);
         FeishuConfig.lastLoadTime = System.currentTimeMillis();
     }
-    private static void debug(){
+    private static void debug() {
     }
-    public static FeishuConfig register(String instance, DataRow row){
+    public static FeishuConfig register(String instance, DataRow row) {
         FeishuConfig config = parse(FeishuConfig.class, instance, row, instances, compatibles);
         FeishuUtil.getInstance(instance);
         return config;
     }
-    public static FeishuConfig register(DataRow row){
+    public static FeishuConfig register(DataRow row) {
         return register(DEFAULT_INSTANCE_KEY, row);
     }
-    public static FeishuConfig register(String instance,  String app, String secret, String redirect){
+    public static FeishuConfig register(String instance,  String app, String secret, String redirect) {
         DataRow row = new DataRow();
         row.put("APP_ID", app);
         row.put("APP_SECRET", secret);
         row.put("OAUTH_REDIRECT_URL", redirect);
         return register(instance, row);
     }
-    public static FeishuConfig register(String app, String secret, String redirect){
+    public static FeishuConfig register(String app, String secret, String redirect) {
         return register(DEFAULT_INSTANCE_KEY, app, secret, redirect);
     }
-    public static FeishuConfig register(String app, String secret){
+    public static FeishuConfig register(String app, String secret) {
         return register(DEFAULT_INSTANCE_KEY, app, secret, null);
     }
 }

@@ -39,16 +39,16 @@ public class OSSUtil {
 
 	static {
 		Hashtable<String, AnylineConfig> configs = OSSConfig.getInstances();
-		for(String key:configs.keySet()){
+		for(String key:configs.keySet()) {
 			instances.put(key, getInstance(key));
 		}
 	}
-	public static Hashtable<String, OSSUtil> getInstances(){
+	public static Hashtable<String, OSSUtil> getInstances() {
 		return instances;
 	}
 
 	public OSSUtil(){}
-	public OSSUtil(String endpoint, String bucket, String account, String password){
+	public OSSUtil(String endpoint, String bucket, String account, String password) {
         OSSConfig config = new OSSConfig();
         config.ENDPOINT = endpoint;
         config.ACCESS_ID = account;
@@ -68,10 +68,10 @@ public class OSSUtil {
 	public void setClient(OSSClient client) {
 		this.client = client;
 	}
-    public OSSConfig getConfig(){
+    public OSSConfig getConfig() {
         return config;
     }
-    public void setConfig(OSSConfig config){
+    public void setConfig(OSSConfig config) {
         this.config = config;
     }
 	@SuppressWarnings("deprecation")
@@ -97,20 +97,20 @@ public class OSSUtil {
 	 * @param path  path
 	 * @return String
 	 */
-	public String upload(File file, String path){
-		if(null == path){
+	public String upload(File file, String path) {
+		if(null == path) {
 			path = "";
 		}
-		if(path.startsWith("/")){
+		if(path.startsWith("/")) {
 			path = path.substring(1);
 		}
 		String result = null;
-		if(null != file && file.exists() && file.isDirectory()){
+		if(null != file && file.exists() && file.isDirectory()) {
 			List<File> files = FileUtil.getAllChildrenFile(file);
-			for(File item:files){
+			for(File item:files) {
 				String itemPath = FileUtil.merge(path, item.getAbsolutePath().replace(file.getAbsolutePath(), "")).replace("\\", "/");
 				String url = upload(item, itemPath);
-				if(null == result){
+				if(null == result) {
 					result = url;
 				}else{
 					result += "," + url;
@@ -119,22 +119,22 @@ public class OSSUtil {
 		}else{
 			result = createUrl(path);
 			client.putObject(config.BUCKET, path, file);
-			if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
+			if(ConfigTable.IS_DEBUG && log.isWarnEnabled()) {
 				log.info("[oss upload file][result:true][file:{}][url:{}]",file.getAbsolutePath(), result);
 			}
 		}
 		return result;
 	}
-	public String upload(URL url, String path){
-		if(null == path){
+	public String upload(URL url, String path) {
+		if(null == path) {
 			path = "";
 		}
-		if(path.startsWith("/")){
+		if(path.startsWith("/")) {
 			path = path.substring(1);
 		}
 		try {
 			client.putObject(config.BUCKET, path, url.openStream());
-			if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
+			if(ConfigTable.IS_DEBUG && log.isWarnEnabled()) {
 				log.info("[oss upload file][result:true][file:{}]",path);
 			}
 		} catch (Exception e) {
@@ -142,20 +142,20 @@ public class OSSUtil {
 		}
 		return createUrl(path);
 	}
-	public String upload(InputStream in, String path){
-		if(null == path){
+	public String upload(InputStream in, String path) {
+		if(null == path) {
 			path = "";
 		}
-		if(path.startsWith("/")){
+		if(path.startsWith("/")) {
 			path = path.substring(1);
 		}
 		client.putObject(config.BUCKET, path, in);
-		if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
+		if(ConfigTable.IS_DEBUG && log.isWarnEnabled()) {
 			log.info("[oss upload file][result:true][file:{}]",path);
 		}
 		return createUrl(path);
 	}
-	public boolean download(File dir){
+	public boolean download(File dir) {
 		return download(dir,"");
 	}
 	/**
@@ -163,12 +163,12 @@ public class OSSUtil {
 	 * @param prefix  前缀
 	 * @return List
 	 */
-	public List<String> list(String prefix){
+	public List<String> list(String prefix) {
 		List<String> list = new ArrayList<>();
-		if(null == prefix){
+		if(null == prefix) {
 			prefix = "";
 		}
-		if(prefix.startsWith("/")){
+		if(prefix.startsWith("/")) {
 			prefix = prefix.substring(1);
 		}
 		final int maxKeys = 200;
@@ -179,7 +179,7 @@ public class OSSUtil {
 		    List<OSSObjectSummary> sums = objectListing.getObjectSummaries();
 		    for (OSSObjectSummary s : sums) {
 		    	String key = s.getKey();
-		    	if(key.endsWith("/")){
+		    	if(key.endsWith("/")) {
 		    		continue;
 		    	}
 		    	list.add(key);
@@ -189,7 +189,7 @@ public class OSSUtil {
 		} while (objectListing.isTruncated());
 		return list;
 	}
-	public List<String> list(){
+	public List<String> list() {
 		return list("");
 	}
 	/**
@@ -199,11 +199,11 @@ public class OSSUtil {
 	 * @param over  已存存的文件是否覆盖
 	 * @return boolean
 	 */
-	public boolean download(File dir, String prefix, boolean over){
-		if(null == prefix){
+	public boolean download(File dir, String prefix, boolean over) {
+		if(null == prefix) {
 			prefix = "";
 		}
-		if(prefix.startsWith("/")){
+		if(prefix.startsWith("/")) {
 			prefix = prefix.substring(1);
 		}
 		final int maxKeys = 200;
@@ -215,26 +215,26 @@ public class OSSUtil {
 		    List<OSSObjectSummary> sums = objectListing.getObjectSummaries();
 		    for (OSSObjectSummary s : sums) {
 		    	String key = s.getKey();
-		    	if(key.endsWith("/")){
+		    	if(key.endsWith("/")) {
 		    		continue;
 		    	}
 		        File file = new File(dir, key);
-				if(file.exists() && !over){
-					if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
+				if(file.exists() && !over) {
+					if(ConfigTable.IS_DEBUG && log.isWarnEnabled()) {
 						log.info("[oss download file][文件已存在][local:{}][remote:{}]",file.getAbsolutePath(),key);
 					}
 					continue;
 				}
 		        File parent = file.getParentFile();
-		        if(null != parent && !parent.exists()){
+		        if(null != parent && !parent.exists()) {
 		        	parent.mkdirs();
 		        }
 		        try{
 		        	client.getObject(new GetObjectRequest(config.BUCKET, key), file);
-		        }catch(Exception e){
+		        }catch(Exception e) {
 		        	e.printStackTrace();
 		        }
-		        if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
+		        if(ConfigTable.IS_DEBUG && log.isWarnEnabled()) {
 		        	log.info("[oss download file][local:{}][remote:{}]",file.getAbsolutePath(),key);
 		        }
 		    }
@@ -244,7 +244,7 @@ public class OSSUtil {
 
 		return true;
 	}
-	public boolean download(File dir, String prefix){
+	public boolean download(File dir, String prefix) {
 		return download(dir, prefix, false);
 	}
 	/**
@@ -252,25 +252,25 @@ public class OSSUtil {
 	 * @param path  文件路径
 	 * @return boolean
 	 */
-	public boolean exists(String path){
+	public boolean exists(String path) {
 		boolean result = false;
-		if(null == path){
+		if(null == path) {
 			path = "";
 		}
 		String key = key(path);
 		try{
 			result = client.doesObjectExist(config.BUCKET,key);
 		}catch(Exception e){}
-		if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
+		if(ConfigTable.IS_DEBUG && log.isWarnEnabled()) {
 			log.info("[check exists][path:{}][key:{}]", path, key);
 		}
 		return result;
 	}
-	public boolean delete(String path){
-		if(null == path){
+	public boolean delete(String path) {
+		if(null == path) {
 			path = "";
 		}
-		if(path.startsWith("/")){
+		if(path.startsWith("/")) {
 			path = path.substring(1);
 		}
 		boolean result = false;
@@ -279,23 +279,23 @@ public class OSSUtil {
 			client.deleteObject(config.BUCKET, key);
 			log.info("[oss delete file][result:true][file:{}]", path);
 			result = true;
-		}catch(Exception e){
+		}catch(Exception e) {
 			log.warn("[oss delete file][result:true][file:{}]",path);
 			result = false;
 		}
 		return result;
 	}
-	public OSSObject get(String path){
-		if(null == path){
+	public OSSObject get(String path) {
+		if(null == path) {
 			path = "";
 		}
-		if(path.startsWith("/")){
+		if(path.startsWith("/")) {
 			path = path.substring(1);
 		}
 		try{
 			path = path.replace("http://"+config.BUCKET+"."+config.ENDPOINT+"/", "");
 			return client.getObject(config.BUCKET, path);
-		}catch(Exception e){
+		}catch(Exception e) {
 			return null;
 		}
 	}
@@ -304,22 +304,22 @@ public class OSSUtil {
 	 * @param path  文件路径
 	 * @return Date
 	 */
-	public Date getLastModified(String path){
-		if(null == path){
+	public Date getLastModified(String path) {
+		if(null == path) {
 			path = "";
 		}
-		if(path.startsWith("/")){
+		if(path.startsWith("/")) {
 			path = path.substring(1);
 		}
 		try{
 			path = path.replace("http://"+config.BUCKET+"."+config.ENDPOINT+"/", "");
 			OSSObject obj = client.getObject(config.BUCKET, path);
-			if(null == obj){
+			if(null == obj) {
 				return null;
 			}else{
 				return obj.getObjectMetadata().getLastModified();
 			}
-		}catch(Exception e){
+		}catch(Exception e) {
 			return null;
 		}
 	}
@@ -329,15 +329,15 @@ public class OSSUtil {
 	 * @param format 日期格式
 	 * @return String
 	 */
-	public String getLastModified(String path, String format){
-		if(null == path){
+	public String getLastModified(String path, String format) {
+		if(null == path) {
 			path = "";
 		}
-		if(path.startsWith("/")){
+		if(path.startsWith("/")) {
 			path = path.substring(1);
 		}
 		Date date = getLastModified(path);
-		if(null == date){
+		if(null == date) {
 			return "";
 		}
 		return DateUtil.format(date, format);
@@ -348,15 +348,15 @@ public class OSSUtil {
 	 * @param millisecond  millisecond
 	 * @return boolean
 	 */
-	public boolean isExpire(String path, long millisecond){
-		if(null == path){
+	public boolean isExpire(String path, long millisecond) {
+		if(null == path) {
 			path = "";
 		}
-		if(path.startsWith("/")){
+		if(path.startsWith("/")) {
 			path = path.substring(1);
 		}
 		Date date = getLastModified(path);
-		if(null == date){
+		if(null == date) {
 			return false;
 		}
 		return DateUtil.diff(DateUtil.DATE_PART_MILLISECOND, date) > millisecond;
@@ -366,11 +366,11 @@ public class OSSUtil {
 	 * @param path  path
 	 * @return String
 	 */
-	private String createUrl(String path){
-		if(null == path){
+	private String createUrl(String path) {
+		if(null == path) {
 			path = "";
 		}
-		if(path.startsWith("/")){
+		if(path.startsWith("/")) {
 			path = path.substring(1);
 		}
 		String result = "";
@@ -382,11 +382,11 @@ public class OSSUtil {
 		return signature(dir, config.EXPIRE_SECOND);
 	}
 	public Map<String, String> signature(String dir, int second) {
-		if(second == 0){
+		if(second == 0) {
 			second = config.EXPIRE_SECOND;
 		}
 		String host = "";
-		if(config.BUCKET.startsWith("http")){
+		if(config.BUCKET.startsWith("http")) {
 			host = config.BUCKET + "." + config.ENDPOINT;
 		}else{
 			host = "https://" + config.BUCKET + "." + config.ENDPOINT;
@@ -408,7 +408,7 @@ public class OSSUtil {
 		}
 		return result;
 	}
-	public String policy(String dir,long second){
+	public String policy(String dir,long second) {
 		String result = null;
 		PolicyConditions policyConds = new PolicyConditions();
 		policyConds.addConditionItem(PolicyConditions.COND_CONTENT_LENGTH_RANGE, 0, 1048576000);
@@ -418,9 +418,9 @@ public class OSSUtil {
 	    result = client.generatePostPolicy(expiration, policyConds);
 		return result;
 	}
-	public String key(String key){
-		if(null != key){
-			if(key.contains(config.ENDPOINT)){
+	public String key(String key) {
+		if(null != key) {
+			if(key.contains(config.ENDPOINT)) {
 				key = key.substring(key.indexOf(config.ENDPOINT)+config.ENDPOINT.length()+1);
 			}
 		}

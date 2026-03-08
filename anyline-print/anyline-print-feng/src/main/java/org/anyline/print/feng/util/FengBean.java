@@ -40,7 +40,7 @@ public class FengBean implements InitializingBean {
     @Override
     public void afterPropertiesSet()  {
         APP_ID = BasicUtil.evl(APP_ID, FengConfig.DEFAULT_APP_ID);
-        if(BasicUtil.isEmpty(APP_ID)){
+        if(BasicUtil.isEmpty(APP_ID)) {
             return;
         }
         DataRow row = new DataRow();
@@ -50,7 +50,7 @@ public class FengBean implements InitializingBean {
         row.put("ACCESS_TOKEN_SERVER", BasicUtil.evl(ACCESS_TOKEN_SERVER, FengConfig.DEFAULT_ACCESS_TOKEN_SERVER));
     }
     @Bean("anyline.feng.init.util")
-    public FengUtil instance(){
+    public FengUtil instance() {
         return FengUtil.getInstance();
     }
 }

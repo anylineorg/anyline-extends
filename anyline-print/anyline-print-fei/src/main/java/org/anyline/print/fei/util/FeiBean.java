@@ -38,7 +38,7 @@ public class FeiBean implements InitializingBean {
     @Override
     public void afterPropertiesSet()  {
         USER = BasicUtil.evl(USER, FeiConfig.DEFAULT_USER);
-        if(BasicUtil.isEmpty(USER)){
+        if(BasicUtil.isEmpty(USER)) {
             return;
         }
         DataRow row = new DataRow();
@@ -47,7 +47,7 @@ public class FeiBean implements InitializingBean {
         row.put("TYPE", BasicUtil.evl(TYPE, FeiConfig.DEFAULT_TYPE));
     }
     @Bean("anyline.print.fei.init.util")
-    public FeiUtil instance(){
+    public FeiUtil instance() {
         return FeiUtil.getInstance();
     }
 }

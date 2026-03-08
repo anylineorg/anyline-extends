@@ -26,25 +26,25 @@ public class WechatTemplateMessage {
 	private String url; 
 	private String topcolor; 
 	Map<String,Map<String, String>> data = new HashMap<String,Map<String, String>>(); 
-	public WechatTemplateMessage setUser(String user){
+	public WechatTemplateMessage setUser(String user) {
 		this.touser = user; 
 		return this; 
 	} 
-	public WechatTemplateMessage setTemplate(String template){
+	public WechatTemplateMessage setTemplate(String template) {
 		this.template_id = template; 
 		return this; 
 	} 
-	public WechatTemplateMessage setUrl(String url){
+	public WechatTemplateMessage setUrl(String url) {
 		this.url = url; 
 		return this; 
 	} 
-	public WechatTemplateMessage setTopColor(String color){
+	public WechatTemplateMessage setTopColor(String color) {
 		this.topcolor = color; 
 		return this; 
 	} 
-	public WechatTemplateMessage addData(String key, String value, String color){
+	public WechatTemplateMessage addData(String key, String value, String color) {
 		Map<String, String> dt = data.get(key); 
-		if(dt == null){
+		if(dt == null) {
 			dt = new HashMap<String, String>(); 
 		} 
 		dt.put("value", value); 
@@ -52,7 +52,7 @@ public class WechatTemplateMessage {
 		data.put(key, dt); 
 		return this; 
 	} 
-	public WechatTemplateMessage addData(String key, String value){
+	public WechatTemplateMessage addData(String key, String value) {
 		return addData(key, value, "#173177"); 
 	} 
 	 

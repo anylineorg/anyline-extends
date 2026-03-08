@@ -27,7 +27,7 @@ public class WechatAuthInfo {
     private String errmsg;
     private boolean result;
     public WechatAuthInfo(){}
-    public WechatAuthInfo(boolean result, String msg){
+    public WechatAuthInfo(boolean result, String msg) {
         this.result = result;
         this.errmsg = msg;
     }

@@ -32,11 +32,11 @@ public class WechatEnterpriseTransferBankResult {
 	// 以下字段在return_code 和result_code都为SUCCESS的时候有返回
 	protected String payment_no			;//微信企业付款单号	是	string(64)	代付成功后,返回的内部业务单号 
 	protected String cmms_amt			;//手续费金额		是	int	手续费金额 RMB:分 
-	public WechatEnterpriseTransferBankResult(){
+	public WechatEnterpriseTransferBankResult() {
 		 
 	} 
-	public WechatEnterpriseTransferBankResult(boolean result, String msg){
-		if(result){
+	public WechatEnterpriseTransferBankResult(boolean result, String msg) {
+		if(result) {
 			this.return_code = "SUCCESS"; 
 		}else{
 			this.return_code = "FAIL"; 

@@ -48,22 +48,22 @@ public class NCUtil {
 		return util; 
 	} 
 	 
-	public NCUtil(String file){
+	public NCUtil(String file) {
 		this.file = file; 
 	} 
 	/** 
 	 * 打开源文件 
 	 * @return boolean
 	 */ 
-	public boolean open(){
+	public boolean open() {
 		try{
 			long fr = System.currentTimeMillis(); 
 			nc = NetcdfFile.open(file); 
-			if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
+			if(ConfigTable.IS_DEBUG && log.isWarnEnabled()) {
 				log.warn("[open file][耗时:{}][file:{}]",DateUtil.format(System.currentTimeMillis()-fr),file);
 			} 
 			return true; 
-		}catch(Exception e){
+		}catch(Exception e) {
 			e.printStackTrace(); 
 			return false; 
 		} 
@@ -72,11 +72,11 @@ public class NCUtil {
 	 * 释放源文件 
 	 * @return boolean
 	 */ 
-	public boolean close(){
+	public boolean close() {
 		try{
 			nc.close(); 
 			return true; 
-		}catch(Exception e){
+		}catch(Exception e) {
 			e.printStackTrace(); 
 			return false; 
 		} 
@@ -85,17 +85,17 @@ public class NCUtil {
 	 * 变量列表 
 	 * @return List
 	 */ 
-	public List<Variable> getVariables(){
+	public List<Variable> getVariables() {
 		return nc.getVariables(); 
 	} 
 	/** 
 	 * 变量名称列表 
 	 * @return List
 	 */ 
-	public List<String> getVariableNames(){
+	public List<String> getVariableNames() {
 		List<String> list = new ArrayList<>();
 		List<Variable> variables = getVariables(); 
-		for(Variable var:variables){
+		for(Variable var:variables) {
 			list.add(var.getFullName()); 
 		} 
 		return list; 
@@ -104,7 +104,7 @@ public class NCUtil {
 	 * 内容概要 
 	 * @return String
 	 */ 
-	public String info(){
+	public String info() {
 		return nc.getDetailInfo(); 
 	} 
 	/** 
@@ -112,7 +112,7 @@ public class NCUtil {
 	 * @param var  var
 	 * @return Variable
 	 */ 
-	public Variable findVariable(String var){
+	public Variable findVariable(String var) {
 		return nc.findVariable(var); 
 	} 
 	/** 
@@ -120,11 +120,11 @@ public class NCUtil {
 	 * @param var  var
 	 * @return Array
 	 */ 
-	public Array getVariableValues(String var){
+	public Array getVariableValues(String var) {
 		Array array = null; 
 		try {
 			Variable variable = findVariable(var); 
-			if(null != variable){
+			if(null != variable) {
 				array = variable.read(); 
 			} 
 		} catch (Exception e) {
@@ -139,11 +139,11 @@ public class NCUtil {
 	 * @param shape 长度 
 	 * @return Array
 	 */ 
-	public Array getVariableValues(String var, int[] origin, int[] shape){
+	public Array getVariableValues(String var, int[] origin, int[] shape) {
 		Array array = null; 
 		try {
 			Variable variable = findVariable(var); 
-			if(null != variable){
+			if(null != variable) {
 				array = variable.read(origin, shape); 
 			} 
 		} catch (Exception e) {

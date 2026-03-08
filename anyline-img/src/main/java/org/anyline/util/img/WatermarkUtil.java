@@ -44,15 +44,15 @@ public class WatermarkUtil {
 	private float y = 0;								// 坐标Y
 	// xy按百分比
 	 
-	public WatermarkUtil(){
+	public WatermarkUtil() {
 		this.x = 0; 
 		this.y = 0; 
 	}
-	public WatermarkUtil(int x, int y){
+	public WatermarkUtil(int x, int y) {
 		this.x = x;
 		this.y = y;
 	}
-	public WatermarkUtil(float x, float y){
+	public WatermarkUtil(float x, float y) {
 		this.x = x;
 		this.y = y;
 	}
@@ -65,12 +65,12 @@ public class WatermarkUtil {
      * @return boolean
      */ 
     public boolean markText(String text, File src, File target) {
-    	if(null == text || null == src || null == target || !src.exists()){
+    	if(null == text || null == src || null == target || !src.exists()) {
     		return false;
     	}
     	long fr = System.currentTimeMillis();
     	File dir = target.getParentFile();
-    	if(null != dir && !dir.exists()){
+    	if(null != dir && !dir.exists()) {
     		dir.mkdirs();
     	}
         // 主图片的路径
@@ -103,7 +103,7 @@ public class WatermarkUtil {
             os = new FileOutputStream(target); 
             // 生成图片// 生成图片
             String format = "jpg";
-            if(target.getName().toLowerCase().endsWith("png")){
+            if(target.getName().toLowerCase().endsWith("png")) {
             	format = "png";
             } 
             ImageIO.write(buffImg, format, os); 
@@ -132,13 +132,13 @@ public class WatermarkUtil {
         log.warn("[添加水印][耗时:{}][text:{}][src:{}][target:{}]", DateUtil.format(System.currentTimeMillis()-fr),text, src.getAbsoluteFile(), target.getAbsoluteFile());
         return true; 
     } 
-    public void markText(String text, String src, String target){
+    public void markText(String text, String src, String target) {
     	markText(text, new File(src), new File(target)); 
     } 
-    public void markText(String text, File src){
+    public void markText(String text, File src) {
     	markText(text, src, src); 
     } 
-    public void markText(String text, String src){
+    public void markText(String text, String src) {
     	markText(text, src, src); 
     }
     /** 
@@ -185,10 +185,10 @@ public class WatermarkUtil {
             int[] offset = finalOffset(width,height);
             _x = offset[0]-icon_width;
             _y = offset[1]-icon_height;
-            if(_x<0){
+            if(_x<0) {
             	_x = 0;
             }
-            if(_y<0){
+            if(_y<0) {
             	_y = 0;
             }
             g.drawImage(img, _x, _y, icon_width, icon_height, null);
@@ -197,7 +197,7 @@ public class WatermarkUtil {
             os = new FileOutputStream(target); 
             // 生成图片
             String format = "jpg";
-            if(target.getName().toLowerCase().endsWith("png")){
+            if(target.getName().toLowerCase().endsWith("png")) {
             	format = "png";
             }
             if ("jpg".equals(format)) {// 重画一下,要么会变色
@@ -214,7 +214,7 @@ public class WatermarkUtil {
         } finally {
         	try{
         		buffImg.flush();
-        	}catch(Exception e){
+        	}catch(Exception e) {
         	} 
             try {
                 if (null != os) 
@@ -232,19 +232,19 @@ public class WatermarkUtil {
         int icon_height = iconOffset[1];
         markIcon(icon, icon_width, icon_height, src, target);
     }
-    private int[] finalOffset(int width, int height){
+    private int[] finalOffset(int width, int height) {
     	 float x = this.x;
          float y = this.y;
-         if(!NumberUtil.isInt(x)){
+         if(!NumberUtil.isInt(x)) {
         	 x = width * x;
          }
-         if(!NumberUtil.isInt(y)){
+         if(!NumberUtil.isInt(y)) {
         	 y = height * y;
          }
-         if(x<0){
+         if(x<0) {
         	 x = width + x;
          }
-         if(y<0){
+         if(y<0) {
         	 y = height + y;
          }
      	int result[] = {(int)x,(int)y};
@@ -255,7 +255,7 @@ public class WatermarkUtil {
      * @param x x
      * @param y y
      */
-    public void offset(int x, int y){
+    public void offset(int x, int y) {
     	this.x = x;
     	this.y = y;
     }
@@ -264,17 +264,17 @@ public class WatermarkUtil {
      * @param x  x%
      * @param y  y%
      */
-    public void offset(float x, float y){
+    public void offset(float x, float y) {
     	this.x = x;
     	this.y = y;
     }
-    public void markIcon(String icon, String src, String target){
+    public void markIcon(String icon, String src, String target) {
     	markIcon(new File(icon), new File(src), new File(target)); 
     } 
-    public void markIcon(File icon, File src){
+    public void markIcon(File icon, File src) {
     	markIcon(icon, src, src); 
     } 
-    public void markIcon(String icon, String src){
+    public void markIcon(String icon, String src) {
     	markIcon(icon, src, src); 
     } 
 	public Integer getDegree() {

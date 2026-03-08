@@ -30,10 +30,10 @@ public class AlipayTransferQueryResult extends BasicResult{
 	private String fail_reason		; // 查询到的订单状态为FAIL失败或REFUND退票时,返回具体的原因.	单笔额度超限 
 	private String error_code		; // 查询失败时,本参数为错误代 码. 查询成功不返回. 对于退票订单,不返回该参数.	ORDER_NOT_EXIST 
 	 
-	public AlipayTransferQueryResult(){
+	public AlipayTransferQueryResult() {
 		 
 	} 
-	public AlipayTransferQueryResult(AlipayFundTransOrderQueryResponse res){
+	public AlipayTransferQueryResult(AlipayFundTransOrderQueryResponse res) {
 		response = res; 
 		setSuccess(res.isSuccess()); 
 		setCode(res.getCode()); 

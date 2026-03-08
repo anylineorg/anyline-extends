@@ -40,7 +40,7 @@ import java.util.List;
 
 public class PDFUtil {
 
-    public static String read(File file){
+    public static String read(File file) {
         String result = null;
         try {
             PDFParser parser = new PDFParser(new RandomAccessFile(file,"rw"));
@@ -55,7 +55,7 @@ public class PDFUtil {
         return result;
     }
 
-    public static String read(InputStream in){
+    public static String read(InputStream in) {
         String result = null;
         try {
             PDFParser parser = new PDFParser(new RandomAccessBuffer(in));
@@ -129,7 +129,7 @@ public class PDFUtil {
         try {
             doc = PDDocument.load(is);
             int size = pages.length;
-            for(int i=size-1;i>=0;i--){
+            for(int i=size-1;i>=0;i--) {
                 int page = pages[i];
                 doc.removePage(page);
             }
@@ -149,7 +149,7 @@ public class PDFUtil {
         try {
             doc = PDDocument.load(is);
             int size = pages.size();
-            for(int i=size-1;i>=0;i--){
+            for(int i=size-1;i>=0;i--) {
                 int page = pages.get(i);
                 doc.removePage(page);
             }
@@ -168,7 +168,7 @@ public class PDFUtil {
      * @param file 源文件
      * @return BufferedImage
      */
-    public static List<BufferedImage> images(File file){
+    public static List<BufferedImage> images(File file) {
         List<BufferedImage> list = new ArrayList<>();
         PDDocument doc = null;
         try {
@@ -200,7 +200,7 @@ public class PDFUtil {
      * 按页读取文本
      * @return List
      */
-    public static List<String> pages(){
+    public static List<String> pages() {
         List<String> list = new ArrayList<>();
         return list;
     }
@@ -208,7 +208,7 @@ public class PDFUtil {
      * 读取表格
      * @return DataSet
      */
-    public static DataSet<DataRow> table(){
+    public static DataSet<DataRow> table() {
         DataSet<DataRow> set = new DataSet();
         return set;
     }
@@ -217,7 +217,7 @@ public class PDFUtil {
      * 读取所有表格
      * @return List
      */
-    public static List<DataSet> tables(){
+    public static List<DataSet> tables() {
         List<DataSet> list = new ArrayList<>();
         return list;
     }

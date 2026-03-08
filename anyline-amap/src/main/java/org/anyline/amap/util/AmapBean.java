@@ -38,7 +38,7 @@ public class AmapBean implements InitializingBean {
     @Override
     public void afterPropertiesSet()  {
         KEY = BasicUtil.evl(KEY, AmapConfig.DEFAULT_KEY);
-        if(BasicUtil.isEmpty(KEY)){
+        if(BasicUtil.isEmpty(KEY)) {
             return;
         }
         AmapConfig config = AmapConfig.register(KEY, BasicUtil.evl(SECRET, AmapConfig.DEFAULT_SECRET)
@@ -48,7 +48,7 @@ public class AmapBean implements InitializingBean {
         }
     }
     @Bean("anyline.amap.init.client")
-    public AmapClient instance(){
+    public AmapClient instance() {
         return AmapClient.getInstance();
     }
 }

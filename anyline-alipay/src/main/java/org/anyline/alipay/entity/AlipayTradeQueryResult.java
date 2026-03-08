@@ -44,10 +44,10 @@ public class AlipayTradeQueryResult extends BasicResult{
 	private String industry_sepc_detail	; // 	选填	4096	行业特殊信息（例如在医保卡支付业务中,向用户返回医疗信息）.	{"registration_order_pay":{"brlx":"1","cblx":"1"}} 
  
  
-	public AlipayTradeQueryResult(){
+	public AlipayTradeQueryResult() {
 		 
 	} 
-	public AlipayTradeQueryResult(AlipayTradeQueryResponse res){
+	public AlipayTradeQueryResult(AlipayTradeQueryResponse res) {
 		this.response = res; 
 		setSuccess(res.isSuccess()); 
 		setCode(res.getCode()); 

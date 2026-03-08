@@ -54,16 +54,16 @@ public class WechatUtil {
 		sign = MD5Util.crypto(sign).toUpperCase(); 
 		return sign; 
 	} 
-	public static boolean validateSign(String secret, Map<String, Object> map){
+	public static boolean validateSign(String secret, Map<String, Object> map) {
 		String sign = (String)map.get("sign"); 
-		if(BasicUtil.isEmpty(sign)){
+		if(BasicUtil.isEmpty(sign)) {
 			return false; 
 		} 
 		map.remove("sign"); 
 		String chkSign = sign(secret, map); 
 		return chkSign.equals(sign); 
 	} 
-	public static boolean validateSign(String secret, String xml){
+	public static boolean validateSign(String secret, String xml) {
 		return validateSign(secret,BeanUtil.xml2map(xml)); 
 	} 
 	/** 
@@ -93,7 +93,7 @@ public class WechatUtil {
 				.setEntity(reqEntity)
 				.build().get().getText();
 		// String txt = HttpUtil.post(httpclient, WechatConfig.API_URL_GET_PUBLIC_SECRET, "UTF-8", reqEntity).getText();
-		if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
+		if(ConfigTable.IS_DEBUG && log.isWarnEnabled()) {
 			log.warn("[获取RSA公钥][\n{}\n]",txt);
 		}
 		return txt;
@@ -101,25 +101,25 @@ public class WechatUtil {
 
 
 
-	public static String getAccessToken(WechatConfig config){
-		if(BasicUtil.isNotEmpty(config.SERVER_WHITELIST)){
+	public static String getAccessToken(WechatConfig config) {
+		if(BasicUtil.isNotEmpty(config.SERVER_WHITELIST)) {
 			try{
 				String ip = InetAddress.getLocalHost().getHostAddress();
-				if(!config.SERVER_WHITELIST.contains(ip)){
+				if(!config.SERVER_WHITELIST.contains(ip)) {
 					log.warn("[白名单验证失败][白名单:{}][本机IP:{}]", config.SERVER_WHITELIST, ip);
 					return null;
 				}
-			}catch (Exception e){
+			}catch (Exception e) {
 				log.warn("[白名单验证异常]");
 			}
 		}
 		String result = "";
 		DataRow row = accessTokens.getRow("APP_ID", config.APP_ID);
-		if(null == row || row.isExpire()){
+		if(null == row || row.isExpire()) {
 			accessTokens.remove(row);
 			row = newAccessToken(config);
 		}
-		if(null != row){
+		if(null != row) {
 			result = row.getString("ACCESS_TOKEN");
 		}
 		return result;
@@ -132,36 +132,36 @@ public class WechatUtil {
 	 * @param config WechatConfig
 	 * @return DataRow
 	 */
-	private static DataRow newAccessToken(WechatConfig config){
-		if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
+	private static DataRow newAccessToken(WechatConfig config) {
+		if(ConfigTable.IS_DEBUG && log.isWarnEnabled()) {
 			log.warn("[CREATE NEW ACCESS TOKEN][appid:{}][secret:{}]",config.APP_ID, config.APP_SECRET);
 		}
 		String appid = config.APP_ID;
 		String secret = config.APP_SECRET;
 		DataRow row = null;
 		String url = null;
-		if(BasicUtil.isEmpty(config.ACCESS_TOKEN_SERVER)){
+		if(BasicUtil.isEmpty(config.ACCESS_TOKEN_SERVER)) {
 			url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid="+appid+"&secret="+secret;
 		}else{
 			url = config.ACCESS_TOKEN_SERVER+ "?grant_type=client_credential&appid="+appid+"&secret="+secret;
 		}
 		String text = HttpUtil.post(url).getText();
-		if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
+		if(ConfigTable.IS_DEBUG && log.isWarnEnabled()) {
 			log.warn("[CREATE NEW ACCESS TOKEN][result:{}]",text);
 		}
 		DataRow json = DataRow.parseJson(text);
-		if(null != json && json.containsKey("access_token")){
+		if(null != json && json.containsKey("access_token")) {
 			row = new DataRow();
 			row.put("APP_ID", appid);
 			row.put("ACCESS_TOKEN", json.getString("access_token"));
 			row.setExpires(json.getInt("expires_in", 0)*800);
 			row.setExpires(1000*60*5); // 5分钟内有效
-			if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
+			if(ConfigTable.IS_DEBUG && log.isWarnEnabled()) {
 				log.warn("[CREATE NEW ACCESS TOKEN][ACCESS_TOKEN:{}]",row.getString("ACCESS_TOKEN"));
 			}
 			accessTokens.addRow(row);
 		}else{
-			if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
+			if(ConfigTable.IS_DEBUG && log.isWarnEnabled()) {
 				log.warn("[CREATE NEW ACCESS TOKEN][FAIL]");
 			}
 			return null;
@@ -174,13 +174,13 @@ public class WechatUtil {
 	 * @param code code
 	 * @return AuthInfo
 	 */
-	public static WechatAuthInfo getAuthInfo(WechatConfig config, String code){
+	public static WechatAuthInfo getAuthInfo(WechatConfig config, String code) {
 		WechatAuthInfo result = null;
 		String url = WechatConfig.API_URL_GET_AUTH_INFO + "?appid="+config.APP_ID+"&secret="+config.APP_SECRET+"&code="+code+"&grant_type=authorization_code";
 		String txt = HttpUtil.get(url).getText();
 		log.warn("[get auth info][txt:{}]",txt);
 		result = BeanUtil.json2oject(txt, WechatAuthInfo.class);
-		if(BasicUtil.isNotEmpty(result.getOpenid())){
+		if(BasicUtil.isNotEmpty(result.getOpenid())) {
 			result.setResult(true);
 		}
 		return result;
@@ -192,19 +192,19 @@ public class WechatUtil {
 	 * @param openid openid
 	 * @return UserInfo
 	 */
-	public static WechatUserInfo getUserInfo(WechatConfig config, String openid){
+	public static WechatUserInfo getUserInfo(WechatConfig config, String openid) {
 		WechatUserInfo result = null;
 		String url = WechatConfig.API_URL_GET_USER_INFO + "?access_token="+getAccessToken(config)+"&openid="+openid+"&lang=zh_CN";
 		String txt = HttpUtil.get(url).getText();
 		log.warn("[wechar get user info][result:{}]",txt);
 		result = BeanUtil.json2oject(txt, WechatUserInfo.class);
-		if(BasicUtil.isNotEmpty(result.getOpenid())){
+		if(BasicUtil.isNotEmpty(result.getOpenid())) {
 			result.setResult(true);
 		}
 		return result;
 	}
 
-	public static void profit(){
+	public static void profit() {
 
     }
 } 

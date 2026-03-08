@@ -45,14 +45,14 @@ public class AlipayUtil {
 
 	static {
 		Hashtable<String, AnylineConfig> configs = AlipayConfig.getInstances();
-		for(String key:configs.keySet()){
+		for(String key:configs.keySet()) {
 			instances.put(key, getInstance(key));
 		}
 	}
 
-	public AlipayUtil(){
+	public AlipayUtil() {
 	}
-	public AlipayUtil(AlipayConfig config){
+	public AlipayUtil(AlipayConfig config) {
 		this.config = config;
 		client = new DefaultAlipayClient(
 				"https://openapi.alipay.com/gateway.do",
@@ -63,7 +63,7 @@ public class AlipayUtil {
 				config.getString("ALIPAY_PUBLIC_KEY"),
 				config.getString("SIGN_TYPE"));
 	}
-	public static Hashtable<String, AlipayUtil> getInstances(){
+	public static Hashtable<String, AlipayUtil> getInstances() {
 		return instances;
 	}
 
@@ -78,7 +78,7 @@ public class AlipayUtil {
 		AlipayUtil util = instances.get(key); 
 		if (null == util) {
 			AlipayConfig config = AlipayConfig.getInstance(key);
-			if(null != config){
+			if(null != config) {
 				util = new AlipayUtil(config);
 				instances.put(key, util);
 			}
@@ -131,10 +131,10 @@ public class AlipayUtil {
 		String result = ""; 
 		return result; 
 	} 
-	public String createWapOrder(AlipayTradeOrder order, String callback){
+	public String createWapOrder(AlipayTradeOrder order, String callback) {
 		String result = ""; 
 		AlipayTradeWapPayRequest alipayRequest = new AlipayTradeWapPayRequest();//创建API对应的request
-		if(BasicUtil.isEmpty(callback)){
+		if(BasicUtil.isEmpty(callback)) {
 			callback = config.RETURN_URL;
 		}
 	    alipayRequest.setReturnUrl(callback);
@@ -147,7 +147,7 @@ public class AlipayUtil {
 	    } 
 		return result; 
 	} 
-	public String createWapOrder(String subject, String body, String price, String order, String callback){
+	public String createWapOrder(String subject, String body, String price, String order, String callback) {
 		AlipayTradeOrder tradeOrder = new AlipayTradeOrder(); 
 		tradeOrder.setSubject(subject); 
 		tradeOrder.setBody(body); 
@@ -160,7 +160,7 @@ public class AlipayUtil {
 	 * @param query 查询参数
 	 * @return AlipayTradeQueryResult
 	 */ 
-	public AlipayTradeQueryResult tradeQuery(AlipayTradeQuery query){
+	public AlipayTradeQueryResult tradeQuery(AlipayTradeQuery query) {
 		AlipayTradeQueryResult result = null;  
 		AlipayTradeQueryRequest request = new AlipayTradeQueryRequest(); 
 		String json = BeanUtil.object2json(query); 
@@ -226,10 +226,10 @@ public class AlipayUtil {
 	 * @param scope 获取信息范围
 	 * @return String
 	 */
-	public String createAuthUrl(String redirect, String scope, String state){
+	public String createAuthUrl(String redirect, String scope, String state) {
 		try {
 			redirect = URLEncoder.encode(redirect, "UTF-8");
-		}catch (Exception e){
+		}catch (Exception e) {
 			e.printStackTrace();
 		}
 		String url = "https://openauth.alipay.com/oauth2/publicAppAuthorize.htm?app_id="+config.APP_ID+"&scope="+scope+"&redirect_uri="+redirect+"&state="+state;
@@ -241,7 +241,7 @@ public class AlipayUtil {
 	 * @param code 回调参数auth_code
 	 * @return DataRow
 	 */
-	public DataRow getUserInfo(String code){
+	public DataRow getUserInfo(String code) {
 		log.warn("[get user info][code:{}]",code);
 		DataRow user = null;
 		AlipaySystemOauthTokenRequest req = new AlipaySystemOauthTokenRequest();
@@ -265,7 +265,7 @@ public class AlipayUtil {
 					user.put("USER_ID", userId);
 					log.warn("[获取详细调用失败][code:{}][msg:{}]", infoRes.getSubCode(), infoRes.getSubMsg());
 				}
-			}catch (Exception e){
+			}catch (Exception e) {
 				e.printStackTrace();
 			}
 		} catch (AlipayApiException e) {

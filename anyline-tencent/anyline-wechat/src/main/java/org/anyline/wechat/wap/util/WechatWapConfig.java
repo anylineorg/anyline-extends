@@ -39,7 +39,7 @@ public class WechatWapConfig extends WechatConfig{
 	 * 解析配置文件内容
 	 * @param content 配置文件内容
 	 */
-	public static void parse(String content){
+	public static void parse(String content) {
 		parse(WechatWapConfig.class, content, instances ,compatibles);
 	}
 	/**
@@ -50,25 +50,25 @@ public class WechatWapConfig extends WechatConfig{
 		load(); 
 	} 
  
-	public static WechatWapConfig getInstance(){
+	public static WechatWapConfig getInstance() {
 		return getInstance(DEFAULT_INSTANCE_KEY);
 	} 
-	public static WechatWapConfig getInstance(String key){
-		if(BasicUtil.isEmpty(key)){
+	public static WechatWapConfig getInstance(String key) {
+		if(BasicUtil.isEmpty(key)) {
 			key = DEFAULT_INSTANCE_KEY;
 		} 
-		if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - WechatWapConfig.lastLoadTime)/1000 > ConfigTable.getReload() ){
+		if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - WechatWapConfig.lastLoadTime)/1000 > ConfigTable.getReload() ) {
 			// 重新加载 
 			load(); 
 		} 
 		return (WechatWapConfig)instances.get(key);
 	} 
  
-	public static WechatWapConfig parse(String key, DataRow row){
+	public static WechatWapConfig parse(String key, DataRow row) {
 		return parse(WechatWapConfig.class, key, row, instances, compatibles);
 	} 
-	public static Hashtable<String,AnylineConfig> parse(String column, DataSet<DataRow> set){
-		for(DataRow row:set){
+	public static Hashtable<String,AnylineConfig> parse(String column, DataSet<DataRow> set) {
+		for(DataRow row:set) {
 			String key = row.getString(column); 
 			parse(key, row); 
 		} 
@@ -81,12 +81,12 @@ public class WechatWapConfig extends WechatConfig{
 		load(instances, WechatWapConfig.class, CONFIG_NAME,compatibles);
 		WechatWapConfig.lastLoadTime = System.currentTimeMillis();
 	} 
-	private static void debug(){
+	private static void debug() {
 	}
-	public static WechatWapConfig register(String key, DataRow row){
+	public static WechatWapConfig register(String key, DataRow row) {
 		return parse(WechatWapConfig.class, key, row, instances,compatibles);
 	}
-	public static WechatWapConfig register(DataRow row){
+	public static WechatWapConfig register(DataRow row) {
 		return register(DEFAULT_INSTANCE_KEY, row);
 	}
 } 

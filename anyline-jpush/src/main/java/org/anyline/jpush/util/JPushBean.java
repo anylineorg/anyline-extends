@@ -35,14 +35,14 @@ public class JPushBean implements InitializingBean {
 	@Override
 	public void afterPropertiesSet()  {
 		APP_KEY = BasicUtil.evl(APP_KEY, JPushConfig.DEFAULT_APP_KEY);
-		if(BasicUtil.isEmpty(APP_KEY)){
+		if(BasicUtil.isEmpty(APP_KEY)) {
 			return;
 		}
 		JPushConfig.register(APP_KEY, BasicUtil.evl(MASTER_SECRET, JPushConfig.DEFAULT_MASTER_SECRET));
 	}
 
 	@Bean("anyline.jpush.init.util")
-	public JPushUtil instance(){
+	public JPushUtil instance() {
 		return JPushUtil.getInstance();
 	}
 }

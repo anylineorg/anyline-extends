@@ -48,7 +48,7 @@ public class VideoUtil {
 			// 截取中间帧图片
 			int i = 0;
 			int length = ff.getLengthInFrames();
-			if(index <=0){
+			if(index <=0) {
 				index= length / 2;
 			}
 			Frame frame = null;
@@ -89,14 +89,14 @@ public class VideoUtil {
 		}
 
 	}
-	public static boolean frame(File video, OutputStream out, int index){
-		if(null == video || null == out || !video.exists()){
+	public static boolean frame(File video, OutputStream out, int index) {
+		if(null == video || null == out || !video.exists()) {
 			log.warn("[视频截图][文件异常]");
 			return false;
 		}
 		try {
 			return frame(new FileInputStream(video), out, index);
-		}catch (Exception e){
+		}catch (Exception e) {
 			return false;
 		}
 	}
@@ -119,11 +119,11 @@ public class VideoUtil {
 		boolean result = false;
 		try {
 			File dir = img.getParentFile();
-			if(null != dir && !dir.exists()){
+			if(null != dir && !dir.exists()) {
 				dir.mkdirs();
 			}
 			result = frame(video, new FileOutputStream(img));
-			if(null != img){
+			if(null != img) {
 				log.warn("[视频截图][截图文件:{}]", img.getAbsolutePath());
 			}
 			return result;

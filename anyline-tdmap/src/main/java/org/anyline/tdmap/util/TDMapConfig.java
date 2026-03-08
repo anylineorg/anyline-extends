@@ -43,7 +43,7 @@ public class TDMapConfig extends AnylineConfig{
 	private static File configDir;
 	public static String CONFIG_NAME = "anyline-tdmap.xml";
 
-	public static Hashtable<String,AnylineConfig>getInstances(){
+	public static Hashtable<String,AnylineConfig>getInstances() {
 		return instances;
 	}
 	static{
@@ -56,7 +56,7 @@ public class TDMapConfig extends AnylineConfig{
 	 * 解析配置文件内容
 	 * @param content 配置文件内容
 	 */
-	public static void parse(String content){
+	public static void parse(String content) {
 		parse(TDMapConfig.class, content, instances ,compatibles); 
 	}
 	/**
@@ -66,19 +66,19 @@ public class TDMapConfig extends AnylineConfig{
 		// 加载配置文件 
 		load(); 
 	} 
-	public static void setConfigDir(File dir){
+	public static void setConfigDir(File dir) {
 		configDir = dir; 
 		init(); 
 	} 
-	public static TDMapConfig getInstance(){
+	public static TDMapConfig getInstance() {
 		return getInstance(DEFAULT_KEY); 
 	} 
-	public static TDMapConfig getInstance(String key){
-		if(BasicUtil.isEmpty(key)){
+	public static TDMapConfig getInstance(String key) {
+		if(BasicUtil.isEmpty(key)) {
 			key = DEFAULT_KEY; 
 		} 
  
-		if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - TDMapConfig.lastLoadTime)/1000 > ConfigTable.getReload() ){
+		if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - TDMapConfig.lastLoadTime)/1000 > ConfigTable.getReload() ) {
 			// 重新加载 
 			load(); 
 		} 
@@ -91,7 +91,7 @@ public class TDMapConfig extends AnylineConfig{
 		load(instances, TDMapConfig.class, CONFIG_NAME);
 		TDMapConfig.lastLoadTime = System.currentTimeMillis(); 
 	} 
-	private static void debug(){
+	private static void debug() {
 	}
 
 	public static TDMapConfig register(String instance, DataRow row) {

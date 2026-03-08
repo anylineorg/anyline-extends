@@ -69,11 +69,11 @@ public class Pay extends BaseBodyTag {
 			builder.append("			'paySign':'").append(sign).append("'\n");
 			builder.append("		}, function(res) {\n");
 			builder.append("			if(res.err_msg == \"get_brand_wcpay_request:ok\") {\n");
-			if(null != success){
+			if(null != success) {
 			builder.append("				").append(success).append("(res);\n");
 			}
 			builder.append("			}else{\n");
-			if(null != fail){
+			if(null != fail) {
 			builder.append("				").append(fail).append("(res);\n");
 			}
 			builder.append("			}");

@@ -40,7 +40,7 @@ public class QQMPConfig extends AnylineConfig{
 	public String API_KEY 			 = DEFAULT_API_KEY				; // APPKEY(应用密钥)
 	public String OAUTH_REDIRECT_URL = DEFAULT_OAUTH_REDIRECT_URL	; // 登录成功回调URL
 
-	public static Hashtable<String,AnylineConfig>getInstances(){
+	public static Hashtable<String,AnylineConfig>getInstances() {
 		return instances;
 	}
 
@@ -52,7 +52,7 @@ public class QQMPConfig extends AnylineConfig{
 	 * 解析配置文件内容
 	 * @param content 配置文件内容
 	 */
-	public static void parse(String content){
+	public static void parse(String content) {
 		parse(QQMPConfig.class, content, instances ,compatibles); 
 	}
 	/**
@@ -63,15 +63,15 @@ public class QQMPConfig extends AnylineConfig{
 		load(); 
 	} 
  
-	public static QQMPConfig getInstance(){
+	public static QQMPConfig getInstance() {
 		return getInstance(DEFAULT_INSTANCE_KEY);
 	} 
-	public static QQMPConfig getInstance(String key){
-		if(BasicUtil.isEmpty(key)){
+	public static QQMPConfig getInstance(String key) {
+		if(BasicUtil.isEmpty(key)) {
 			key = DEFAULT_INSTANCE_KEY;
 		} 
  
-		if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - QQMPConfig.lastLoadTime)/1000 > ConfigTable.getReload() ){
+		if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - QQMPConfig.lastLoadTime)/1000 > ConfigTable.getReload() ) {
 			// 重新加载
 			load(); 
 		} 
@@ -86,24 +86,24 @@ public class QQMPConfig extends AnylineConfig{
 		load(instances, QQMPConfig.class, CONFIG_NAME);
 		QQMPConfig.lastLoadTime = System.currentTimeMillis(); 
 	} 
-	private static void debug(){
+	private static void debug() {
 	}
-	public static QQMPConfig register(String instance, DataRow row){
+	public static QQMPConfig register(String instance, DataRow row) {
 		QQMPConfig config = parse(QQMPConfig.class, instance, row, instances, compatibles);
 		QQMPUtil.getInstance(instance);
 		return config;
 	}
-	public static QQMPConfig register(DataRow row){
+	public static QQMPConfig register(DataRow row) {
 		return register(DEFAULT_INSTANCE_KEY, row);
 	}
-	public static QQMPConfig register(String instance,  String app, String key, String redirect){
+	public static QQMPConfig register(String instance,  String app, String key, String redirect) {
 		DataRow row = new DataRow();
 		row.put("DEFAULT_APP_ID", app);
 		row.put("DEFAULT_API_KEY", key);
 		row.put("OAUTH_REDIRECT_URL", redirect);
 		return register(instance, row);
 	}
-	public static QQMPConfig register(String app, String key, String redirect){
+	public static QQMPConfig register(String app, String key, String redirect) {
 		return register(DEFAULT_INSTANCE_KEY, app, key, redirect);
 	}
 } 

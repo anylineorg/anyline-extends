@@ -39,7 +39,7 @@ public class WechatMPConfig extends WechatConfig{
 	 * 解析配置文件内容
 	 * @param content 配置文件内容
 	 */
-	public static void parse(String content){
+	public static void parse(String content) {
 		parse(WechatMPConfig.class, content, instances ,compatibles);
 	}
 	/**
@@ -50,31 +50,31 @@ public class WechatMPConfig extends WechatConfig{
 		load();
 	}
 
-	public static Hashtable<String,AnylineConfig>getInstances(){
+	public static Hashtable<String,AnylineConfig>getInstances() {
 		return instances;
 	}
-	public static WechatMPConfig getInstance(){
+	public static WechatMPConfig getInstance() {
 		return getInstance(DEFAULT_INSTANCE_KEY);
 	}
-	public static WechatMPConfig getInstance(String key){
-		if(BasicUtil.isEmpty(key)){
+	public static WechatMPConfig getInstance(String key) {
+		if(BasicUtil.isEmpty(key)) {
 			key = DEFAULT_INSTANCE_KEY;
 		}
 
-		if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - WechatMPConfig.lastLoadTime)/1000 > ConfigTable.getReload() ){
+		if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - WechatMPConfig.lastLoadTime)/1000 > ConfigTable.getReload() ) {
 			// 重新加载
 			load();
 		}
 		return (WechatMPConfig)instances.get(key);
 	}
 
-	public static WechatMPConfig parse(String instance, DataRow row){
+	public static WechatMPConfig parse(String instance, DataRow row) {
 		WechatMPConfig config = parse(WechatMPConfig.class, instance, row, instances,compatibles);
 		WechatMPUtil.getInstance(instance);
 		return config;
 	}
-	public static Hashtable<String,AnylineConfig> parse(String column, DataSet<DataRow> set){
-		for(DataRow row:set){
+	public static Hashtable<String,AnylineConfig> parse(String column, DataSet<DataRow> set) {
+		for(DataRow row:set) {
 			String instance = row.getString(column);
 			parse(instance, row);
 		}
@@ -89,13 +89,13 @@ public class WechatMPConfig extends WechatConfig{
 		load(instances, WechatMPConfig.class,CONFIG_NAME ,compatibles);
 		WechatMPConfig.lastLoadTime = System.currentTimeMillis();
 	}
-	private static void debug(){
+	private static void debug() {
 	}
 
-	public static WechatMPConfig register(String key, DataRow row){
+	public static WechatMPConfig register(String key, DataRow row) {
 		return parse(WechatMPConfig.class, key, row, instances,compatibles);
 	}
-	public static WechatMPConfig register(DataRow row){
+	public static WechatMPConfig register(DataRow row) {
 		return register(DEFAULT_INSTANCE_KEY, row);
 	}
 } 

@@ -36,7 +36,7 @@ public class QQMPBean implements InitializingBean {
     @Override
     public void afterPropertiesSet()  {
         APP_ID = BasicUtil.evl(APP_ID, QQMPConfig.DEFAULT_APP_ID);
-        if(BasicUtil.isEmpty(APP_ID)){
+        if(BasicUtil.isEmpty(APP_ID)) {
             return;
         }
         DataRow row = new DataRow();
@@ -47,7 +47,7 @@ public class QQMPBean implements InitializingBean {
     }
 
     @Bean("anyline.qq.mp.init.bean")
-    public QQMPUtil instance(){
+    public QQMPUtil instance() {
         return QQMPUtil.getInstance();
     }
 }

@@ -34,7 +34,7 @@ public class WechatProfitReceiver {
     private String account		; // 分账接收方帐号		是	string(64)	86693852	类型是MERCHANT_ID时,是商户ID类型是PERSONAL_WECHATID时,是个人微信号类型是PERSONAL_OPENID时,是个人openid类型是PERSONAL_SUB_OPENID时,是个人sub_openid
     private int amount		    ; // 分账金额			是	int	888	分账金额,单位为分,只能为整数,不能超过原订单支付金额及最大分账比例金额
     private String description	; // 分账描述			是	string(80)	分给商户A	分账的原因描述,分账账单中需要体现
-    public WechatProfitReceiver(TYPE type, String account, int amount, String description){
+    public WechatProfitReceiver(TYPE type, String account, int amount, String description) {
         this.type = type;
         this.account = account;
         this.amount = amount;

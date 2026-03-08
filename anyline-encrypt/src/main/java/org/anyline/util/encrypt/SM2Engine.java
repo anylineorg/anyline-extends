@@ -65,7 +65,7 @@ public class SM2Engine {
      * 设置密文排序方式
      * @param mode 排序方式
      */
-    public void setMode(int mode){
+    public void setMode(int mode) {
         this.mode = mode;
     }
 
@@ -146,7 +146,7 @@ public class SM2Engine {
         digest.update(bytes, offset, len);
         add(digest, kPB.getAffineYCoord());
         digest.doFinal(c3, 0);
-        if (mode == CIPHER_MODE_CN){
+        if (mode == CIPHER_MODE_CN) {
             return Arrays.concatenate(c1, c3, c2);
         }
         return Arrays.concatenate(c1, c2, c3);

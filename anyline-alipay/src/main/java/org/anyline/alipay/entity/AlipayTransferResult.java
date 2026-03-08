@@ -24,10 +24,10 @@ public class AlipayTransferResult extends BasicResult{
 	private String order_id		; // 支付宝转账单据号,成功一定返回,失败可能不返回也可能返回.	20160627110070001502260006780837 
 	private String pay_date		; // 支付时间:格式为yyyy-MM-dd HH:mm:ss,仅转账成功返回.	2013-01-01 08:08:08 
 	 
-	public AlipayTransferResult(){
+	public AlipayTransferResult() {
 		 
 	} 
-	public AlipayTransferResult(AlipayFundTransToaccountTransferResponse res){
+	public AlipayTransferResult(AlipayFundTransToaccountTransferResponse res) {
 		setSuccess(res.isSuccess()); 
 		setCode(res.getCode()); 
 		setSub_code(res.getSubCode()); 

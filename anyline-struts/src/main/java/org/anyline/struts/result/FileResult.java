@@ -48,7 +48,7 @@ public class FileResult extends StrutsResultSupport {
 			File file = null;
 			String title = null;
 			data = invocation.getStack().findValue("data");
-			if(null == data){
+			if(null == data) {
 				log.warn("[文件下载][文件不存在][URL:{}?{}",request.getRequestURL(),request.getQueryString());
 				return;
 			}
@@ -59,7 +59,7 @@ public class FileResult extends StrutsResultSupport {
 				DataRow row = (DataRow) data;
 				String fileServer = row.getString("SERVER_HOST");
 				// 转到到文件服务器(根据URL)
-				if(BasicUtil.isNotEmpty(fileServer)){
+				if(BasicUtil.isNotEmpty(fileServer)) {
 					String url = FileUtil.merge(row.getString("SUB_DIR"), row.getString("FILE_NAME"));
 					// 注意http:\\中的\
 					url = url.replace("\\", "/").replace("//", "/");

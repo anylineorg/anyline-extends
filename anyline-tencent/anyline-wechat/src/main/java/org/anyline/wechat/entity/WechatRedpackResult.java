@@ -33,11 +33,11 @@ public class WechatRedpackResult {
 	protected String 	re_openid		;//用户openid	是	oxTWIuGaIt6gTKsQRLau2M0yL16E	String(32)	接受收红包的用户用户在wxappid下的openid 
 	protected String 	total_amount	;//付款金额		是	1000	int	付款金额,单位分 
 	protected String 	send_listid		;//微信单号		是	100000000020150520314766074200	String(32)	红包订单的微信单号 
-	public WechatRedpackResult(){
+	public WechatRedpackResult() {
 		 
 	} 
-	public WechatRedpackResult(boolean result, String msg){
-		if(result){
+	public WechatRedpackResult(boolean result, String msg) {
+		if(result) {
 			this.return_code = "SUCCESS"; 
 		}else{
 			this.return_code = "FAIL"; 

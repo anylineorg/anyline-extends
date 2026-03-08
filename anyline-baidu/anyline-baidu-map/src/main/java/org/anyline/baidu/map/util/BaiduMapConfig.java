@@ -39,14 +39,14 @@ public class BaiduMapConfig extends AnylineConfig {
         init();
         debug();
     }
-    public static Hashtable<String,AnylineConfig>getInstances(){
+    public static Hashtable<String,AnylineConfig>getInstances() {
         return instances;
     }
     /**
      * 解析配置文件内容
      * @param content 配置文件内容
      */
-    public static void parse(String content){
+    public static void parse(String content) {
         parse(BaiduMapConfig.class, content, instances ,compatibles);
     }
     /**
@@ -57,15 +57,15 @@ public class BaiduMapConfig extends AnylineConfig {
         load();
     }
 
-    public static BaiduMapConfig getInstance(){
+    public static BaiduMapConfig getInstance() {
         return getInstance(DEFAULT_INSTANCE_KEY);
     }
-    public static BaiduMapConfig getInstance(String key){
-        if(BasicUtil.isEmpty(key)){
+    public static BaiduMapConfig getInstance(String key) {
+        if(BasicUtil.isEmpty(key)) {
             key = DEFAULT_INSTANCE_KEY;
         }
 
-        if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - BaiduMapConfig.lastLoadTime)/1000 > ConfigTable.getReload() ){
+        if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - BaiduMapConfig.lastLoadTime)/1000 > ConfigTable.getReload() ) {
             // 重新加载 
             load();
         }
@@ -80,23 +80,23 @@ public class BaiduMapConfig extends AnylineConfig {
         load(instances, BaiduMapConfig.class, CONFIG_NAME);
         BaiduMapConfig.lastLoadTime = System.currentTimeMillis();
     }
-    private static void debug(){
+    private static void debug() {
     }
-    public static BaiduMapConfig register(String instance, DataRow row){
+    public static BaiduMapConfig register(String instance, DataRow row) {
         BaiduMapConfig config = parse(BaiduMapConfig.class, instance, row, instances, compatibles);
         BaiduMapClient.getInstance(instance);
         return config;
     }
-    public static BaiduMapConfig register(DataRow row){
+    public static BaiduMapConfig register(DataRow row) {
         return register(DEFAULT_INSTANCE_KEY, row);
     }
-    public static BaiduMapConfig register(String instance,  String ak, String sk){
+    public static BaiduMapConfig register(String instance,  String ak, String sk) {
         DataRow row = new DataRow();
         row.put("AK", ak);
         row.put("SK", sk);
         return register(instance, row);
     }
-    public static BaiduMapConfig register(String ak, String sk){
+    public static BaiduMapConfig register(String ak, String sk) {
         return register(DEFAULT_INSTANCE_KEY, ak, sk);
     }
 }

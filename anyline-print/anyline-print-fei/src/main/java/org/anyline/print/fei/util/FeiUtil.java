@@ -34,29 +34,29 @@ public class FeiUtil {
     private FeiConfig config = null;
 
     private static Hashtable<String, FeiUtil> instances = new Hashtable<String, FeiUtil>();
-    public static FeiUtil getInstance(){
+    public static FeiUtil getInstance() {
         return getInstance(FeiConfig.DEFAULT_INSTANCE_KEY);
     }
-    public FeiUtil(FeiConfig config){
+    public FeiUtil(FeiConfig config) {
         this.config = config;
     }
-    public FeiUtil(String key, DataRow config){
+    public FeiUtil(String key, DataRow config) {
         FeiConfig conf = FeiConfig.parse(key, config);
         this.config = conf;
         instances.put(key, this);
     }
-    public static FeiUtil reg(String key, DataRow config){
+    public static FeiUtil reg(String key, DataRow config) {
         FeiConfig conf = FeiConfig.reg(key, config);
         FeiUtil util = new FeiUtil(conf);
         instances.put(key, util);
         return util;
     }
-    public static FeiUtil getInstance(String key){
-        if(BasicUtil.isEmpty(key)){
+    public static FeiUtil getInstance(String key) {
+        if(BasicUtil.isEmpty(key)) {
             key = FeiConfig.DEFAULT_INSTANCE_KEY;
         }
         FeiUtil util = instances.get(key);
-        if(null == util){
+        if(null == util) {
             FeiConfig config = FeiConfig.getInstance(key);
             if(null != config) {
                 util = new FeiUtil(config);
@@ -69,7 +69,7 @@ public class FeiUtil {
     public FeiConfig getConfig() {
         return config;
     }
-    private DataRow api(FeiConfig.API api, Map<String, Object> params){
+    private DataRow api(FeiConfig.API api, Map<String, Object> params) {
         DataRow result = null;
         long time = System.currentTimeMillis()/1000;
         params.put("user", config.USER);
@@ -83,9 +83,9 @@ public class FeiUtil {
         //{"msg":"ok","ret":0,"data":{"ok":[""],"no":[],"noGuide":[]},"serverExecutedTime":25}]
         //{"msg":"ok","ret":0,"data":"222538508_20250411131616_1010458444","serverExecutedTime":10}
         DataRow row = DataRow.parseJson(txt);
-        if(row.getInt("ret",-1) ==0){
+        if(row.getInt("ret",-1) ==0) {
             Object data = row.get("data");
-            if(data instanceof DataRow){
+            if(data instanceof DataRow) {
                 result = (DataRow)data;
             }else{
                 result = new DataRow();
@@ -113,7 +113,7 @@ public class FeiUtil {
         builder.append(code).append("#").append(secret).append("#").append(name).append("#").append(phone).append("#1");
         params.put("printerContent", builder.toString());
         DataRow row = api(FeiConfig.API.ADD_PRINTER, params);
-        if(!row.getBoolean("success",false)){
+        if(!row.getBoolean("success",false)) {
             throw new Exception(row.getString("error"));
         }
     }
@@ -131,7 +131,7 @@ public class FeiUtil {
         builder.append(code);
         params.put("snlist", builder.toString());
         DataRow row = api(FeiConfig.API.DELETE_PRINTER, params);
-        if(!row.getBoolean("success",false)){
+        if(!row.getBoolean("success",false)) {
             throw new Exception(row.getString("error"));
         }
     }
@@ -149,11 +149,11 @@ public class FeiUtil {
         params.put("content", text);
         params.put("sn", machine);
         params.put("times", times);
-        if(BasicUtil.isNotEmpty(callback)){
+        if(BasicUtil.isNotEmpty(callback)) {
             params.put("backurl", callback);
         }
         DataRow row = api(FeiConfig.API.PRINT_TEXT, params);
-        if(!row.getBoolean("success",false)){
+        if(!row.getBoolean("success",false)) {
             throw new Exception(row.getString("error"));
         }
         return row;
@@ -175,13 +175,13 @@ public class FeiUtil {
         Map<String, Object> params = new HashMap<>();
         params.put("sn", machine);
         DataRow row = api(FeiConfig.API.PRINT_CANCELS, params);
-        if(!row.getBoolean("success",false)){
+        if(!row.getBoolean("success",false)) {
             throw new Exception(row.getString("error"));
         }
         return row;
     }
     //对参数user+UKEY+stime 拼接后（+号表示连接符）进行SHA1加密得到签名，加密后签名值为40位小写字符串
-    private String sign(long time){
+    private String sign(long time) {
         String result = DigestUtils.sha1Hex(config.USER + config.KEY + time);
         return result;
     }

@@ -54,13 +54,13 @@ public class SMSTemplate {
     }
 
     public void setStatus(String status) {
-        if(STATUS.AUDIT_STATE_INIT.getCode().equals(status)){
+        if(STATUS.AUDIT_STATE_INIT.getCode().equals(status)) {
             this.status = STATUS.AUDIT_STATE_INIT;
-        }else if(STATUS.AUDIT_STATE_PASS.getCode().equals(status)){
+        }else if(STATUS.AUDIT_STATE_PASS.getCode().equals(status)) {
             this.status = STATUS.AUDIT_STATE_PASS;
-        }else if(STATUS.AUDIT_STATE_NOT_PASS.getCode().equals(status)){
+        }else if(STATUS.AUDIT_STATE_NOT_PASS.getCode().equals(status)) {
             this.status = STATUS.AUDIT_STATE_NOT_PASS;
-        }else if(STATUS.AUDIT_SATE_CANCEL.getCode().equals(status)){
+        }else if(STATUS.AUDIT_SATE_CANCEL.getCode().equals(status)) {
             this.status = STATUS.AUDIT_SATE_CANCEL;
         }
     }
@@ -88,14 +88,14 @@ public class SMSTemplate {
     public void setType(int type) {
         this.type = type(type);
     }
-    public static TYPE type(int type){
-        if(type == 0){
+    public static TYPE type(int type) {
+        if(type == 0) {
             return TYPE.VERIFY_CODE;
         }
-        if(type == 1){
+        if(type == 1) {
             return TYPE.NOTICE;
         }
-        if(type == 2){
+        if(type == 2) {
             return TYPE.POPULARIZE;
         }
         return null;

@@ -35,13 +35,13 @@ public class BaiduSeoBean implements InitializingBean {
     @Override
     public void afterPropertiesSet()  {
         SITE = BasicUtil.evl(SITE, BaiduSeoConfig.DEFAULT_SITE);
-        if(BasicUtil.isEmpty(SITE)){
+        if(BasicUtil.isEmpty(SITE)) {
             return;
         }
         BaiduSeoConfig.register(SITE, BasicUtil.evl(TOKEN, BaiduSeoConfig.DEFAULT_TOKEN));
     }
     @Bean("anyline.baidu.seo.init.client")
-    public BaiduSeoClient instance(){
+    public BaiduSeoClient instance() {
         return BaiduSeoClient.getInstance();
     }
 }

@@ -42,7 +42,7 @@ public class OSSBean implements InitializingBean {
 	@Override
 	public void afterPropertiesSet()  {
 		ACCESS_SECRET = BasicUtil.evl(ACCESS_SECRET, OSSConfig.DEFAULT_ACCESS_SECRET);
- 		if(BasicUtil.isEmpty(ACCESS_SECRET)){
+ 		if(BasicUtil.isEmpty(ACCESS_SECRET)) {
 			return;
 		}
 		OSSConfig.register(
@@ -55,7 +55,7 @@ public class OSSBean implements InitializingBean {
 		);
 	}
 	@Bean("anyline.aliyun.oss.init.util")
-	public OSSUtil instance(){
+	public OSSUtil instance() {
 		return OSSUtil.getInstance();
 	}
 

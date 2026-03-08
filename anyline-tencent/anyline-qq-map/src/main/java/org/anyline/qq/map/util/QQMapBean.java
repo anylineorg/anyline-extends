@@ -37,7 +37,7 @@ public class QQMapBean implements InitializingBean {
     @Override
     public void afterPropertiesSet()  {
         KEY = BasicUtil.evl(KEY, QQMapConfig.DEFAULT_KEY);
-        if(BasicUtil.isEmpty(KEY)){
+        if(BasicUtil.isEmpty(KEY)) {
             return;
         }
         QQMapConfig config = QQMapConfig.register(KEY, BasicUtil.evl(SECRET, QQMapConfig.DEFAULT_SECRET));
@@ -46,7 +46,7 @@ public class QQMapBean implements InitializingBean {
         }
     }
     @Bean("anyline.qq.map.init.client")
-    public QQMapClient instance(){
+    public QQMapClient instance() {
         return QQMapClient.getInstance();
     }
 }

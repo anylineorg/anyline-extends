@@ -54,7 +54,7 @@ public class ExcelUtil {
 		try {
 			Workbook workbook = getWorkbook(file);
 			list = read(workbook.getSheetAt(sheet), rows, foot);
-		}catch (Exception e){
+		}catch (Exception e) {
 			e.printStackTrace();
 		}
 		return list;
@@ -73,7 +73,7 @@ public class ExcelUtil {
 		try {
 			Workbook workbook = getWorkbook(file);
 			list = read(workbook.getSheetAt(sheet), rows, 0);
-		}catch (Exception e){
+		}catch (Exception e) {
 			e.printStackTrace();
 		}
 		return list;
@@ -83,29 +83,29 @@ public class ExcelUtil {
 		try {
 			Workbook workbook = getWorkbook(file);
 			int size = workbook.getNumberOfSheets();
-			for(int i=0; i<size; i++){
+			for(int i=0; i<size; i++) {
 				list.add(read(workbook.getSheetAt(i), rows, 0));
 			}
-		}catch (Exception e){
+		}catch (Exception e) {
 			e.printStackTrace();
 		}
 		return list;
 	}
 
-	public static int[] position(Sheet sheet, int rows, int cols, String regex){
+	public static int[] position(Sheet sheet, int rows, int cols, String regex) {
 		int row = -1;
 		int col = -1;
 		int last = sheet.getLastRowNum();
 		for (int r = rows; r <= last; r++) {// 遍历行
 			List<String> list = new ArrayList<>();
 			Row line = sheet.getRow(r);
-			if(line != null){
+			if(line != null) {
 				int cells = line.getLastCellNum();// 表头总共的列数
 				for (int c = cols; c < cells; c++) {
 					Cell cell = line.getCell(c);
 					String value = null;
-					if(cell != null){
-						if(isMerged(sheet, r, c)){
+					if(cell != null) {
+						if(isMerged(sheet, r, c)) {
 							value = getMergedRegionValue(sheet, r, c);
 						}else {
 							value = value(cell);
@@ -113,8 +113,8 @@ public class ExcelUtil {
 					}else{
 						value = getMergedRegionValue(sheet, r, c);
 					}
-					if(null != value){
-						if(RegularUtil.match(value, regex)){
+					if(null != value) {
+						if(RegularUtil.match(value, regex)) {
 							row = r;
 							col = c;
 							break;
@@ -122,7 +122,7 @@ public class ExcelUtil {
 					}
 				}
 			}
-			if(row != -1){
+			if(row != -1) {
 				break;
 			}
 		}
@@ -137,59 +137,59 @@ public class ExcelUtil {
 	 * @param regex 匹配内容
 	 * @return int[]
 	 */
-	public static int[] position(InputStream is, int sheet, int rows, int cols, String regex){
+	public static int[] position(InputStream is, int sheet, int rows, int cols, String regex) {
 		try{
 			Workbook workbook = getWorkbook(is);
 			return position(workbook.getSheetAt(sheet), rows, cols, regex);
-		}catch (Exception e){
+		}catch (Exception e) {
 			e.printStackTrace();
 		}
 		return new int[]{-1,-1};
 	}
-	public static int[] position(InputStream is, String sheet, int rows, int cols, String regex){
+	public static int[] position(InputStream is, String sheet, int rows, int cols, String regex) {
 		try{
 			Workbook workbook = getWorkbook(is);
 			return position(workbook.getSheet(sheet), rows, cols, regex);
-		}catch (Exception e){
+		}catch (Exception e) {
 			e.printStackTrace();
 		}
 		return new int[]{-1,-1};
 	}
-	public static int[] position(InputStream is, int sheet, String regex){
+	public static int[] position(InputStream is, int sheet, String regex) {
 		return position(is, sheet, 0, 0, regex);
 	}
-	public static int[] position(InputStream is, String sheet, String regex){
+	public static int[] position(InputStream is, String sheet, String regex) {
 		return position(is, sheet, 0, 0, regex);
 	}
-	public static int[] position(InputStream is, String regex){
+	public static int[] position(InputStream is, String regex) {
 		return position(is, 0, 0, 0, regex);
 	}
 
-	public static int[] position(File file, int sheet, int rows, int cols, String regex){
+	public static int[] position(File file, int sheet, int rows, int cols, String regex) {
 		try{
 			Workbook workbook = getWorkbook(file);
 			return position(workbook.getSheetAt(sheet), rows, cols, regex);
-		}catch (Exception e){
+		}catch (Exception e) {
 			e.printStackTrace();
 		}
 		return new int[]{-1,-1};
 	}
-	public static int[] position(File file, String sheet, int rows, int cols, String regex){
+	public static int[] position(File file, String sheet, int rows, int cols, String regex) {
 		try{
 			Workbook workbook = getWorkbook(file);
 			return position(workbook.getSheet(sheet), rows, cols, regex);
-		}catch (Exception e){
+		}catch (Exception e) {
 			e.printStackTrace();
 		}
 		return new int[]{-1,-1};
 	}
-	public static int[] position(File file, int sheet, String regex){
+	public static int[] position(File file, int sheet, String regex) {
 		return position(file, sheet, 0, 0, regex);
 	}
-	public static int[] position(File file, String sheet, String regex){
+	public static int[] position(File file, String sheet, String regex) {
 		return position(file, sheet, 0, 0, regex);
 	}
-	public static int[] position(File file, String regex){
+	public static int[] position(File file, String regex) {
 		return position(file, 0, 0, 0, regex);
 	}
 	/**
@@ -330,24 +330,24 @@ public class ExcelUtil {
 	 */
 	public static List<List<String>> read(Sheet sheet, int start, int end) {
 		List<List<String>> lists = new ArrayList<>();
-		if(sheet != null){
+		if(sheet != null) {
 			int max = sheet.getLastRowNum();// 得到excel的总记录条数
 			int last = max;
-			if(end < 0){
+			if(end < 0) {
 				last = max + end;
-			}else if(end > 0){
+			}else if(end > 0) {
 				last = end;
 			}
 			for (int r = start; r <= last; r++) {// 遍历行
 				List<String> list = new ArrayList<>();
 				Row row = sheet.getRow(r);
-				if(row != null){
+				if(row != null) {
 					int cells = row.getLastCellNum();// 表头总共的列数
 					for (int c = 0; c < cells; c++) {
 						Cell cell = row.getCell(c);
 						String value = null;
-						if(cell != null){
-							if(isMerged(sheet, r, c)){
+						if(cell != null) {
+							if(isMerged(sheet, r, c)) {
 								value = getMergedRegionValue(sheet, r, c);
 							}else {
 								value = value(cell);
@@ -378,8 +378,8 @@ public class ExcelUtil {
 			int lastColumn = range.getLastColumn();
 			int firstRow = range.getFirstRow();
 			int lastRow = range.getLastRow();
-			if(row >= firstRow && row <= lastRow){
-				if(col >= firstColumn && col <= lastColumn){
+			if(row >= firstRow && row <= lastRow) {
+				if(col >= firstColumn && col <= lastColumn) {
 					return true;
 				}
 			}
@@ -394,16 +394,16 @@ public class ExcelUtil {
 	 * @param col col
 	 * @return String
 	 */
-	public static String getMergedRegionValue(Sheet sheet ,int row , int col){
+	public static String getMergedRegionValue(Sheet sheet ,int row , int col) {
 		int sheetMergeCount = sheet.getNumMergedRegions();
-		for(int i = 0 ; i < sheetMergeCount ; i++){
+		for(int i = 0 ; i < sheetMergeCount ; i++) {
 			CellRangeAddress ca = sheet.getMergedRegion(i);
 			int firstColumn = ca.getFirstColumn();
 			int lastColumn = ca.getLastColumn();
 			int firstRow = ca.getFirstRow();
 			int lastRow = ca.getLastRow();
-			if(row >= firstRow && row <= lastRow){
-				if(col >= firstColumn && col <= lastColumn){
+			if(row >= firstRow && row <= lastRow) {
+				if(col >= firstColumn && col <= lastColumn) {
 					Row fRow = sheet.getRow(firstRow);
 					Cell fCell = fRow.getCell(firstColumn);
 					return value(fCell) ;
@@ -662,33 +662,33 @@ public class ExcelUtil {
 
 	public static void value(Sheet sheet, int row, int col, String value) throws Exception {
 		Row r = sheet.getRow(row);
-		if(null == r){
+		if(null == r) {
 			r = sheet.createRow(row);
 		}
 		Cell cell = r.getCell(col);
-		if(null == cell){
+		if(null == cell) {
 			cell = r.createCell(col);
 		}
 		cell.setCellValue(value);
 	}
 	public static void value(Sheet sheet, int row, int col, double value) throws Exception {
 		Row r = sheet.getRow(row);
-		if(null == r){
+		if(null == r) {
 			r = sheet.createRow(row);
 		}
 		Cell cell = r.getCell(col);
-		if(null == cell){
+		if(null == cell) {
 			cell = r.createCell(col);
 		}
 		cell.setCellValue(value);
 	}
 	public static void value(Sheet sheet, int row, int col, int value) throws Exception {
 		Row r = sheet.getRow(row);
-		if(null == r){
+		if(null == r) {
 			r = sheet.createRow(row);
 		}
 		Cell cell = r.getCell(col);
-		if(null == cell){
+		if(null == cell) {
 			cell = r.createCell(col);
 		}
 		cell.setCellValue(value);
@@ -747,25 +747,25 @@ public class ExcelUtil {
 	 * @param set		数据源  set		数据源
 	 * @return boolean
 	 */
-	public static boolean export(OutputStream os, String sheet, int insert, List<String>headers, List<String> keys, Collection<?> set){
+	public static boolean export(OutputStream os, String sheet, int insert, List<String>headers, List<String> keys, Collection<?> set) {
 		try{
 			XSSFWorkbook  workbook = null;
 			Sheet sht = null;
 			workbook = new XSSFWorkbook();
-			if(BasicUtil.isEmpty(sheet)){
+			if(BasicUtil.isEmpty(sheet)) {
 				sheet = "sheet1";
 			}
 			sht = workbook.createSheet(sheet);
 			write(sht, insert, headers, keys, set);
 			workbook.write(os);
-		}catch(Exception e){
+		}catch(Exception e) {
 			e.printStackTrace();
 			return false;
 		}finally {
 			try{
 				os.flush();
 				os.close();
-			}catch (Exception e){
+			}catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -773,7 +773,7 @@ public class ExcelUtil {
 		return true;
 	}
 
-	private static void write(Sheet sheet, int insert, List<String>headers, List<String> keys, Collection<?> set){
+	private static void write(Sheet sheet, int insert, List<String>headers, List<String> keys, Collection<?> set) {
 		// 表头
 		if(null != headers && headers.size()>0) {
 			Row row =sheet.createRow(insert++);
@@ -785,13 +785,13 @@ public class ExcelUtil {
 			}
 		}
 		int num = 1;
-		for(Object item:set){
+		for(Object item:set) {
 			Row row = sheet.createRow(insert++);
 			int c = 0;
-			for(String key:keys){
+			for(String key:keys) {
 				Cell cell=row.createCell(c++);
 				cell.setCellType(CellType.STRING);
-				if(key.equals("${num}")){
+				if(key.equals("${num}")) {
 					cell.setCellValue(num);
 				}else {
 					cell.setCellValue(BeanUtil.parseFinalValue(item, key, ""));
@@ -800,20 +800,20 @@ public class ExcelUtil {
 			num ++;
 		}
 	}
-	public static boolean export(File file, String sheet, int insert, Table table){
+	public static boolean export(File file, String sheet, int insert, Table table) {
 		FileOutputStream os = null;
 		try{
 			XSSFWorkbook  workbook = null;
 			Sheet sht = null;
-			if(file.exists()){
+			if(file.exists()) {
 				File tempFile = FileUtil.createTempFile(file);
 				FileInputStream is = new FileInputStream(tempFile);
 				workbook = new XSSFWorkbook(is);
-				if(BasicUtil.isEmpty(sheet)){
+				if(BasicUtil.isEmpty(sheet)) {
 					sht = workbook.getSheetAt(0);
 				}else {
 					sht = workbook.getSheet(sheet);
-					if(null == sht){
+					if(null == sht) {
 						sht = workbook.createSheet(sheet);
 					}
 				}
@@ -821,79 +821,79 @@ public class ExcelUtil {
 				tempFile.delete();
 			}else {
 				workbook = new XSSFWorkbook();
-				if(BasicUtil.isEmpty(sheet)){
+				if(BasicUtil.isEmpty(sheet)) {
 					sheet = "sheet1";
 				}
 				sht = workbook.createSheet(sheet);
 			}
 			File dir = file.getParentFile();
-			if(null != dir && !dir.exists()){
+			if(null != dir && !dir.exists()) {
 				file.getParentFile().mkdirs();
 			}
-			if(!file.exists()){
+			if(!file.exists()) {
 				file.createNewFile();
 			}
 			os = new FileOutputStream(file);
 			write(workbook, os, sht, insert, table);
-		}catch(Exception e){
+		}catch(Exception e) {
 			e.printStackTrace();
 			return false;
 		}
 		return true;
 	}
 
-	public static boolean export(File file, Table table){
+	public static boolean export(File file, Table table) {
 		String sheet = "sheet1";
 		return export(file, sheet,0, table);
 	}
-	public static boolean export(File file, String sheet, Table table){
+	public static boolean export(File file, String sheet, Table table) {
 		return export(file, sheet,0, table);
 	}
-	public static boolean export(File template, OutputStream os, String sheet, int insert, Table table){
+	public static boolean export(File template, OutputStream os, String sheet, int insert, Table table) {
 		try{
 			Sheet sht = null;
 			FileInputStream is = new FileInputStream(template);
 			XSSFWorkbook workbook = new XSSFWorkbook(is);
-			if(BasicUtil.isEmpty(sheet)){
+			if(BasicUtil.isEmpty(sheet)) {
 				sht = workbook.getSheetAt(0);
 			}else {
 				sht = workbook.getSheet(sheet);
-				if(null == sht){
+				if(null == sht) {
 					sht = workbook.createSheet(sheet);
 				}
 			}
 			is.close();
 
 			write(workbook, os, sht, insert, table);
-		}catch(Exception e){
+		}catch(Exception e) {
 			e.printStackTrace();
 			return false;
 		}
 		return true;
 	}
-	public static boolean export(File template, File file, String sheet, int insert, Table table){
+	public static boolean export(File template, File file, String sheet, int insert, Table table) {
 		try{
 			Sheet sht = null;
 			FileInputStream is = new FileInputStream(template);
 			XSSFWorkbook workbook = new XSSFWorkbook(is);
-			if(BasicUtil.isEmpty(sheet)){
+			if(BasicUtil.isEmpty(sheet)) {
 				sht = workbook.getSheetAt(0);
 			}else {
 				sht = workbook.getSheet(sheet);
-				if(null == sht){
+				if(null == sht) {
 					sht = workbook.createSheet(sheet);
 				}
 			}
 			is.close();
 			FileUtil.create(file, false);
 			write(workbook, new FileOutputStream(file), sht, insert, table);
-		}catch(Exception e){
+		}catch(Exception e) {
 			e.printStackTrace();
 			return false;
 		}
 		return true;
 	}
-	public static boolean export(File template, File file, int sheet, int insert, Table table){
+	public static boolean export(File template, File file, int sheet, int insert, Table table) {
 		try{
 			Sheet sht = null;
 			FileInputStream is = new FileInputStream(template);
@@ -902,35 +902,35 @@ public class ExcelUtil {
 			is.close();
 			FileUtil.create(file, false);
 			write(workbook, new FileOutputStream(file), sht, insert, table);
-		}catch(Exception e){
+		}catch(Exception e) {
 			e.printStackTrace();
 			return false;
 		}
 		return true;
 	}
-	public static boolean export(File template, OutputStream os,  Table table){
+	public static boolean export(File template, OutputStream os,  Table table) {
 		return export(template, os, "", 0, table);
 	}
-	public static boolean export(OutputStream os, String sheet, int insert, Table table){
+	public static boolean export(OutputStream os, String sheet, int insert, Table table) {
 		try{
 			XSSFWorkbook workbook = new XSSFWorkbook();
-			if(BasicUtil.isEmpty(sheet)){
+			if(BasicUtil.isEmpty(sheet)) {
 				sheet = "sheet1";
 			}
 			Sheet sht = workbook.createSheet(sheet);
 			write(workbook, os, sht, insert, table);
-		}catch(Exception e){
+		}catch(Exception e) {
 			e.printStackTrace();
 			return false;
 		}
 		return true;
 	}
-	private static Row row(Sheet sheet, int r){
+	private static Row row(Sheet sheet, int r) {
 		Row row = null;
 		int last = sheet.getLastRowNum();
-		if(r<=last){
+		if(r<=last) {
 			row = sheet.getRow(r);
-			if(null == row){
+			if(null == row) {
 				row = sheet.createRow(r);
 			}
 		}else{
@@ -938,7 +938,7 @@ public class ExcelUtil {
 		}
 		return row;
 	}
-	private static void write(XSSFWorkbook workbook, OutputStream os, Sheet sheet, int insert, Table table){
+	private static void write(XSSFWorkbook workbook, OutputStream os, Sheet sheet, int insert, Table table) {
 		try {
 			int size = table.getTrs().size();
 			int last = sheet.getLastRowNum();
@@ -970,14 +970,14 @@ public class ExcelUtil {
 						}
 					}
 					Map<String, String> styles = td.getStyles();
-					if(null != styles || !styles.isEmpty()){
-						if(null == style){
+					if(null != styles || !styles.isEmpty()) {
+						if(null == style) {
 							style = sheet.getWorkbook().createCellStyle();
 						}
 						parseStyle(style, styles);
 						Font font = sheet.getWorkbook().createFont();
 						font = parseFont(font, styles);
-						if(null != font){
+						if(null != font) {
 							style.setFont(font);
 						}
 					}
@@ -989,15 +989,15 @@ public class ExcelUtil {
 						CellRangeAddress region = new CellRangeAddress(firstRow, lastRow, firstCol, lastCol);
 						sheet.addMergedRegion(region);
 						// 补齐其他单元格(否则边框设置不上)
-						for(int rr=1; rr<rowspan; rr++){
+						for(int rr=1; rr<rowspan; rr++) {
 							Row mergeRow = row(sheet, insert+rr);
-							for(int cc=0; cc<colspan; cc++){
+							for(int cc=0; cc<colspan; cc++) {
 								Cell mergeCell = mergeRow.createCell(colIndex + offset + cc);
 								mergeCell.setCellStyle(style);
 							}
 						}
-						if(colspan>1){
-							for(int cc=1; cc<colspan; cc++){
+						if(colspan>1) {
+							for(int cc=1; cc<colspan; cc++) {
 								Cell mergeCell = row.createCell(colIndex + offset + cc);
 								if(null != style) {
 									mergeCell.setCellStyle(style);
@@ -1016,34 +1016,34 @@ public class ExcelUtil {
 				insert++;
 			}
 			workbook.write(os);
-		}catch (Exception e){
+		}catch (Exception e) {
 			e.printStackTrace();
 		}finally {
 			try{
 				os.flush();
 				os.close();
-			}catch (Exception e){
+			}catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 	}
 
-	private static BorderStyle parseBorderStyle(Map<String, String> styles, String side){
+	private static BorderStyle parseBorderStyle(Map<String, String> styles, String side) {
 		BorderStyle result = BorderStyle.NONE;
 		String style = styles.get("border-"+side+"-style");
-		if(BasicUtil.isEmpty(style)){
+		if(BasicUtil.isEmpty(style)) {
 			style = styles.get("border-style");
 		}
-		if(BasicUtil.isNotEmpty(style)){
-			if("solid".equalsIgnoreCase(style)){
+		if(BasicUtil.isNotEmpty(style)) {
+			if("solid".equalsIgnoreCase(style)) {
 				result = BorderStyle.THIN;
-			}else if("double".equalsIgnoreCase(style)){
+			}else if("double".equalsIgnoreCase(style)) {
 				result = BorderStyle.DOUBLE;
-			}else if("dashed".equalsIgnoreCase(style)){
+			}else if("dashed".equalsIgnoreCase(style)) {
 				result = BorderStyle.DASHED;
-			}else if("dotted".equalsIgnoreCase(style)){
+			}else if("dotted".equalsIgnoreCase(style)) {
 				result = BorderStyle.DOTTED;
-			}else if("thick".equalsIgnoreCase(style)){
+			}else if("thick".equalsIgnoreCase(style)) {
 				result = BorderStyle.THICK;
 			}else{
 				result = BorderStyle.THIN;
@@ -1057,7 +1057,7 @@ public class ExcelUtil {
 	 * @param styles css样式
 	 * @return CellStyle
 	 */
-	private static CellStyle parseStyle(CellStyle style, Map<String, String> styles){
+	private static CellStyle parseStyle(CellStyle style, Map<String, String> styles) {
 		if(null != styles) {
 			// 边框
 			style.setBorderTop(parseBorderStyle(styles, "top"));
@@ -1067,23 +1067,23 @@ public class ExcelUtil {
 
 			// 水平对齐
 			String textAlign = styles.get("text-align");
-			if(BasicUtil.isNotEmpty(textAlign)){
-				if("center".equals(textAlign)){
+			if(BasicUtil.isNotEmpty(textAlign)) {
+				if("center".equals(textAlign)) {
 					style.setAlignment(HorizontalAlignment.CENTER);
-				}else if("left".equals(textAlign)){
+				}else if("left".equals(textAlign)) {
 					style.setAlignment(HorizontalAlignment.LEFT);
-				}else if("right".equals(textAlign)){
+				}else if("right".equals(textAlign)) {
 					style.setAlignment(HorizontalAlignment.RIGHT);
 				}
 			}
 			// 垂直对齐
 			String verticalAlign = styles.get("vertical-align");
-			if(BasicUtil.isNotEmpty(verticalAlign)){
-				if("center".equals(verticalAlign) || "middle".equals(verticalAlign)){
+			if(BasicUtil.isNotEmpty(verticalAlign)) {
+				if("center".equals(verticalAlign) || "middle".equals(verticalAlign)) {
 					style.setVerticalAlignment(VerticalAlignment.CENTER);
-				}else if("top".equals(verticalAlign)){
+				}else if("top".equals(verticalAlign)) {
 					style.setVerticalAlignment(VerticalAlignment.TOP);
-				}else if("bottom".equals(verticalAlign)){
+				}else if("bottom".equals(verticalAlign)) {
 					style.setVerticalAlignment(VerticalAlignment.BOTTOM);
 				}
 			}
@@ -1091,18 +1091,18 @@ public class ExcelUtil {
 		}
 		return style;
 	}
-	private static Font parseFont(Font font, Map<String, String> styles){
+	private static Font parseFont(Font font, Map<String, String> styles) {
 		if(null != styles) {
 			String fontSize = styles.get("font-size");
-			if(null != fontSize){
+			if(null != fontSize) {
 				short pt = 0;
-				if(fontSize.endsWith("px")){
+				if(fontSize.endsWith("px")) {
 					int px = BasicUtil.parseInt(fontSize.replace("px",""),0);
 					pt = (short) DocxUtil.px2pt(px);
-				}else if(fontSize.endsWith("pt")){
+				}else if(fontSize.endsWith("pt")) {
 					pt = BasicUtil.parseInt(fontSize.replace("pt",""),0).shortValue();
 				}
-				if(pt>0){
+				if(pt>0) {
 					font.setFontHeightInPoints(pt);
 				}
 			}
@@ -1114,30 +1114,30 @@ public class ExcelUtil {
 
 			// 删除线
 			String strike = styles.get("strike");
-			if(null != strike){
-				if(strike.equalsIgnoreCase("true")){
+			if(null != strike) {
+				if(strike.equalsIgnoreCase("true")) {
 					font.setStrikeout(true);
 				}
 			}
 			// 斜体
 			String italics = styles.get("italic");
-			if(null != italics){
-				if(italics.equalsIgnoreCase("true")){
+			if(null != italics) {
+				if(italics.equalsIgnoreCase("true")) {
 					font.setItalic(true);
 				}
 			}
 			// 加粗
 			String fontWeight = styles.get("font-weight");
-			if(null != fontWeight && fontWeight.length()>0){
+			if(null != fontWeight && fontWeight.length()>0) {
 				int weight = BasicUtil.parseInt(fontWeight,0);
-				if(weight >=700){
+				if(weight >=700) {
 					font.setBold(true);
 				}
 			}
 
 			// 下划线
 			String underline = styles.get("underline");
-			if(null != underline){
+			if(null != underline) {
 				font.setUnderline((byte) 1);
 			}
 			return font;
@@ -1153,10 +1153,10 @@ public class ExcelUtil {
 	 * @param set 数据集合
 	 * @return boolean
 	 */
-	public static boolean export(File file, int rows, List<String>headers, List<String> keys, Collection<?> set){
+	public static boolean export(File file, int rows, List<String>headers, List<String> keys, Collection<?> set) {
 		return export(file, "sheet1", rows, headers, keys, set);
 	}
-	public static boolean export(OutputStream os, int rows, List<String>headers, List<String> keys, Collection<?> set){
+	public static boolean export(OutputStream os, int rows, List<String>headers, List<String> keys, Collection<?> set) {
 		return export(os, "sheet1", rows, headers, keys, set);
 	}
 
@@ -1167,10 +1167,10 @@ public class ExcelUtil {
 	 * @param set 数据集合
 	 * @return boolean
 	 */
-	public static boolean export(File file, List<String> keys, Collection<?> set){
+	public static boolean export(File file, List<String> keys, Collection<?> set) {
 		return export(file,0, null, keys, set);
 	}
-	public static boolean export(OutputStream os, List<String> keys, Collection<?> set){
+	public static boolean export(OutputStream os, List<String> keys, Collection<?> set) {
 		return export(os,0, null, keys, set);
 	}
 
@@ -1182,10 +1182,10 @@ public class ExcelUtil {
 	 * @param set 数据集合
 	 * @return boolean
 	 */
-	public static boolean export(File file, List<String> headers,List<String> keys, Collection<?> set){
+	public static boolean export(File file, List<String> headers,List<String> keys, Collection<?> set) {
 		return export(file,0, headers, keys, set);
 	}
-	public static boolean export(OutputStream os, List<String> headers,List<String> keys, Collection<?> set){
+	public static boolean export(OutputStream os, List<String> headers,List<String> keys, Collection<?> set) {
 		return export(os,0, headers, keys, set);
 	}
 
@@ -1197,10 +1197,10 @@ public class ExcelUtil {
 	 * @param set 数据集合
 	 * @return boolean
 	 */
-	public static boolean export(File file, int rows, List<String> keys, Collection<?> set){
+	public static boolean export(File file, int rows, List<String> keys, Collection<?> set) {
 		return export(file, rows, null, keys, set);
 	}
-	public static boolean export(OutputStream os, int rows, List<String> keys, Collection<?> set){
+	public static boolean export(OutputStream os, int rows, List<String> keys, Collection<?> set) {
 		return export(os, rows, null, keys, set);
 	}
 
@@ -1213,40 +1213,40 @@ public class ExcelUtil {
 	 * @param configs 姓名:NAME或NAME
 	 * @return boolean
 	 */
-	public static boolean export(File file, String sheet, int rows, Collection<?> set, String ... configs){
+	public static boolean export(File file, String sheet, int rows, Collection<?> set, String ... configs) {
 		List<String> headers = new ArrayList<>();
 		List<String> keys = new ArrayList<>();
-		if(null != configs){
-			for(String config:configs){
+		if(null != configs) {
+			for(String config:configs) {
 				String tmps[] = config.split(":");
-				if(tmps.length == 2){
+				if(tmps.length == 2) {
 					headers.add(tmps[0]);
 					keys.add(tmps[1]);
 				}else{
 					keys.add(config);
 				}
 			}
-			if(headers.size() != keys.size()){
+			if(headers.size() != keys.size()) {
 				headers = new ArrayList<>();
 			}
 		}
 		return export(file, sheet, rows, headers, keys, set);
 	}
 
-	public static boolean export(OutputStream os, String sheet, int rows, Collection<?> set, String ... configs){
+	public static boolean export(OutputStream os, String sheet, int rows, Collection<?> set, String ... configs) {
 		List<String> headers = new ArrayList<>();
 		List<String> keys = new ArrayList<>();
-		if(null != configs){
-			for(String config:configs){
+		if(null != configs) {
+			for(String config:configs) {
 				String tmps[] = config.split(":");
-				if(tmps.length == 2){
+				if(tmps.length == 2) {
 					headers.add(tmps[0]);
 					keys.add(tmps[1]);
 				}else{
 					keys.add(config);
 				}
 			}
-			if(headers.size() != keys.size()){
+			if(headers.size() != keys.size()) {
 				headers = new ArrayList<>();
 			}
 		}
@@ -1261,10 +1261,10 @@ public class ExcelUtil {
 	 * @param configs 姓名:NAME或NAME
 	 * @return boolean
 	 */
-	public static boolean export(File file, int rows, Collection<?> set, String ... configs){
+	public static boolean export(File file, int rows, Collection<?> set, String ... configs) {
 		return export(file, "", rows, set, configs);
 	}
-	public static boolean export(OutputStream os, int rows, Collection<?> set, String ... configs){
+	public static boolean export(OutputStream os, int rows, Collection<?> set, String ... configs) {
 		return export(os, "", rows, set, configs);
 	}
 
@@ -1275,11 +1275,11 @@ public class ExcelUtil {
 	 * @param configs 姓名:NAME或NAME
 	 * @return boolean
 	 */
-	public static boolean export(File file,  Collection<?> set, String ... configs){
+	public static boolean export(File file,  Collection<?> set, String ... configs) {
 		return export(file, 0, set, configs);
 	}
 
-	public static boolean export(OutputStream os,  Collection<?> set, String ... configs){
+	public static boolean export(OutputStream os,  Collection<?> set, String ... configs) {
 		return export(os, 0, set, configs);
 	}
 
@@ -1295,35 +1295,35 @@ public class ExcelUtil {
 	 * @param set		数据源  set		数据源
 	 * @return boolean
 	 */
-	public static boolean export(File template, File file, String sheet, int insert, List<String>headers, List<String> keys, Collection<?> set){
+	public static boolean export(File template, File file, String sheet, int insert, List<String>headers, List<String> keys, Collection<?> set) {
 
 		try{
 			FileUtil.create(file, false);
 			return export(template, new FileOutputStream(file), sheet, insert, headers, keys, set);
-		}catch(Exception e){
+		}catch(Exception e) {
 			e.printStackTrace();
 			return false;
 		}
 	}
 
 
-	public static boolean export(File file, String sheet, int insert, List<String>headers, List<String> keys, Collection<?> set){
+	public static boolean export(File file, String sheet, int insert, List<String>headers, List<String> keys, Collection<?> set) {
 		FileOutputStream os = null;
 		try{
 			XSSFWorkbook  workbook = null;
 			Sheet sht = null;
-			if(file.length() == 0){
+			if(file.length() == 0) {
 				file.delete();
 			}
-			if(file.exists()){
+			if(file.exists()) {
 				File tempFile = FileUtil.createTempFile(file);
 				FileInputStream is = new FileInputStream(tempFile);
 				workbook = new XSSFWorkbook(is);
-				if(BasicUtil.isEmpty(sheet)){
+				if(BasicUtil.isEmpty(sheet)) {
 					sht = workbook.getSheetAt(0);
 				}else {
 					sht = workbook.getSheet(sheet);
-					if(null == sht){
+					if(null == sht) {
 						sht = workbook.createSheet(sheet);
 					}
 				}
@@ -1333,7 +1333,7 @@ public class ExcelUtil {
 
 				FileUtil.create(file, false);
 				workbook = new XSSFWorkbook();
-				if(BasicUtil.isEmpty(sheet)){
+				if(BasicUtil.isEmpty(sheet)) {
 					sheet = "sheet1";
 				}
 				sht = workbook.createSheet(sheet);
@@ -1341,13 +1341,13 @@ public class ExcelUtil {
 			os = new FileOutputStream(file);
 			write(workbook, os, sht, insert, headers, keys, set);
 
-		}catch(Exception e){
+		}catch(Exception e) {
 			e.printStackTrace();
 			return false;
 		}
 		return true;
 	}
-	private static void write(XSSFWorkbook workbook, OutputStream os, Sheet sheet, int insert, List<String>headers, List<String> keys, Collection<?> set){
+	private static void write(XSSFWorkbook workbook, OutputStream os, Sheet sheet, int insert, List<String>headers, List<String> keys, Collection<?> set) {
 		try {
 
 			int size = set.size();
@@ -1357,25 +1357,25 @@ public class ExcelUtil {
 			}
 			write(sheet, insert, headers, keys, set);
 			workbook.write(os);
-		}catch (Exception e){
+		}catch (Exception e) {
 			e.printStackTrace();
 		}finally {
 			try{
 				os.flush();
 				os.close();
-			}catch (Exception e){
+			}catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 	}
-	public static boolean export(File template, OutputStream os, String sheet, int insert, List<String>headers, List<String> keys, Collection<?> set){
+	public static boolean export(File template, OutputStream os, String sheet, int insert, List<String>headers, List<String> keys, Collection<?> set) {
 		try{
 			XSSFWorkbook  workbook = null;
 			Sheet sht = null;
-			if(null != template && template.exists()){
+			if(null != template && template.exists()) {
 				FileInputStream is = new FileInputStream(template);
 				workbook = new XSSFWorkbook(is);
-				if(BasicUtil.isNotEmpty(sheet)){
+				if(BasicUtil.isNotEmpty(sheet)) {
 					workbook.setSheetName(0, sheet);
 				}
 				sht = workbook.getSheetAt(0);
@@ -1383,13 +1383,13 @@ public class ExcelUtil {
 				is.close();
 			}else {
 				workbook = new XSSFWorkbook();
-				if(BasicUtil.isEmpty(sheet)){
+				if(BasicUtil.isEmpty(sheet)) {
 					sheet = "sheet1";
 				}
 				sht = workbook.createSheet(sheet);
 			}
 			write(workbook, os, sht, insert, headers, keys, set);
-		}catch(Exception e){
+		}catch(Exception e) {
 			e.printStackTrace();
 			return false;
 		}
@@ -1405,10 +1405,10 @@ public class ExcelUtil {
 	 * @param set 数据集合
 	 * @return boolean
 	 */
-	public static boolean export(File template, File file, int rows, List<String>headers, List<String> keys, Collection<?> set){
+	public static boolean export(File template, File file, int rows, List<String>headers, List<String> keys, Collection<?> set) {
 		return export(template, file, "sheet1", rows, headers, keys, set);
 	}
-	public static boolean export(File template, OutputStream os, int rows, List<String>headers, List<String> keys, Collection<?> set){
+	public static boolean export(File template, OutputStream os, int rows, List<String>headers, List<String> keys, Collection<?> set) {
 		return export(template, os, "sheet1", rows, headers, keys, set);
 	}
 	/**
@@ -1419,10 +1419,10 @@ public class ExcelUtil {
 	 * @param set 数据集合
 	 * @return boolean
 	 */
-	public static boolean export(File template, File file, List<String> keys, Collection<?> set){
+	public static boolean export(File template, File file, List<String> keys, Collection<?> set) {
 		return export(template, file,0, null, keys, set);
 	}
-	public static boolean export(File template, OutputStream os, List<String> keys, Collection<?> set){
+	public static boolean export(File template, OutputStream os, List<String> keys, Collection<?> set) {
 		return export(template, os,0, null, keys, set);
 	}
 
@@ -1435,10 +1435,10 @@ public class ExcelUtil {
 	 * @param set 数据集合
 	 * @return boolean
 	 */
-	public static boolean export(File template, File file, List<String> headers,List<String> keys, Collection<?> set){
+	public static boolean export(File template, File file, List<String> headers,List<String> keys, Collection<?> set) {
 		return export(template, file,0, headers, keys, set);
 	}
-	public static boolean export(File template, OutputStream os, List<String> headers,List<String> keys, Collection<?> set){
+	public static boolean export(File template, OutputStream os, List<String> headers,List<String> keys, Collection<?> set) {
 		return export(template, os,0, headers, keys, set);
 	}
 
@@ -1451,10 +1451,10 @@ public class ExcelUtil {
 	 * @param set 数据集合
 	 * @return boolean
 	 */
-	public static boolean export(File template, File file, int insert, List<String> keys, Collection<?> set){
+	public static boolean export(File template, File file, int insert, List<String> keys, Collection<?> set) {
 		return export(template, file,insert, null, keys, set);
 	}
-	public static boolean export(File template, OutputStream os, int insert, List<String> keys, Collection<?> set){
+	public static boolean export(File template, OutputStream os, int insert, List<String> keys, Collection<?> set) {
 		return export(template, os, insert, null, keys, set);
 	}
 
@@ -1469,29 +1469,29 @@ public class ExcelUtil {
 	 * @param configs 姓名:NAME或NAME
 	 * @return boolean
 	 */
-	public static boolean export(File template, File file, String sheet, int rows, Collection<?> set, String ... configs){
+	public static boolean export(File template, File file, String sheet, int rows, Collection<?> set, String ... configs) {
 		try {
 			FileUtil.create(file, false);
 			return export(template, new FileOutputStream(file), sheet, rows, set, configs);
-		}catch (Exception e){
+		}catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}
 	}
-	public static boolean export(File template, OutputStream os, String sheet, int insert, Collection<?> set, String ... configs){
+	public static boolean export(File template, OutputStream os, String sheet, int insert, Collection<?> set, String ... configs) {
 		List<String> headers = new ArrayList<>();
 		List<String> keys = new ArrayList<>();
-		if(null != configs){
-			for(String config:configs){
+		if(null != configs) {
+			for(String config:configs) {
 				String tmps[] = config.split(":");
-				if(tmps.length == 2){
+				if(tmps.length == 2) {
 					headers.add(tmps[0]);
 					keys.add(tmps[1]);
 				}else{
 					keys.add(config);
 				}
 			}
-			if(headers.size() != keys.size()){
+			if(headers.size() != keys.size()) {
 				headers = new ArrayList<>();
 			}
 		}
@@ -1507,17 +1507,17 @@ public class ExcelUtil {
 	 * @param configs 姓名:NAME或NAME
 	 * @return boolean
 	 */
-	public static boolean export(File template, File file, int insert, Collection<?> set, String ... configs){
+	public static boolean export(File template, File file, int insert, Collection<?> set, String ... configs) {
 		return export(template, file, null, insert, set, configs);
 	}
-	public static boolean export(File template, File file, int insert, Table table){
+	public static boolean export(File template, File file, int insert, Table table) {
 		return export(template, file, null, insert, table);
 	}
-	public static boolean export(File template, OutputStream os, int insert, Collection<?> set, String ... configs){
+	public static boolean export(File template, OutputStream os, int insert, Collection<?> set, String ... configs) {
 		return export(template, os, null, insert, set, configs);
 	}
 
-	public static boolean export(File template, OutputStream os, int insert, Table table){
+	public static boolean export(File template, OutputStream os, int insert, Table table) {
 		return export(template, os, null, insert, table);
 	}
 
@@ -1529,20 +1529,20 @@ public class ExcelUtil {
 	 * @param configs 姓名:NAME或NAME
 	 * @return boolean
 	 */
-	public static boolean export(File template, File file,  Collection<?> set, String ... configs){
+	public static boolean export(File template, File file,  Collection<?> set, String ... configs) {
 		return export(template, file, 0, set, configs);
 	}
-	public static boolean export(File template, File file,  Table table){
+	public static boolean export(File template, File file,  Table table) {
 		return export(template, file,"", 0, table);
 	}
-	public static boolean export(File template, OutputStream os,  Collection<?> set, String ... configs){
+	public static boolean export(File template, OutputStream os,  Collection<?> set, String ... configs) {
 		return export(template, os, 0, set, configs);
 	}
 	public static boolean merge(Sheet sheet, int firstRow, int lastRow, int firstCol, int lastCol) {
 		try {
 			sheet.addMergedRegion(new CellRangeAddress(firstRow, lastRow, firstCol, lastCol));
 			return true;
-		}catch (Exception e){
+		}catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}

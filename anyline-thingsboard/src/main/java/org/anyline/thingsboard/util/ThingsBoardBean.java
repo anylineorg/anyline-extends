@@ -39,7 +39,7 @@ public class ThingsBoardBean implements InitializingBean {
     @Override
     public void afterPropertiesSet()  {
         ACCOUNT = BasicUtil.evl(ACCOUNT, ThingsBoardConfig.DEFAULT_ACCOUNT);
-        if(BasicUtil.isEmpty(ACCOUNT)){
+        if(BasicUtil.isEmpty(ACCOUNT)) {
             return;
         }
         DataRow row = new DataRow();
@@ -50,7 +50,7 @@ public class ThingsBoardBean implements InitializingBean {
         ThingsBoardConfig.register(row);
     }
     @Bean("anyline.thingsboard.init.client")
-    public ThingsBoardClient instance(){
+    public ThingsBoardClient instance() {
         return ThingsBoardClient.getInstance();
     }
 

@@ -42,7 +42,7 @@ public class EasemobBean implements InitializingBean {
     @Override
     public void afterPropertiesSet()  {
         HOST = BasicUtil.evl(HOST, EasemobConfig.DEFAULT_HOST);
-        if(BasicUtil.isEmpty(HOST)){
+        if(BasicUtil.isEmpty(HOST)) {
             return;
         }
         DataRow row = new DataRow();
@@ -55,7 +55,7 @@ public class EasemobBean implements InitializingBean {
     }
 
     @Bean("anyline.easemob.init.util")
-    public EasemobUtil instance(){
+    public EasemobUtil instance() {
         return EasemobUtil.getInstance();
     }
 }

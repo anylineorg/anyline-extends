@@ -36,7 +36,7 @@ public class JPushConfig extends AnylineConfig{
 
 	public static String CONFIG_NAME = "anyline-jpush.xml";
 
-	public static Hashtable<String,AnylineConfig>getInstances(){
+	public static Hashtable<String,AnylineConfig>getInstances() {
 		return instances;
 	}
 	static{
@@ -47,7 +47,7 @@ public class JPushConfig extends AnylineConfig{
 	 * 解析配置文件内容
 	 * @param content 配置文件内容
 	 */
-	public static void parse(String content){
+	public static void parse(String content) {
 		parse(JPushConfig.class, content, instances ,compatibles); 
 	}
 	/**
@@ -58,15 +58,15 @@ public class JPushConfig extends AnylineConfig{
 		load(); 
 	} 
  
-	public static JPushConfig getInstance(){
+	public static JPushConfig getInstance() {
 		return getInstance(DEFAULT_INSTANCE_KEY);
 	} 
-	public static JPushConfig getInstance(String key){
-		if(BasicUtil.isEmpty(key)){
+	public static JPushConfig getInstance(String key) {
+		if(BasicUtil.isEmpty(key)) {
 			key = DEFAULT_INSTANCE_KEY;
 		} 
  
-		if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - JPushConfig.lastLoadTime)/1000 > ConfigTable.getReload() ){
+		if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - JPushConfig.lastLoadTime)/1000 > ConfigTable.getReload() ) {
 			// 重新加载 
 			load(); 
 		} 
@@ -79,9 +79,9 @@ public class JPushConfig extends AnylineConfig{
 		load(instances, JPushConfig.class, CONFIG_NAME);
 		JPushConfig.lastLoadTime = System.currentTimeMillis(); 
 	} 
-	private static void debug(){
+	private static void debug() {
 	}
-	public static JPushConfig register(String instance, String key, String secret){
+	public static JPushConfig register(String instance, String key, String secret) {
 		DataRow row = new DataRow();
 		row.put("APP_KEY",key);
 		row.put("MASTER_SECRET",secret);
@@ -89,7 +89,7 @@ public class JPushConfig extends AnylineConfig{
 		JPushUtil.getInstance(instance);
 		return config;
 	}
-	public static JPushConfig register(String key, String secret){
+	public static JPushConfig register(String key, String secret) {
 		return register(DEFAULT_INSTANCE_KEY, key, secret);
 	}
 }

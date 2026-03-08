@@ -46,13 +46,13 @@ public class SMSTemplate {
     }
 
     public void setStatus(String status) {
-        if(STATUS.AUDIT_STATE_INIT.getCode().equals(status)){
+        if(STATUS.AUDIT_STATE_INIT.getCode().equals(status)) {
             this.status = STATUS.AUDIT_STATE_INIT;
-        }else if(STATUS.AUDIT_STATE_PASS.getCode().equals(status)){
+        }else if(STATUS.AUDIT_STATE_PASS.getCode().equals(status)) {
             this.status = STATUS.AUDIT_STATE_PASS;
-        }else if(STATUS.AUDIT_STATE_NOT_PASS.getCode().equals(status)){
+        }else if(STATUS.AUDIT_STATE_NOT_PASS.getCode().equals(status)) {
             this.status = STATUS.AUDIT_STATE_NOT_PASS;
-        }else if(STATUS.AUDIT_SATE_CANCEL.getCode().equals(status)){
+        }else if(STATUS.AUDIT_SATE_CANCEL.getCode().equals(status)) {
             this.status = STATUS.AUDIT_SATE_CANCEL;
         }
     }

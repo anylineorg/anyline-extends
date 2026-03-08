@@ -50,8 +50,7 @@ public class AlipayConfig extends AnylineConfig{
 
 	public static String CONFIG_NAME = "anyline-alipay.xml";
 
-	public static Hashtable<String,AnylineConfig>getInstances(){
-		return instances;
+	public static Hashtable<String,AnylineConfig>getInstances() {		return instances;
 	}
 	static{
 		init(); 
@@ -61,16 +60,15 @@ public class AlipayConfig extends AnylineConfig{
 	 * 解析配置文件内容
 	 * @param content 配置文件内容
 	 */
-	public static void parse(String content){
-		parse(AlipayConfig.class, content, instances ,compatibles); 
+	public static void parse(String content) {		parse(AlipayConfig.class, content, instances ,compatibles); 
 	}
 
 
-	public static AlipayConfig parse(String key, DataRow row){
-		return parse(AlipayConfig.class, key, row, instances,compatibles);
+	public static AlipayConfig parse(String key, DataRow row) {
+	return parse(AlipayConfig.class, key, row, instances,compatibles);
 	}
-	public static Hashtable<String,AnylineConfig> parse(String column, DataSet<DataRow> set){
-		for(DataRow row:set){
+	public static Hashtable<String,AnylineConfig> parse(String column, DataSet<DataRow> set) {
+		for(DataRow row:set) {
 			String key = row.getString(column);
 			parse(key, row);
 		}
@@ -83,14 +81,14 @@ public class AlipayConfig extends AnylineConfig{
 		// 加载配置文件
 		load(); 
 	} 
-	public static AlipayConfig getInstance(){
+	public static AlipayConfig getInstance() {
 		return getInstance(DEFAULT_INSTANCE_KEY);
 	} 
-	public static AlipayConfig getInstance(String key){
-		if(BasicUtil.isEmpty(key)){
+	public static AlipayConfig getInstance(String key) {
+		if(BasicUtil.isEmpty(key)) {
 			key = DEFAULT_INSTANCE_KEY;
 		} 
-		if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - AlipayConfig.lastLoadTime)/1000 > ConfigTable.getReload() ){
+		if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - AlipayConfig.lastLoadTime)/1000 > ConfigTable.getReload() ) {
 			// 重新加载
 			load(); 
 		} 
@@ -106,13 +104,13 @@ public class AlipayConfig extends AnylineConfig{
 		load(instances, AlipayConfig.class, CONFIG_NAME);
 		AlipayConfig.lastLoadTime = System.currentTimeMillis(); 
 	} 
-	public String getString(String key){
+	public String getString(String key) {
 		return kvs.get(key); 
 	} 
-	private static void debug(){
+	private static void debug() {
 	}
 
-	public static AlipayConfig register(String instance, DataRow row){
+	public static AlipayConfig register(String instance, DataRow row) {
 		AlipayConfig config = parse(AlipayConfig.class, instance, row, instances,compatibles);
 		AlipayUtil.getInstance(instance);
 		return config;

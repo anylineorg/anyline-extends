@@ -33,11 +33,11 @@ public class WechatEnterpriseTransferResult {
 	private String payment_no		;// 微信付款单号	是	1007752501201407033233368018	String(64)	企业付款成功,返回的微信付款单号 
 	private String payment_time		;// 付款成功时间	是	2015-05-19 15:26:59	String(32)	企业付款成功时间 
 	 
-	public WechatEnterpriseTransferResult(){
+	public WechatEnterpriseTransferResult() {
 		 
 	} 
-	public WechatEnterpriseTransferResult(boolean result, String msg){
-		if(result){
+	public WechatEnterpriseTransferResult(boolean result, String msg) {
+		if(result) {
 			this.return_code = "SUCCESS"; 
 		}else{
 			this.return_code = "FAIL"; 

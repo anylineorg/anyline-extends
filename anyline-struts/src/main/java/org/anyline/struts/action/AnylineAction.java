@@ -239,14 +239,14 @@ public class AnylineAction extends AbstractController implements ServletRequestA
 		return success(RESULT_TYPE_DEFAULT,request, data); 
 	} 
 	protected String success(int resultType, HttpServletRequest request, Object ... data) {
-		if(null != data){
+		if(null != data) {
 			if(data.length ==1){				 
 				this.data = data[0]; 
 			}else{
 				this.data = data; 
 			} 
 		} 
-		if(ConfigTable.IS_DEBUG && log.isInfoEnabled()){
+		if(ConfigTable.IS_DEBUG && log.isInfoEnabled()) {
 			log.info("[result:success][url:{}][action return][action:{}]",request.getRequestURI(),getClass().getName());
 		} 
 		if (isAjaxRequest(request) || resultType == RESULT_TYPE_JSON) {
@@ -264,7 +264,7 @@ public class AnylineAction extends AbstractController implements ServletRequestA
 
 	protected String json(HttpServletRequest request, boolean result, Object ... data) {
 		this.result = result; 
-		if(result){
+		if(result) {
 			return success(RESULT_TYPE_JSON,request, data); 
 		}else{
 			return fail(RESULT_TYPE_JSON,data); 
@@ -282,7 +282,7 @@ public class AnylineAction extends AbstractController implements ServletRequestA
 	 * @return String
 	 */ 
 	protected String success(Object data, boolean encrypt) {
-		if(encrypt && null != data){
+		if(encrypt && null != data) {
 			return result(true, DESUtil.encryptParamValue(data.toString()),null);
 		} 
 		return success(request, data); 
@@ -294,23 +294,23 @@ public class AnylineAction extends AbstractController implements ServletRequestA
 	protected String success() {
 		return success(request, data); 
 	} 
-	public String navi(DataSet<DataRow> data, String page, Object ext){
-		if(null == data){
+	public String navi(DataSet<DataRow> data, String page, Object ext) {
+		if(null == data) {
 			data = (DataSet)request.getAttribute("_anyline_navi_data"); 
 		}else{
 			request.setAttribute("_anyline_navi_data", data); 
 		} 
 		PageNavi navi = null; 
-		if(null != data){
+		if(null != data) {
 			navi = data.getNavi(); 
 		} 
 		Map<String, Object> map = super.navi(request, response, data, navi, page, ext); 
 		return success(map); 
 	} 
-	public String navi(DataSet<DataRow> data, String page){
+	public String navi(DataSet<DataRow> data, String page) {
 		return navi(data, page, null); 
 	} 
-	protected String jsonFail(Object... msgs){
+	protected String jsonFail(Object... msgs) {
 		return fail(RESULT_TYPE_JSON, msgs); 
 	} 
 	protected String fail(Object... msgs) {
@@ -339,7 +339,7 @@ public class AnylineAction extends AbstractController implements ServletRequestA
 			} 
 		} 
 		msg = BasicUtil.nvl(msg, "").toString() + BasicUtil.nvl(html, "").toString().trim(); 
-		if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
+		if(ConfigTable.IS_DEBUG && log.isWarnEnabled()) {
 			log.warn("[result:fail][message:{}][url:{}][action return][action:{}]",msg, request.getRequestURI(),getClass().getName()); 
 		} 
 		request.getSession().setAttribute(Constant.SESSION_ATTR_ERROR_MESSAGE, msg); 
@@ -357,38 +357,38 @@ public class AnylineAction extends AbstractController implements ServletRequestA
 	 * @param style  样式path 
 	 * @param data	  数据path 
 	 */ 
-	protected void setTemplate(String layout, String style, String data){
+	protected void setTemplate(String layout, String style, String data) {
 		request.setAttribute(Constant.REQUEST_ATTR_TEMPLATE_LAYOUT_PATH, layout); 
 		try{
-			if(null != style){
-				if(style.startsWith("/")){
+			if(null != style) {
+				if(style.startsWith("/")) {
 					// 从根目录开始 
 				}else{
 					// 根据内容页相对目录 
 					int idx = this.getDir().indexOf("/page/"); 
-					if(idx > 0){
+					if(idx > 0) {
 						String styleDir = this.getDir().replace("/page/", "/template/style/"); 
-						if(!styleDir.endsWith("/")){
+						if(!styleDir.endsWith("/")) {
 							styleDir = styleDir + "/"; 
 						} 
 						style = styleDir + style; 
 					} 
 				} 
 			}else{
-				if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
+				if(ConfigTable.IS_DEBUG && log.isWarnEnabled()) {
 					log.warn("[未设置样式模板] [原因:有可能需要数据url中通过parseJsp合成样式与数据]"); 
 				} 
 			} 
 			request.setAttribute(Constant.REQUEST_ATTR_TEMPLATE_STYLE_PATH, DESUtil.getInstance().encrypt(style)); 
-		}catch(Exception e){
+		}catch(Exception e) {
 			e.printStackTrace(); 
 		} 
 		request.setAttribute(Constant.REQUEST_ATTR_TEMPLATE_DATA_PATH, data); 
 	} 
-	protected void template(String layout, String style, String data){
+	protected void template(String layout, String style, String data) {
 		setTemplate(layout, style, data); 
 	} 
-	protected void template(String template){
+	protected void template(String template) {
 		template(template, null, null); 
 	} 
  

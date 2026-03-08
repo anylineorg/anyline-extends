@@ -59,7 +59,7 @@ public class QQOpenConfig extends QQConfig{
 	public String PAY_KEY_STORE_FILE 	= DEFAULT_PAY_KEY_STORE_FILE	; // 支付证书存放路径地址
 
 
-	public static Hashtable<String,AnylineConfig>getInstances(){
+	public static Hashtable<String,AnylineConfig>getInstances() {
 		return instances;
 	}
 	static{
@@ -71,15 +71,15 @@ public class QQOpenConfig extends QQConfig{
 		load(); 
 	} 
  
-	public static QQOpenConfig getInstance(){
+	public static QQOpenConfig getInstance() {
 		return getInstance(DEFAULT_INSTANCE_KEY);
 	} 
-	public static QQOpenConfig getInstance(String key){
-		if(BasicUtil.isEmpty(key)){
+	public static QQOpenConfig getInstance(String key) {
+		if(BasicUtil.isEmpty(key)) {
 			key = DEFAULT_INSTANCE_KEY;
 		} 
  
-		if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - QQOpenConfig.lastLoadTime)/1000 > ConfigTable.getReload() ){
+		if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - QQOpenConfig.lastLoadTime)/1000 > ConfigTable.getReload() ) {
 			// 重新加载
 			load(); 
 		} 
@@ -92,14 +92,14 @@ public class QQOpenConfig extends QQConfig{
 		load(instances, QQOpenConfig.class, CONFIG_NAME);
 		QQOpenConfig.lastLoadTime = System.currentTimeMillis(); 
 	} 
-	private static void debug(){
+	private static void debug() {
 	}
-	public static QQOpenConfig register(String instance, DataRow row){
+	public static QQOpenConfig register(String instance, DataRow row) {
 		QQOpenConfig config = parse(QQOpenConfig.class, instance, row, instances, compatibles);
 		QQOpenUtil.getInstance(instance);
 		return config;
 	}
-	public static QQOpenConfig register(DataRow row){
+	public static QQOpenConfig register(DataRow row) {
 		return register(DEFAULT_INSTANCE_KEY, row);
 	}
 } 

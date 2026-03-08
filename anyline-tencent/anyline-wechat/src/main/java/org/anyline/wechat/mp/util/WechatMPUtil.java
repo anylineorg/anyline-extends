@@ -49,35 +49,35 @@ public class WechatMPUtil extends WechatUtil {
 
 	static {
 		Hashtable<String, AnylineConfig> configs = WechatMPConfig.getInstances();
-		for(String key:configs.keySet()){
+		for(String key:configs.keySet()) {
 			instances.put(key, getInstance(key));
 		}
 	}
 
 
-	public static WechatMPUtil getInstance(){
+	public static WechatMPUtil getInstance() {
 		return getInstance(WechatMPConfig.DEFAULT_INSTANCE_KEY);
 	} 
-	public WechatMPUtil(WechatMPConfig config){
+	public WechatMPUtil(WechatMPConfig config) {
 		this.config = config; 
 	} 
-	public WechatMPUtil(String key, DataRow config){
+	public WechatMPUtil(String key, DataRow config) {
 		WechatMPConfig conf = WechatMPConfig.parse(key, config); 
 		this.config = conf; 
 		instances.put(key, this); 
 	} 
-	public static WechatMPUtil reg(String key, DataRow config){
+	public static WechatMPUtil reg(String key, DataRow config) {
 		WechatMPConfig conf = WechatMPConfig.register(key, config);
 		WechatMPUtil util = new WechatMPUtil(conf); 
 		instances.put(key, util); 
 		return util; 
 	} 
-	public static WechatMPUtil getInstance(String key){
-		if(BasicUtil.isEmpty(key)){
+	public static WechatMPUtil getInstance(String key) {
+		if(BasicUtil.isEmpty(key)) {
 			key = WechatMPConfig.DEFAULT_INSTANCE_KEY;
 		} 
 		WechatMPUtil util = instances.get(key); 
-		if(null == util){
+		if(null == util) {
 			WechatMPConfig config = WechatMPConfig.getInstance(key);
 			if(null != config) {
 				util = new WechatMPUtil(config);
@@ -92,42 +92,42 @@ public class WechatMPUtil extends WechatUtil {
 	} 
 
 	 
-	public String getAccessToken(){
+	public String getAccessToken() {
 		return WechatUtil.getAccessToken(config);
 	}
 
-	public String getJsapiTicket(){
+	public String getJsapiTicket() {
 		String result = ""; 
 		DataRow row = jsapiTickets.getRow("APP_ID", config.APP_ID); 
-		if(null == row){
+		if(null == row) {
 			String accessToken = getAccessToken(); 
 			row = newJsapiTicket(accessToken); 
-		}else if(row.isExpire()){
+		}else if(row.isExpire()) {
 			jsapiTickets.remove(row); 
 			String accessToken = getAccessToken(); 
 			row = newJsapiTicket(accessToken); 
 		} 
-		if(null != row){
+		if(null != row) {
 			result = row.getString("TICKET"); 
 		} 
 		return result; 
 	} 
-	public DataRow newJsapiTicket(String accessToken){
+	public DataRow newJsapiTicket(String accessToken) {
 		DataRow row = new DataRow();
-		if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
+		if(ConfigTable.IS_DEBUG && log.isWarnEnabled()) {
 			log.warn("[CREATE NEW JSAPI TICKET][token:{}]",accessToken); 
 		}
-		if(BasicUtil.isNotEmpty(accessToken)){
+		if(BasicUtil.isNotEmpty(accessToken)) {
 			row.put("APP_ID", config.APP_ID);
 			String url = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token="+accessToken+"&type=jsapi";
 			String text = HttpUtil.get(url,"UTF-8").getText();
 			log.warn("[CREATE NEW JSAPI TICKET][txt:{}]",text);
 			DataRow json = DataRow.parseJson(text);
-			if(json.containsKey("ticket")){
+			if(json.containsKey("ticket")) {
 				row.put("TICKET", json.getString("ticket"));
 				row.setExpires(json.getInt("expires_in", 0)*1000);
 				row.setExpires(1000*60*5); // 5分钟内有效
-				if(ConfigTable.IS_DEBUG && log.isWarnEnabled()){
+				if(ConfigTable.IS_DEBUG && log.isWarnEnabled()) {
 					log.warn("[CREATE NEW JSAPI TICKET][TICKET:{}]",row.get("TICKET"));
 				}
 			}else{
@@ -149,14 +149,14 @@ public class WechatMPUtil extends WechatUtil {
 	 * @param params  params
 	 * @return String
 	 */ 
-	public String jsapiSign(Map<String, Object> params){
+	public String jsapiSign(Map<String, Object> params) {
 		String sign = ""; 
 		sign = BeanUtil.map2string(params);
 		sign = SHA1Util.sign(sign);
 		return sign; 
 	} 
 	 
-	public Map<String, Object> jsapiSign(String url){
+	public Map<String, Object> jsapiSign(String url) {
 		Map<String, Object> params = new HashMap<>(); 
 		params.put("noncestr", BasicUtil.getRandomLowerString(32)); 
 		params.put("jsapi_ticket", getJsapiTicket()); 
@@ -168,17 +168,17 @@ public class WechatMPUtil extends WechatUtil {
 		return params; 
 	}
 
-	public WechatAuthInfo getAuthInfo(String code){
+	public WechatAuthInfo getAuthInfo(String code) {
 		return WechatUtil.getAuthInfo(config, code);
 	}
-	public String getOpenId(String code){
+	public String getOpenId(String code) {
 		WechatAuthInfo info = getAuthInfo(code);
-		if(null != info && info.isResult()){
+		if(null != info && info.isResult()) {
 			return info.getOpenid();
 		}
 		return null;
 	}
-	public WechatUserInfo getUserInfo(String openid){
+	public WechatUserInfo getUserInfo(String openid) {
 		return WechatUtil.getUserInfo(config,openid);
 	}
 	public String getUnionId(String openid) {
@@ -194,12 +194,12 @@ public class WechatMPUtil extends WechatUtil {
 	 * @param openid  openid
 	 * @return boolean
 	 */ 
-	public boolean isSubscribe(String openid){
+	public boolean isSubscribe(String openid) {
 		WechatUserInfo info = getUserInfo(openid);
-		if(null == info){
+		if(null == info) {
 			return false; 
 		}
-		if("1".equals(info.getSubscribe())){
+		if("1".equals(info.getSubscribe())) {
 			return true; 
 		} 
 		return false; 
@@ -213,24 +213,24 @@ public class WechatMPUtil extends WechatUtil {
 	 * @param state state 原样返回
 	 * @return String
 	 */
-	public static String createAuthUrl(String key, String redirect, SNSAPI_SCOPE scope, String state){
+	public static String createAuthUrl(String key, String redirect, SNSAPI_SCOPE scope, String state) {
 		String url = null;
 		try{
 			WechatConfig config = WechatMPConfig.getInstance(key);
 			String appid = config.APP_ID;
-			if(BasicUtil.isEmpty(scope)){
+			if(BasicUtil.isEmpty(scope)) {
 				scope = SNSAPI_SCOPE.BASE;
 			}
-			if(BasicUtil.isEmpty(redirect)){
+			if(BasicUtil.isEmpty(redirect)) {
 				redirect = config.OAUTH_REDIRECT_URL;
 			}
-			if(BasicUtil.isEmpty(redirect)){
+			if(BasicUtil.isEmpty(redirect)) {
 				redirect = WechatMPConfig.getInstance().OAUTH_REDIRECT_URL;
 			}
 			redirect = URLEncoder.encode(redirect, "UTF-8");
 			url =  WechatConfig.URL_OAUTH + "?appid="+appid+"&redirect_uri="+redirect+"&response_type=code&scope="
 					+scope.getCode()+"&state="+state+",app:"+key+"#wechat_redirect";
-		}catch(Exception e){
+		}catch(Exception e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -243,7 +243,7 @@ public class WechatMPUtil extends WechatUtil {
 	 * @param msg  msg
 	 * @return WechatTemplateMessageResult
 	 */
-	public WechatTemplateMessageResult sendTemplateMessage(WechatTemplateMessage msg){
+	public WechatTemplateMessageResult sendTemplateMessage(WechatTemplateMessage msg) {
 		WechatTemplateMessageResult result = null;
 		String token = getAccessToken();
 		String url = WechatConfig.API_URL_SEND_TEMPLATE_MESSAGE + "?access_token=" + token;
@@ -257,14 +257,14 @@ public class WechatMPUtil extends WechatUtil {
 		}
 		return result;
 	}
-	public WechatTemplateMessageResult sendTemplateMessage(String openId, WechatTemplateMessage msg){
+	public WechatTemplateMessageResult sendTemplateMessage(String openId, WechatTemplateMessage msg) {
 		if(null != msg) {
 			msg.setUser(openId);
 		}
 		return sendTemplateMessage(msg);
 	}
 	// 生成场景二维码
-	public DataRow createQrCode(String code){
+	public DataRow createQrCode(String code) {
 		String token = getAccessToken();
 		String url = "https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token="+token;
 		Map<String, String> params = new HashMap<String, String>();
@@ -279,7 +279,7 @@ public class WechatMPUtil extends WechatUtil {
 	 * @param sec 有效时间(秒)
 	 * @return DataRow
 	 */
-	public DataRow createQrCode(String code, int sec){
+	public DataRow createQrCode(String code, int sec) {
 		String token = getAccessToken();
 		String url = "https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token="+token;
 		Map<String, String> params = new HashMap<String, String>();
@@ -294,7 +294,7 @@ public class WechatMPUtil extends WechatUtil {
 	 * @param tag 标签id
 	 * @return DataRow
 	 */
-	public DataRow addUserTag(List<String> users, int tag){
+	public DataRow addUserTag(List<String> users, int tag) {
 		String token = getAccessToken();
 		String url = "https://api.weixin.qq.com/cgi-bin/tags/members/batchuntagging?access_token="+token;
 		Map<String, Object> params = new HashMap<>();
@@ -309,9 +309,9 @@ public class WechatMPUtil extends WechatUtil {
 	 * @param menu 菜单内容
 	 * @return 菜单id
 	 */
-	public String createMenu(Menu menu){
+	public String createMenu(Menu menu) {
 		String url = "https://api.weixin.qq.com/cgi-bin/menu/addconditional?access_token="+getAccessToken();
-		if(null == menu.getMatchrule()){
+		if(null == menu.getMatchrule()) {
 			url = "https://api.weixin.qq.com/cgi-bin/menu/create?access_token="+getAccessToken();
 		}
 		String result = HttpUtil.post(url, "UTF-8", new StringEntity(menu.toJson(),"UTF-8")).getText();
@@ -325,7 +325,7 @@ public class WechatMPUtil extends WechatUtil {
 	 * 删除所以菜单
 	 * @return DataRow
 	 */
-	public DataRow deleteMenu(){
+	public DataRow deleteMenu() {
 		String url = "https://api.weixin.qq.com/cgi-bin/menu/delete?access_token="+getAccessToken();
 		String result = HttpUtil.get(url).getText();
 		DataRow row = DataRow.parse(result);
@@ -337,7 +337,7 @@ public class WechatMPUtil extends WechatUtil {
 	 * @param menu 菜单id
 	 * @return DataRow
 	 */
-	public DataRow deleteMenu(String menu){
+	public DataRow deleteMenu(String menu) {
 		String param = "{\"menuid\":\""+menu+"\"}";
 		String url = "https://api.weixin.qq.com/cgi-bin/menu/delconditional?access_token="+getAccessToken();
 		String result = HttpUtil.post(url, "UTF-8", new StringEntity(param,"UTF-8")).getText();
@@ -345,7 +345,7 @@ public class WechatMPUtil extends WechatUtil {
 		return row;
 	}
 
-	public DataRow getMenu(){
+	public DataRow getMenu() {
 		String url = "https://api.weixin.qq.com/cgi-bin/menu/get?access_token="+getAccessToken();
 		String result = HttpUtil.get(url).getText();
 		DataRow row = DataRow.parseJson(result);

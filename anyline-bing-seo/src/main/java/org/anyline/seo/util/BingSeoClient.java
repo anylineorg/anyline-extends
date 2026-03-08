@@ -35,15 +35,15 @@ public class BingSeoClient {
 
     static {
         Hashtable<String, AnylineConfig> configs = BingSeoConfig.getInstances();
-        for(String key:configs.keySet()){
+        for(String key:configs.keySet()) {
             instances.put(key, getInstance(key));
         }
     }
-    public static Hashtable<String, BingSeoClient> getInstances(){
+    public static Hashtable<String, BingSeoClient> getInstances() {
         return instances;
     }
 
-    public BingSeoConfig getConfig(){
+    public BingSeoConfig getConfig() {
         return config;
     }
     public static BingSeoClient getInstance() {
@@ -80,8 +80,8 @@ public class BingSeoClient {
         builder.append("{\"siteUrl\":\"").append(config.SITE).append("\"");
         builder.append(",\"urlList\":[");
         boolean first = true;
-        for(String url:urls){
-            if(!first){
+        for(String url:urls) {
+            if(!first) {
                 builder.append(",");
             }
             first = false;
@@ -91,12 +91,12 @@ public class BingSeoClient {
         String body = builder.toString();
         HttpResponse response = HttpUtil.post(headers, api, "UTF-8" ,new StringEntity(body,"utf-8"));
         PushResponse result = response(response);
-        if(!result.isResult()){
+        if(!result.isResult()) {
             log.warn("[push bing fail]\n[msg:{}]\n[content:{}]", result.getMessage(), body);
         }
         return result;
     }
-    public PushResponse push(String url){
+    public PushResponse push(String url) {
         List<String> urls = new ArrayList<>();
         urls.add(url);
         return push(urls);
@@ -109,14 +109,14 @@ public class BingSeoClient {
      }
      {"ErrorCode":2,"Message":"ERROR!!! Quota remaining for today: 89, Submitted: 100"}
     * */
-    private PushResponse response(HttpResponse response){
+    private PushResponse response(HttpResponse response) {
         PushResponse result = new PushResponse();
         result.setResult(false);
         String txt = response.getText();
         result.setMessage(txt);
-        if(response.getStatus() == 200){
+        if(response.getStatus() == 200) {
             result.setResult(true);
-            if(txt.contains("ErrorCode")){
+            if(txt.contains("ErrorCode")) {
                 result.setResult(false);
             }else{
                 result.setResult(true);

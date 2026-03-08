@@ -47,7 +47,7 @@ public class AliPayBean implements InitializingBean {
     @Override
     public void afterPropertiesSet()  {
         APP_ID = BasicUtil.evl(APP_ID, AlipayConfig.DEFAULT_APP_ID);
-        if(BasicUtil.isEmpty(APP_ID)){
+        if(BasicUtil.isEmpty(APP_ID)) {
             return;
         }
         DataRow row = new DataRow();
@@ -63,7 +63,7 @@ public class AliPayBean implements InitializingBean {
         AlipayConfig.register(AlipayConfig.DEFAULT_INSTANCE_KEY, row);
     }
     @Bean("anyline.alipay.init.util")
-    public AlipayUtil instance(){
+    public AlipayUtil instance() {
         return AlipayUtil.getInstance();
     }
 }

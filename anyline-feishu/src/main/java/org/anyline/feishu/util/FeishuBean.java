@@ -36,7 +36,7 @@ public class FeishuBean implements InitializingBean {
     @Override
     public void afterPropertiesSet()  {
         APP_ID = BasicUtil.evl(APP_ID, FeishuConfig.DEFAULT_APP_ID);
-        if(BasicUtil.isEmpty(APP_ID)){
+        if(BasicUtil.isEmpty(APP_ID)) {
             return;
         }
         DataRow row = new DataRow();
@@ -47,7 +47,7 @@ public class FeishuBean implements InitializingBean {
     }
 
     @Bean("anyline.feishu.init.bean")
-    public FeishuUtil instance(){
+    public FeishuUtil instance() {
         return FeishuUtil.getInstance();
     }
 }

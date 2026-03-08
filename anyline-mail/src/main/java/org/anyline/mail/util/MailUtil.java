@@ -34,17 +34,17 @@ public class MailUtil {
 	private static Hashtable<String, MailUtil> instances = new Hashtable<String, MailUtil>();
 
 
-	public MailConfig getConfig(){
+	public MailConfig getConfig() {
 		return config; 
 	}
 
 	static {
 		Hashtable<String, AnylineConfig> configs = MailConfig.getInstances();
-		for(String key:configs.keySet()){
+		for(String key:configs.keySet()) {
 			instances.put(key, getInstance(key));
 		}
 	}
-	public static Hashtable<String, MailUtil> getInstances(){
+	public static Hashtable<String, MailUtil> getInstances() {
 		return instances;
 	}
 

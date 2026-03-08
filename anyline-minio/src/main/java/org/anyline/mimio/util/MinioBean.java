@@ -45,7 +45,7 @@ public class MinioBean implements InitializingBean {
     @Override
     public void afterPropertiesSet()  {
         ACCESS_KEY = BasicUtil.evl(ACCESS_KEY, MinioConfig.DEFAULT_ACCESS_KEY);
-        if(BasicUtil.isEmpty(ACCESS_KEY)){
+        if(BasicUtil.isEmpty(ACCESS_KEY)) {
             return;
         }
         DataRow row = new DataRow();
@@ -60,7 +60,7 @@ public class MinioBean implements InitializingBean {
     }
 
     @Bean("anyline.minio.init.util")
-    public MinioUtil instance(){
+    public MinioUtil instance() {
         return MinioUtil.getInstance();
     }
 }

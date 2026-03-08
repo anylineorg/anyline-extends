@@ -54,7 +54,7 @@ public class MailConfig extends AnylineConfig{
 	public boolean SSL 						= DEFAULT_SSL						;  // 是否需要ssl验证  具体看服务商情况  smtp  25不需要  465需要
 	public boolean AUTO_DOWNLOAD_ATTACHMENT = DEFAULT_AUTO_DOWNLOAD_ATTACHMENT	;
 
-	public static Hashtable<String,AnylineConfig>getInstances(){
+	public static Hashtable<String,AnylineConfig>getInstances() {
 		return instances;
 	}
 	static{
@@ -65,7 +65,7 @@ public class MailConfig extends AnylineConfig{
 	 * 解析配置文件内容
 	 * @param content 配置文件内容
 	 */
-	public static void parse(String content){
+	public static void parse(String content) {
 		parse(MailConfig.class, content, instances ,compatibles);
 	}
 	/**
@@ -75,18 +75,18 @@ public class MailConfig extends AnylineConfig{
 		// 加载默认配置文件
 		load();
 	}
-	public static void setConfigDir(File dir){
+	public static void setConfigDir(File dir) {
 		configDir = dir;
 		init();
 	}
-	public static MailConfig getInstance(){
+	public static MailConfig getInstance() {
 		return getInstance(DEFAULT_INSTANCE_KEY);
 	}
-	public static MailConfig getInstance(String key){
-		if(BasicUtil.isEmpty(key)){
+	public static MailConfig getInstance(String key) {
+		if(BasicUtil.isEmpty(key)) {
 			key = DEFAULT_INSTANCE_KEY;
 		}
-		if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - MailConfig.lastLoadTime)/1000 > ConfigTable.getReload() ){
+		if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - MailConfig.lastLoadTime)/1000 > ConfigTable.getReload() ) {
 			// 重新加载
 			load();
 		}
@@ -99,15 +99,15 @@ public class MailConfig extends AnylineConfig{
 		load(instances, MailConfig.class, CONFIG_NAME);
 		MailConfig.lastLoadTime = System.currentTimeMillis();
 	}
-	private static void debug(){
+	private static void debug() {
 	}
-	public static MailConfig register(String instance, DataRow row){
+	public static MailConfig register(String instance, DataRow row) {
 		MailConfig config = parse(MailConfig.class, instance, row, instances, compatibles);
 		MailUtil.getInstance(instance);
 		Pop3Util.getInstance(instance);
 		return config;
 	}
-	public static MailConfig register(DataRow row){
+	public static MailConfig register(DataRow row) {
 		return register(DEFAULT_INSTANCE_KEY, row);
 	}
 } 

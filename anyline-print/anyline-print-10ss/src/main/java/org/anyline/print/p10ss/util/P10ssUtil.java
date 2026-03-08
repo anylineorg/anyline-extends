@@ -39,29 +39,29 @@ public class P10ssUtil {
     private P10ssConfig config = null;
 
     private static Hashtable<String, P10ssUtil> instances = new Hashtable<String, P10ssUtil>();
-    public static P10ssUtil getInstance(){
+    public static P10ssUtil getInstance() {
         return getInstance(P10ssConfig.DEFAULT_INSTANCE_KEY);
     }
-    public P10ssUtil(P10ssConfig config){
+    public P10ssUtil(P10ssConfig config) {
         this.config = config;
     }
-    public P10ssUtil(String key, DataRow config){
+    public P10ssUtil(String key, DataRow config) {
         P10ssConfig conf = P10ssConfig.parse(key, config);
         this.config = conf;
         instances.put(key, this);
     }
-    public static P10ssUtil reg(String key, DataRow config){
+    public static P10ssUtil reg(String key, DataRow config) {
         P10ssConfig conf = P10ssConfig.reg(key, config);
         P10ssUtil util = new P10ssUtil(conf);
         instances.put(key, util);
         return util;
     }
-    public static P10ssUtil getInstance(String key){
-        if(BasicUtil.isEmpty(key)){
+    public static P10ssUtil getInstance(String key) {
+        if(BasicUtil.isEmpty(key)) {
             key = P10ssConfig.DEFAULT_INSTANCE_KEY;
         }
         P10ssUtil util = instances.get(key);
-        if(null == util){
+        if(null == util) {
             P10ssConfig config = P10ssConfig.getInstance(key);
             if(null != config) {
                 util = new P10ssUtil(config);
@@ -74,7 +74,7 @@ public class P10ssUtil {
     public P10ssConfig getConfig() {
         return config;
     }
-    private DataRow api(P10ssConfig.URL url, Map<String, Object> params){
+    private DataRow api(P10ssConfig.URL url, Map<String, Object> params) {
         DataRow result = null;
         long time = System.currentTimeMillis()/1000;
         params.put("client_id", config.APP_ID);
@@ -86,9 +86,9 @@ public class P10ssUtil {
         String txt = HttpUtil.post(header,url.getCode(), "UTF-8",params).getText();
         log.info("[invoice api][result:{}]", txt);
         DataRow row = DataRow.parseJson(txt);
-        if(row.getInt("error",-1) ==0){
+        if(row.getInt("error",-1) ==0) {
             result = row.getRow("body");
-            if(null == result){
+            if(null == result) {
                 result = new DataRow();
             }
             result.put("success", true);
@@ -101,10 +101,10 @@ public class P10ssUtil {
     }
     // {'error':'0','error_description':'success','body':{'access_token':'xxxx','refresh_token':'xxxx','expires_in':2592000,'scope':'all'}}
     // 自用
-    public DataRow getAccessToken(){
+    public DataRow getAccessToken() {
         DataRow row = null;
         row = accessTokens.getRow("APP_ID", config.APP_ID);
-        if(null == row){
+        if(null == row) {
             row = newAccessToken();
         }else if(row.isExpire()){//过期刷新
             row = refreshAccessToken(row.getString("refresh_token"));
@@ -113,15 +113,15 @@ public class P10ssUtil {
 
     }
     // 开放平台
-    public DataRow getAccessToken(String code){
+    public DataRow getAccessToken(String code) {
         DataRow row = null;
         row = newAccessToken(code);
         return row;
     }
     // 自用
-    public DataRow newAccessToken(){
+    public DataRow newAccessToken() {
         DataRow row = null;
-        if(BasicUtil.isEmpty(config.ACCESS_TOKEN_SERVER)){
+        if(BasicUtil.isEmpty(config.ACCESS_TOKEN_SERVER)) {
             Map<String, Object> params = new HashMap<>();
             params.put("grant_type", "client_credentials");
             params.put("scope","all");
@@ -139,9 +139,9 @@ public class P10ssUtil {
         return row;
     }
     // 开放平台
-    public DataRow newAccessToken(String code){
+    public DataRow newAccessToken(String code) {
         DataRow row = null;
-//       if(BasicUtil.isEmpty(config.ACCESS_TOKEN_SERVER)){
+//       if(BasicUtil.isEmpty(config.ACCESS_TOKEN_SERVER)) {
         Map<String, Object> params = new HashMap<>();
         params.put("grant_type", "authorization_code");			// 开放平台
         params.put("code",code);
@@ -150,7 +150,7 @@ public class P10ssUtil {
         log.info("[new access token][code:{}][token:{}]", code, row);
 /*        }else{
             String url = config.ACCESS_TOKEN_SERVER+ "?appid="+config.APP_ID+"&secret="+config.APP_SECRET;
-            if(BasicUtil.isNotEmpty(code)){
+            if(BasicUtil.isNotEmpty(code)) {
                 url += "&code="+code;
             }
             String text = HttpUtil.post(url,"UTF-8").getText();
@@ -160,9 +160,9 @@ public class P10ssUtil {
         row.put("APP_ID", config.APP_ID);
         return row;
     }
-    public DataRow refreshAccessToken(String refresh){
+    public DataRow refreshAccessToken(String refresh) {
         DataRow row = null;
-        // if(BasicUtil.isEmpty(config.ACCESS_TOKEN_SERVER)){
+        // if(BasicUtil.isEmpty(config.ACCESS_TOKEN_SERVER)) {
         Map<String, Object> params = new HashMap<>();
         params.put("grant_type", "refresh_token");
         params.put("scope", "all");
@@ -184,10 +184,10 @@ public class P10ssUtil {
      * @param state 状态保持
      * @return url url
      */
-    public String createAuthorizeCodeUrl(String redirect, String state){
+    public String createAuthorizeCodeUrl(String redirect, String state) {
         try {
             redirect = URLEncoder.encode(redirect, "UTF-8");
-        }catch (Exception e){
+        }catch (Exception e) {
             e.printStackTrace();
         }
         String url = "https://open-api.10ss.net/oauth/authorize?response_type=code&client_id="+config.APP_ID+"&redirect_uri="+redirect+"&state="+state;
@@ -214,7 +214,7 @@ public class P10ssUtil {
         DataRow token = getAccessToken();
         params.put("access_token", token.getString("access_token"));
         DataRow row = api(P10ssConfig.URL.ADD_PRINTER, params);
-        if(!row.getBoolean("success",false)){
+        if(!row.getBoolean("success",false)) {
             throw new Exception(row.getString("error"));
         }
     }
@@ -232,7 +232,7 @@ public class P10ssUtil {
         DataRow token = getAccessToken();
         params.put("access_token", token.getString("access_token"));
         DataRow row = api(P10ssConfig.URL.DELETE_PRINTER, params);
-        if(!row.getBoolean("success",false)){
+        if(!row.getBoolean("success",false)) {
             throw new Exception(row.getString("error"));
         }
     }
@@ -256,7 +256,7 @@ public class P10ssUtil {
         params.put("access_token", token.getString("access_token"));
         return api(URL.PRINT_TEXT, params);
     }
-    public DataRow setPush(String machine, P10ssConfig.PUSH_TYPE type, String url, String status){
+    public DataRow setPush(String machine, P10ssConfig.PUSH_TYPE type, String url, String status) {
         DataRow token = getAccessToken();
         Map<String, Object> params = new HashMap<>();
         params.put("machine_code", machine);
@@ -266,13 +266,13 @@ public class P10ssUtil {
         params.put("access_token", token.getString("access_token"));
         return api(URL.CONFIG_PUSH, params);
     }
-    public DataRow openPush(String machine, P10ssConfig.PUSH_TYPE type, String url){
+    public DataRow openPush(String machine, P10ssConfig.PUSH_TYPE type, String url) {
         return setPush(machine, type, url, "open");
     }
-    public DataRow cancelPush(String machine, P10ssConfig.PUSH_TYPE type, String url){
+    public DataRow cancelPush(String machine, P10ssConfig.PUSH_TYPE type, String url) {
         return setPush(machine, type, url, "close");
     }
-    public DataRow cancel(String machine, String order){
+    public DataRow cancel(String machine, String order) {
         DataRow token = getAccessToken();
         Map<String, Object> params = new HashMap<>();
         params.put("machine_code", machine);
@@ -280,14 +280,14 @@ public class P10ssUtil {
         params.put("access_token", token.getString("access_token"));
         return api(URL.PRINT_CANCEL, params);
     }
-    public DataRow cancels(String machine){
+    public DataRow cancels(String machine) {
         DataRow token = getAccessToken();
         Map<String, Object> params = new HashMap<>();
         params.put("machine_code", machine);
         params.put("access_token", token.getString("access_token"));
         return api(URL.PRINT_CANCELS, params);
     }
-    private String sign(long time){
+    private String sign(long time) {
         String result = MD5Util.crypto(config.APP_ID+time+config.APP_SECRET).toLowerCase();
         return result;
     }

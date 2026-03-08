@@ -45,23 +45,23 @@ public class LdapUtil {
 
 	static {
 		Hashtable<String, AnylineConfig> configs = LdapConfig.getInstances();
-		for(String key:configs.keySet()){
+		for(String key:configs.keySet()) {
 			instances.put(key, getInstance(key));
 		}
 	}
-	public static Hashtable<String, LdapUtil> getInstances(){
+	public static Hashtable<String, LdapUtil> getInstances() {
 		return instances;
 	}
 
-	public static LdapUtil getInstance(){
+	public static LdapUtil getInstance() {
 		return getInstance(LdapConfig.DEFAULT_INSTANCE_KEY);
 	} 
-	public static LdapUtil getInstance(String key){
-		if(BasicUtil.isEmpty(key)){
+	public static LdapUtil getInstance(String key) {
+		if(BasicUtil.isEmpty(key)) {
 			key =LdapConfig.DEFAULT_INSTANCE_KEY;
 		}
 		LdapUtil util = instances.get(key);
-		if(null == util){
+		if(null == util) {
 			util = new LdapUtil();
 			LdapConfig config = LdapConfig.getInstance(key);
 			util.config = config;
@@ -79,7 +79,7 @@ public class LdapUtil {
 	public boolean login(String account, String password) throws Exception{
 		try{
 			connect(account, password).close();
-		}catch(Exception e){
+		}catch(Exception e) {
 			log.warn("[ldap login][result:false][msg:{}]", e.toString());
 			throw e;
 		}
@@ -93,7 +93,7 @@ public class LdapUtil {
 	 * @throws Exception 异常 如果抛出异常表示登录失败
 	 */
 	public DirContext connect(String account, String password) throws Exception {
-		if(null != account && !account.endsWith(config.DOMAIN)){
+		if(null != account && !account.endsWith(config.DOMAIN)) {
 			account = account + "@" + config.DOMAIN;
 		}
 		Hashtable<String, Object> env = new Hashtable<String, Object>();
@@ -102,15 +102,15 @@ public class LdapUtil {
 		env.put(Context.PROVIDER_URL, config.URL);			// LDAP的地址:端口
 		env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");//LDAP工厂类
 		env.put(Context.SECURITY_AUTHENTICATION, config.SECURITY_AUTHENTICATION);//认证类型
-		if(config.CONNECT_TIMEOUT > 0){
+		if(config.CONNECT_TIMEOUT > 0) {
 			env.put("com.sun.jndi.ldap.connect.timeout",config.CONNECT_TIMEOUT+"");
 		}
-		if(config.READ_TIMEOUT > 0){
+		if(config.READ_TIMEOUT > 0) {
 			env.put("com.sun.jndi.ldap.read.timeout",config.READ_TIMEOUT+"");
 		}
 		try{
 			dc = new InitialLdapContext(env, null);//连接
-		}catch(Exception e){
+		}catch(Exception e) {
 			log.warn("[ldap connect][result:false][msg:{}]", e.toString());
 			throw e;
 		}
@@ -135,7 +135,7 @@ public class LdapUtil {
 			attrs.put(objclassSet);
 			attrs.put("ou", ou);
 			List<String> keys = BeanUtil.getMapKeys(attributes);
-			for(String key:keys){
+			for(String key:keys) {
 				attrs.put(key, attributes.get(key));
 			}
 			byte[] unicodePassword = null;
@@ -232,7 +232,7 @@ public class LdapUtil {
 			ModificationItem[] mods = new ModificationItem[1];
 			List<String> keys = BeanUtil.getMapKeys(params);
 			int index = 0;
-			for(String key:keys){
+			for(String key:keys) {
 				String value = params.get(key);
 				Attribute attr = new BasicAttribute(key, value);
 				ModificationItem mod = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, attr);

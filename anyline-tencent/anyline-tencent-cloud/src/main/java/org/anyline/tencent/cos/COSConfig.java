@@ -45,7 +45,7 @@ public class COSConfig extends AnylineConfig{
 	public int EXPIRE_SECOND 	= DEFAULT_EXPIRE_SECOND			; // 
 	public static String CONFIG_NAME = "anyline-tencent-cos.xml"; // 
 
-	public static Hashtable<String,AnylineConfig>getInstances(){
+	public static Hashtable<String,AnylineConfig>getInstances() {
 		return instances;
 	}
 	static{
@@ -56,7 +56,7 @@ public class COSConfig extends AnylineConfig{
 	 * 解析配置文件内容
 	 * @param content 配置文件内容
 	 */
-	public static void parse(String content){
+	public static void parse(String content) {
 		parse(COSConfig.class, content, instances ,compatibles); 
 	}
 	/**
@@ -66,19 +66,19 @@ public class COSConfig extends AnylineConfig{
 		// 加载配置文件 
 		load(); 
 	} 
-	public static void setConfigDir(File dir){
+	public static void setConfigDir(File dir) {
 		configDir = dir; 
 		init(); 
 	} 
-	public static COSConfig getInstance(){
+	public static COSConfig getInstance() {
 		return getInstance(DEFAULT_INSTANCE_KEY);
 	} 
-	public static COSConfig getInstance(String key){
-		if(BasicUtil.isEmpty(key)){
+	public static COSConfig getInstance(String key) {
+		if(BasicUtil.isEmpty(key)) {
 			key = DEFAULT_INSTANCE_KEY;
 		} 
  
-		if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - COSConfig.lastLoadTime)/1000 > ConfigTable.getReload() ){
+		if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - COSConfig.lastLoadTime)/1000 > ConfigTable.getReload() ) {
 			// 重新加载 
 			load(); 
 		} 
@@ -93,13 +93,13 @@ public class COSConfig extends AnylineConfig{
 		load(instances, COSConfig.class, CONFIG_NAME);
 		COSConfig.lastLoadTime = System.currentTimeMillis(); 
 	} 
-	private static void debug(){
+	private static void debug() {
 	}
-	public static COSConfig register(String instance, DataRow row){
+	public static COSConfig register(String instance, DataRow row) {
 		COSConfig config = parse(COSConfig.class, instance, row, instances, compatibles);
 		return config;
 	}
-	public static COSConfig register(DataRow row){
+	public static COSConfig register(DataRow row) {
 		return register(DEFAULT_INSTANCE_KEY, row);
 	}
 } 

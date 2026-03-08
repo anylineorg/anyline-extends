@@ -42,7 +42,7 @@ public class HuaweiMapBean implements InitializingBean {
         }
     }
     @Bean("anyline.huawei.map.init.client")
-    public HuaweiMapClient instance(){
+    public HuaweiMapClient instance() {
         return HuaweiMapClient.getInstance();
     }
 }

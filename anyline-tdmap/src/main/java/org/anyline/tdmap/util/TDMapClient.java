@@ -48,11 +48,11 @@ public class TDMapClient extends AbstractMapClient implements MapClient {
 	public TDMapConfig config = null;
 	private static Hashtable<String, TDMapClient> instances = new Hashtable<>();
 
-	public static Hashtable<String, TDMapClient> getInstances(){
+	public static Hashtable<String, TDMapClient> getInstances() {
 		return instances;
 	}
 
-	public TDMapConfig getConfig(){
+	public TDMapConfig getConfig() {
 		return config;
 	}
 	public static TDMapClient getInstance() {
@@ -88,20 +88,20 @@ public class TDMapClient extends AbstractMapClient implements MapClient {
 	 * @param keyword 关键词
 	 * @return List
 	 */
-	public List<Coordinate> poi(String city, String category, String keyword){
+	public List<Coordinate> poi(String city, String category, String keyword) {
 		List<Coordinate> coordinates = new ArrayList<>();
 		String api = "/v2/search";
 		Map<String, Object> params = new HashMap<>();
-		if(BasicUtil.isNotEmpty(keyword)){
+		if(BasicUtil.isNotEmpty(keyword)) {
 			params.put("keyWord", keyword);
 		}
-		if(!city.startsWith("156")){
+		if(!city.startsWith("156")) {
 			city = "156" + city;
 		}
 		city = BasicUtil.fillRChar(city, "0",9);
 		params.put("specify", city);
 		params.put("queryType", 12);
-		if(BasicUtil.isNotEmpty(category)){
+		if(BasicUtil.isNotEmpty(category)) {
 			params.put("dataTypes", category);
 		}
 		params.put("show", 2);
@@ -112,12 +112,12 @@ public class TDMapClient extends AbstractMapClient implements MapClient {
 			params.put("count", count);
 			params.put("start", start);
 			DataRow row = get(TDMapConfig.DEFAULT_HOST, api, params);
-			if(null != row){
+			if(null != row) {
 				DataSet<DataRow> set = row.getSet("pois");
 				if(null != set) {
-					for(DataRow item:set){
+					for(DataRow item:set) {
 						Coordinate coordinate = poi(item);
-						if(!maps.containsKey(coordinate.getId())){
+						if(!maps.containsKey(coordinate.getId())) {
 							coordinates.add(coordinate);
 						}
 						maps.put(coordinate.getId(), coordinate);
@@ -145,12 +145,12 @@ public class TDMapClient extends AbstractMapClient implements MapClient {
 ///http://api.tianditu.gov.cn/v2/search?postStr={%22keyWord%22:%22%E5%85%AC%E5%9B%AD%22,%22level%22:12,%22queryRadius%22:5000,%22pointLonlat%22:%22116.48016,39.93136%22,%22queryType%22:3,%22start%22:0,%22count%22:10,%22show%22:2}&type=query&tk=f232b5b5a4f8cac146f03860e8dcacf4
 		//http://api.tianditu.gov.cn/v2/search?postStr={"keyWord":"公园","level":12,"queryRadius":5000,"pointLonlat":"116.48016,39.93136","queryType":3,"start":0,"count":10}&type=query&tk=您的密钥
 		Map<String, Object> params = new HashMap<>();
-		if(BasicUtil.isNotEmpty(keyword)){
+		if(BasicUtil.isNotEmpty(keyword)) {
 			params.put("keyWord", keyword);
 		}
 		params.put("pointLonlat", lng + "," + lat);
 		params.put("queryRadius", radius);
-		if(BasicUtil.isNotEmpty(category)){
+		if(BasicUtil.isNotEmpty(category)) {
 			params.put("dataTypes", category);
 		}
 		params.put("queryType", "3");
@@ -163,12 +163,12 @@ public class TDMapClient extends AbstractMapClient implements MapClient {
 			params.put("count", count);
 			params.put("start", start);
 			DataRow row = get(TDMapConfig.DEFAULT_HOST, api, params);
-			if(null != row){
+			if(null != row) {
 				DataSet<DataRow> set = row.getSet("pois");
 				if(null != set) {
-					for(DataRow item:set){
+					for(DataRow item:set) {
 						Coordinate coordinate = poi(item);
-						if(!maps.containsKey(coordinate.getId())){
+						if(!maps.containsKey(coordinate.getId())) {
 							coordinates.add(coordinate);
 						}
 						maps.put(coordinate.getId(), coordinate);
@@ -190,7 +190,7 @@ public class TDMapClient extends AbstractMapClient implements MapClient {
 		return null;
 	}
 
-	private Coordinate poi(DataRow row){
+	private Coordinate poi(DataRow row) {
 		Coordinate coordinate = new Coordinate();
 		coordinate.setPoiCategoryName(row.getString("typeName"));
 		coordinate.setPoiCategoryCode(row.getString("typeCode"));
@@ -200,28 +200,28 @@ public class TDMapClient extends AbstractMapClient implements MapClient {
 		coordinate.setId(row.getString("hotPointID"));
 		coordinate.setTel(row.getString("phone"));
 		String province = row.getString("provinceCode");
-		if(null != province){
-			if(province.startsWith("156")){
+		if(null != province) {
+			if(province.startsWith("156")) {
 				province = province.substring(3);
 			}
-			if(province.endsWith("0000")){
+			if(province.endsWith("0000")) {
 				province = province.substring(0, 2);
 			}
 		}
 		coordinate.setProvinceCode(province);
 		String city = row.getString("cityCode");
-		if(null != city){
-			if(city.startsWith("156")){
+		if(null != city) {
+			if(city.startsWith("156")) {
 				city = city.substring(3);
 			}
-			if(city.endsWith("00")){
+			if(city.endsWith("00")) {
 				city = city.substring(0, 4);
 			}
 		}
 		coordinate.setCityCode(city);
 		String county = row.getString("countyCode");
-		if(null != county){
-			if(county.startsWith("156")){
+		if(null != county) {
+			if(county.startsWith("156")) {
 				county = county.substring(3);
 			}
 		}
@@ -234,36 +234,39 @@ public class TDMapClient extends AbstractMapClient implements MapClient {
 		return coordinate;
 	}
 	public DataRow get(String host, String api, Map<String, Object> params) {
+		if(limit()) {
+			return null;
+		}
 		DataRow row = null;
 		String query = null;
 		try {
 			query = URLEncoder.encode(BeanUtil.map2json(params), "UTF-8");
-		}catch (Exception ignore) {
+		} catch (Exception ignore) {
 		}
 		String url = host + api + "?postStr="+ query+"&type=query&tk="+config.KEY;
 		HttpResponse response = HttpUtil.get(url);
 		int status = response.getStatus();
 		if(status == 200) {
 			String txt = response.getText();
-			if(null != TDMapConfig.CACHE_DIR){
-				File dir = new File(TDMapConfig.CACHE_DIR, config.KEY +"/"+api.replace("/","_")+"/"+ params.get("queryType") +"/"+ DateUtil.format("yyyyMMddHH"));
-				File file = new File(dir, System.currentTimeMillis()+"_"+BasicUtil.getRandomString(8)+".txt");
-				FileUtil.write(BeanUtil.map2json(params)+"\r\n"+txt, file);
+			if(null != TDMapConfig.CACHE_DIR) {
+				File dir = new File(TDMapConfig.CACHE_DIR, config.KEY + "/" + api.replace("/","_") + "/" + params.get("queryType") + "/" + DateUtil.format("yyyyMMddHH"));
+				File file = new File(dir, System.currentTimeMillis() + "_" + BasicUtil.getRandomString(8) + ".txt");
+				FileUtil.write(BeanUtil.map2json(params) + "\r\n" + txt, file);
 			}
 			row = DataRow.parseJson(txt);
-			if(null == row){
+			if(null == row) {
 				throw new AnylineException(status);
 			}
-		}else{
+		} else {
 			//{"count":0,"resultType":1,"status":{"cndesc":"specify 不正确，请重新检查","infocode":2001}}
 			String txt = response.getText();
 			log.warn("[执行失败][msg:{}]", txt);
 			row = DataRow.parseJson(txt);
-			if(null != row){
+			if(null != row) {
 				DataRow status_info = row.getRow("STATUS");
 				String infocode = "0";
 				String msg = null;
-				if(null != status_info){
+				if(null != status_info) {
 					infocode = status_info.getString("infocode");
 					msg = status_info.getString("cndesc");
 				}
@@ -277,7 +280,7 @@ public class TDMapClient extends AbstractMapClient implements MapClient {
 	 * @param params  params
 	 * @return String
 	 */ 
-	public String sign(Map<String, Object> params){
+	public String sign(Map<String, Object> params) {
 		params.remove("sig");
 		String sign = ""; 
 		sign = BeanUtil.map2string(params) + config.SECRET;

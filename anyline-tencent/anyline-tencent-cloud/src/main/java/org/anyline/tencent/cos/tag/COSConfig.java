@@ -41,10 +41,10 @@ public class COSConfig extends BaseBodyTag {
     public int doEndTag() throws JspException {
         try{
             COSUtil util = COSUtil.getInstance(key);
-            if(BasicUtil.isEmpty(dir)){
+            if(BasicUtil.isEmpty(dir)) {
                 dir = util.getConfig().DIR;
             }
-            if(BasicUtil.isNotEmpty(dir)){
+            if(BasicUtil.isNotEmpty(dir)) {
                 String yyyy = DateUtil.format("yyyy");
                 String yy = DateUtil.format("yy");
                 String mm = DateUtil.format("MM");
@@ -59,7 +59,7 @@ public class COSConfig extends BaseBodyTag {
                 dir = dir.replace("{d}", dd);
             }
             Map<String, String> map = util.signature(dir, expire);
-            if(BasicUtil.isEmpty(var)){
+            if(BasicUtil.isEmpty(var)) {
                 var = "al.config.cos['tencent']";
             }
             StringBuffer script = new StringBuffer();

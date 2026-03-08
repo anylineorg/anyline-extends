@@ -40,7 +40,7 @@ public class HuaweiMapConfig extends AnylineConfig{
 	private static File configDir;
 	public static String CONFIG_NAME = "anyline-huawei-map.xml";
 
-	public static Hashtable<String,AnylineConfig>getInstances(){
+	public static Hashtable<String,AnylineConfig>getInstances() {
 		return instances;
 	}
 	static{
@@ -53,7 +53,7 @@ public class HuaweiMapConfig extends AnylineConfig{
 	 * 解析配置文件内容
 	 * @param content 配置文件内容
 	 */
-	public static void parse(String content){
+	public static void parse(String content) {
 		parse(HuaweiMapConfig.class, content, instances ,compatibles); 
 	}
 	/**
@@ -63,19 +63,19 @@ public class HuaweiMapConfig extends AnylineConfig{
 		// 加载配置文件 
 		load(); 
 	} 
-	public static void setConfigDir(File dir){
+	public static void setConfigDir(File dir) {
 		configDir = dir; 
 		init(); 
 	} 
-	public static HuaweiMapConfig getInstance(){
+	public static HuaweiMapConfig getInstance() {
 		return getInstance(DEFAULT_KEY); 
 	} 
-	public static HuaweiMapConfig getInstance(String key){
-		if(BasicUtil.isEmpty(key)){
+	public static HuaweiMapConfig getInstance(String key) {
+		if(BasicUtil.isEmpty(key)) {
 			key = DEFAULT_KEY; 
 		} 
  
-		if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - HuaweiMapConfig.lastLoadTime)/1000 > ConfigTable.getReload() ){
+		if(ConfigTable.getReload() > 0 && (System.currentTimeMillis() - HuaweiMapConfig.lastLoadTime)/1000 > ConfigTable.getReload() ) {
 			// 重新加载 
 			load(); 
 		} 
@@ -88,7 +88,7 @@ public class HuaweiMapConfig extends AnylineConfig{
 		load(instances, HuaweiMapConfig.class, CONFIG_NAME);
 		HuaweiMapConfig.lastLoadTime = System.currentTimeMillis(); 
 	} 
-	private static void debug(){
+	private static void debug() {
 	}
 
 	public static HuaweiMapConfig register(String instance, DataRow row) {

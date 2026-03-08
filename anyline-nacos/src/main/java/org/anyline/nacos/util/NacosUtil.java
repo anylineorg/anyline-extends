@@ -44,7 +44,7 @@ public class NacosUtil {
 
 	static {
 		Hashtable<String, AnylineConfig> configs = NacosConfig.getInstances();
-		for(String key:configs.keySet()){
+		for(String key:configs.keySet()) {
 			NacosUtil instance = getInstance(key);
 			if(null != instance) {
 				instances.put(key, instance);
@@ -53,12 +53,12 @@ public class NacosUtil {
 		}
 	}
 
-	public static Hashtable<String, NacosUtil> getInstances(){
+	public static Hashtable<String, NacosUtil> getInstances() {
 		return instances;
 	}
 
-	public void scan(){
-		if(null == config){
+	public void scan() {
+		if(null == config) {
 			return;
 		}
 
@@ -76,7 +76,7 @@ public class NacosUtil {
 		};
 		try {
 			config(null, ConfigTable.CONFIG_NAME, listener);
-		}catch (Exception e){
+		}catch (Exception e) {
 			log.warn("[nacos config][result:false][group:{}][namespace:{}][class:{}][msg:{}]", config.GROUP, config.NAMESPACE, ConfigTable.class.getSimpleName(),e.toString());
 		}
 
@@ -95,14 +95,14 @@ public class NacosUtil {
 			}
 		}
 		// 自动扫描
-		if(config.AUTO_SCAN){
+		if(config.AUTO_SCAN) {
 			String packages = config.SCAN_PACKAGE;
-			if(BasicUtil.isNotEmpty(packages)){
+			if(BasicUtil.isNotEmpty(packages)) {
 				String[] pks = packages.split(",");
 				if(null != pks) {
 					for (String pk:pks) {
 						List<Class<?>> list = ClassUtil.list(pk, true, AnylineConfig.class, ConfigTable.class);
-						for(Class<?> clazz:list){
+						for(Class<?> clazz:list) {
 							@SuppressWarnings("unchecked")
 							Class<AnylineConfig> configClass = (Class<AnylineConfig>)clazz;
 							String configName = (String)BeanUtil.getFieldValue(clazz, "CONFIG_NAME");
@@ -116,9 +116,9 @@ public class NacosUtil {
 				}
 			}
 			String cls = config.SCAN_CLASS;
-			if(BasicUtil.isNotEmpty(cls)){
+			if(BasicUtil.isNotEmpty(cls)) {
 				String[] clas  = cls.split(",");
-				for(String c:clas){
+				for(String c:clas) {
 					Class clazz = null;
 					try {
 						clazz = Class.forName(c);
@@ -126,22 +126,22 @@ public class NacosUtil {
 						Class<AnylineConfig> configClass = (Class<AnylineConfig>)clazz;
 						String configName = (String)BeanUtil.getFieldValue(clazz, "CONFIG_NAME");
 						config(null, configName, configClass);
-					}catch (Exception e){
+					}catch (Exception e) {
 						log.warn("[nacos config][result:false][class:{}][msg:{}]", c,e.toString());
 					}
 				}
 			}
 		}
 	}
-	public static NacosUtil getInstance(){
+	public static NacosUtil getInstance() {
 		return getInstance(NacosConfig.DEFAULT_INSTANCE_KEY);
 	}
-	public static NacosUtil getInstance(String key){
-		if(BasicUtil.isEmpty(key)){
+	public static NacosUtil getInstance(String key) {
+		if(BasicUtil.isEmpty(key)) {
 			key = NacosConfig.DEFAULT_INSTANCE_KEY;
 		}
 		NacosUtil util = instances.get(key);
-		if(null == util){
+		if(null == util) {
 			util = new NacosUtil();
 			NacosConfig config = NacosConfig.getInstance(key);
 			if(null != config) {
@@ -152,7 +152,7 @@ public class NacosUtil {
 		return util;
 	}
 	public String config(String group, String data, final Class<? extends AnylineConfig> T) throws NacosException{
-		if(BasicUtil.isEmpty(group)){
+		if(BasicUtil.isEmpty(group)) {
 			group = config.GROUP;
 		}
 		log.warn("[nacos config][group:{}][data:{}][class:{}]", group, data, T.getName());
@@ -183,14 +183,14 @@ public class NacosUtil {
 	 * @throws NacosException NacosException
 	 */
 	public String config(String group, String data, Listener listener) throws NacosException{
-		if(BasicUtil.isEmpty(group)){
+		if(BasicUtil.isEmpty(group)) {
 			group = config.GROUP;
 		}
 		log.warn("[nacos config][group:{}][namespace:{}][data:{}][listener:{}]", group, config.NAMESPACE, data, listener);
 		Properties properties = new Properties();
 		properties.put(PropertyKeyConst.NAMESPACE, config.NAMESPACE);
 		String adr = config.ADDRESS;
-		if(!adr.contains(":") && config.PORT > 0){
+		if(!adr.contains(":") && config.PORT > 0) {
 			adr = adr + ":" + config.PORT;
 		}
 		properties.put(PropertyKeyConst.SERVER_ADDR, adr);
@@ -201,27 +201,27 @@ public class NacosUtil {
 		}
 		return content;
 	}
-	public String config(String data){
+	public String config(String data) {
 		try{
 			Listener listener = null;
 			return config(null, data, listener);
-		}catch(Exception e){
+		}catch(Exception e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
-	public String config(String group, String data){
+	public String config(String group, String data) {
 		try{
 			Listener listener = null;
 			return config(group, data, listener);
-		}catch(Exception e){
+		}catch(Exception e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
 
 	public static void parse(Class<? extends AnylineConfig> T, String content) {
-		if(BasicUtil.isEmpty(content)){
+		if(BasicUtil.isEmpty(content)) {
 			log.warn("[nacos config][pull fail][config class:{}]",T.getSimpleName());
 			return;
 		}
@@ -229,7 +229,7 @@ public class NacosUtil {
 		    Class<?> clazz = Class.forName(T.getName());
 		    Method method = clazz.getMethod("parse", String.class);
 		    method.invoke(null, content);
-		}catch(Exception e){
+		}catch(Exception e) {
 			
 		}
 	}

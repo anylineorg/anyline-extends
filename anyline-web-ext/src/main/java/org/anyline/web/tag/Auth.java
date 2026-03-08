@@ -52,25 +52,25 @@ public class Auth extends BaseBodyTag {
 		boolean result = true; 
 		String html = "";
 		String url = "";
-		if(BasicUtil.isEmpty(id)){
+		if(BasicUtil.isEmpty(id)) {
 			id = BasicUtil.getRandomLowerString(10);
 		}
 		 
 		try {
 			log.info("[第三方登录][type:{}]",type);
-			if(encode){
+			if(encode) {
 				String stateValue = state;
 				state = BasicUtil.getRandomLowerString(20);
 				DataSet<DataRow> states = (DataSet)pageContext.getServletContext().getAttribute("auth_states");
-				if(null == states){
+				if(null == states) {
 					states = new DataSet();
 					pageContext.getServletContext().setAttribute("auth_states", states);
 				}else{
 					// 清空过期
 					int size = states.size();
-					for(int i=size-1;i>=0; i--){
+					for(int i=size-1;i>=0; i--) {
 						DataRow item = states.getRow(i);
-						if(item.isExpire(1000*60*5)){
+						if(item.isExpire(1000*60*5)) {
 							states.remove(item);
 						}
 					}
@@ -82,57 +82,57 @@ public class Auth extends BaseBodyTag {
 				
 			}
 			
-			if("wx".equalsIgnoreCase(type) || "wechat".equalsIgnoreCase(type) || "weixin".equalsIgnoreCase(type)){
+			if("wx".equalsIgnoreCase(type) || "wechat".equalsIgnoreCase(type) || "weixin".equalsIgnoreCase(type)) {
 				WechatConfig wechatConfig = WechatMPConfig.getInstance(key);
-				if(null == wechatConfig){
+				if(null == wechatConfig) {
 					log.warn("[第三方登录][微信配置文件不存在][key:{}]",key);
 					result = false;
 				}else{
 					WechatConfig.SNSAPI_SCOPE apiScope = WechatConfig.SNSAPI_SCOPE.BASE;
-					if(WechatConfig.SNSAPI_SCOPE.USERINFO.getCode().equals(scope) || "info".equals(scope)){
+					if(WechatConfig.SNSAPI_SCOPE.USERINFO.getCode().equals(scope) || "info".equals(scope)) {
 						apiScope = WechatConfig.SNSAPI_SCOPE.USERINFO;
 					}
 					url = WechatMPUtil.createAuthUrl(key, redirect, apiScope, state);
 				}
-			}else if("qq".equalsIgnoreCase(type)){
+			}else if("qq".equalsIgnoreCase(type)) {
 				QQMPConfig qqconfig = QQMPConfig.getInstance(key);
-				if(null == qqconfig){
+				if(null == qqconfig) {
 					log.warn("[第三方登录][QQ配置文件不存在][key:{}]",key);
 					result = false;
 				}else{
-					if(BasicUtil.isEmpty(appid)){
+					if(BasicUtil.isEmpty(appid)) {
 						appid = qqconfig.APP_ID;
 					}
 					Map<String, String> map = new HashMap<String, String>();
-					if(null != params){
+					if(null != params) {
 						String[] items = params.split(",");
-						for(String item:items){
+						for(String item:items) {
 							String[] kv = item.split(":");
-							if(kv.length ==2){
+							if(kv.length ==2) {
 								map.put(kv[0], kv[1]);
 							}
 						}
 					}
 					String response_type = "code";
-					if(BasicUtil.isEmpty(scope)){
+					if(BasicUtil.isEmpty(scope)) {
 						scope = "get_user_info";
 					}
-					if(BasicUtil.isEmpty(redirect)){
+					if(BasicUtil.isEmpty(redirect)) {
 						redirect = qqconfig.OAUTH_REDIRECT_URL;
 					}
-					if(BasicUtil.isEmpty(redirect)){
+					if(BasicUtil.isEmpty(redirect)) {
 						redirect = QQMPConfig.getInstance().OAUTH_REDIRECT_URL;
 					}
 					redirect = CodeUtil.urlEncode(redirect, "UTF-8");
 					url =  QQConfig.URL_OAUTH + "?client_id="+appid+"&response_type="+response_type+"&redirect_uri="+redirect+"&scope="+scope+"&state="+state+",app:"+key;
 				}
 			} else if("alipay".equalsIgnoreCase(type)) {
-				if(BasicUtil.isEmpty(scope)){
+				if(BasicUtil.isEmpty(scope)) {
 					scope = "auth_base";
 				}
 				url = AlipayUtil.getInstance(key).createAuthUrl(redirect,scope,state);
 			}else if("feishu".equalsIgnoreCase(type) || "fs".equalsIgnoreCase(type)) {
-				if(BasicUtil.isEmpty(scope)){
+				if(BasicUtil.isEmpty(scope)) {
 					scope = "contact:contact.base:readonly";
 				}
 				FeishuUtil util = FeishuUtil.getInstance(key);
@@ -141,13 +141,13 @@ public class Auth extends BaseBodyTag {
 				}
 			}
 			log.info("[第三方登录][result:{}][url:{}]",result,url);
-			if(result){
+			if(result) {
 				html = "<a href=\""+url+"\" id=\""+id+"\">";
-				if(BasicUtil.isNotEmpty(body)){
+				if(BasicUtil.isNotEmpty(body)) {
 					html += body;
 				}
 				html += "</a>";
-				if(auto){
+				if(auto) {
 					// ((HttpServletResponse)pageContext.getResponse()).sendRedirect(url);
 					html += "<script>location.href = \""+url+"\";</script>";
 					// return EVAL_PAGE;
