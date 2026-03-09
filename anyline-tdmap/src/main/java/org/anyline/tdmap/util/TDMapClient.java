@@ -82,24 +82,24 @@ public class TDMapClient extends AbstractMapClient implements MapClient {
 	}
 
 	/**
-	 * 城市内 poi
-	 * @param city 城市编码
+	 * 行政区 poi
+	 * @param district 行政区编码 一般支持到区县级
 	 * @param category 类别 ","隔开(英文逗号)
 	 * @param keyword 关键词
 	 * @return List
 	 */
-	public List<Coordinate> poi(String city, String category, String keyword) {
+	public List<Coordinate> poi(String district, String category, String keyword) {
 		List<Coordinate> coordinates = new ArrayList<>();
 		String api = "/v2/search";
 		Map<String, Object> params = new HashMap<>();
 		if(BasicUtil.isNotEmpty(keyword)) {
 			params.put("keyWord", keyword);
 		}
-		if(!city.startsWith("156")) {
-			city = "156" + city;
+		if(!district.startsWith("156")) {
+			district = "156" + district;
 		}
-		city = BasicUtil.fillRChar(city, "0",9);
-		params.put("specify", city);
+		district = BasicUtil.fillRChar(district, "0",9);
+		params.put("specify", district);
 		params.put("queryType", 12);
 		if(BasicUtil.isNotEmpty(category)) {
 			params.put("dataTypes", category);

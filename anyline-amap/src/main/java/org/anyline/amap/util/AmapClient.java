@@ -994,15 +994,15 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 
 	/**
 	 *
-	 * @param city 城市 或 区县
+	 * @param district 行政区 一般支持到区县级
 	 * @param category 类别
 	 * @param keyword 关键定
 	 * @return List
 	 */
-	public List<Coordinate> poi(String city, String category, String keyword) {
+	public List<Coordinate> poi(String district, String category, String keyword) {
 		List<Coordinate> coordinates = new ArrayList<>();
 		String api = "/v3/place/text";
-
+		int vol = 25;
 		Map<String, Object> params = new HashMap<>();
 		if(BasicUtil.isNotEmpty(keyword)) {
 			params.put("keywords", keyword);
@@ -1010,9 +1010,9 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 		if(BasicUtil.isNotEmpty(category)) {
 			params.put("types", category);
 		}
-		params.put("city", city);
+		params.put("city", district);
 		params.put("extensions", "all");
-		params.put("offset", 25);
+		params.put("offset", vol);
 		params.put("key", config.KEY);
 		int page = 1;
 		Map<String, Coordinate> maps = new HashMap<>();
@@ -1037,11 +1037,11 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 				maps.put(coordinate.getId(), coordinate);
 			}
 			//最后一页小于20个
-			if(set.size() < 25) {
+			if(set.size() < vol) {
 				break;
 			}
 			//有10个以上重复的中断(算成最后一页)
-			if(exists > 10) {
+			if(exists > vol/2){
 				break;
 			}
 		}

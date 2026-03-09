@@ -299,30 +299,31 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
     }
     /**
      * 附近poi https://lbs.qq.com/service/webService/webServiceGuide/search/webServiceSearch
-     * @param city 城市
+     * @param district 行政区 一般支持到区县级
      * @param category 类别
      * @param keyword 关键词
      * @return List
      */
     @Override
-    public List<Coordinate> poi(String city, String category, String keyword) {
+    public List<Coordinate> poi(String district, String category, String keyword) {
         List<Coordinate> coordinates = new ArrayList<>();
         String api = "/ws/place/v1/search";
 
+        int page = 1;
+        int vol = 20;
         Map<String, Object> params = new HashMap<>();
         if(BasicUtil.isNotEmpty(keyword)) {
             params.put("keyword", keyword);
         }
-        String boundary = "region("+city+",0)";
+        String boundary = "region("+district+",0)";
         params.put("boundary", boundary);
         //filter=category= 241000,241100
         if(BasicUtil.isNotEmpty(category)) {
             String filter = "category="+category;
             params.put("filter", filter);
         }
-        params.put("page_size", 20);
+        params.put("page_size", vol);
         params.put("added_fields", "category_code");
-        int page = 1;
         Map<String, Coordinate> maps = new HashMap<>();
         while (true) {
             params.put("page_index", page++);
@@ -345,11 +346,11 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
                 maps.put(coordinate.getId(), coordinate);
             }
             //最后一页小于20个
-            if(set.size() < 20) {
+            if(set.size() < vol) {
                 break;
             }
             //有10个以上重复的中断(算成最后一页)
-            if(exists > 10) {
+            if(exists > vol/2) {
                 break;
             }
 

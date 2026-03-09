@@ -35,10 +35,12 @@ public class HuaweiMapBean implements InitializingBean {
 
     @Override
     public void afterPropertiesSet()  {
-        HuaweiMapConfig config = HuaweiMapConfig.register(BasicUtil.evl(SECRET, HuaweiMapConfig.DEFAULT_SECRET)
-                , BasicUtil.evl(TABLE, HuaweiMapConfig.DEFAULT_TABLE));
-        if(BasicUtil.isNotEmpty(this.HOST)) {
-            config.HOST = this.HOST;
+        if(BasicUtil.isNotEmpty(HuaweiMapConfig.DEFAULT_SECRET)) {
+            HuaweiMapConfig config = HuaweiMapConfig.register(BasicUtil.evl(SECRET, HuaweiMapConfig.DEFAULT_SECRET)
+                    , BasicUtil.evl(TABLE, HuaweiMapConfig.DEFAULT_TABLE));
+            if (BasicUtil.isNotEmpty(this.HOST)) {
+                config.HOST = this.HOST;
+            }
         }
     }
     @Bean("anyline.huawei.map.init.client")

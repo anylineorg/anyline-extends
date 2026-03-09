@@ -206,7 +206,7 @@ public class HuaweiMapClient extends AbstractMapClient implements MapClient {
 	public List<Coordinate> poi(Double lng, Double lat, int radius, String category, String keyword) {
 		List<Coordinate> coordinates = new ArrayList<>();
 		String api = "/mapApi/v1/siteService/nearbySearch";
-
+		int vol = 20;
 		Map<String, Object> params = new HashMap<>();
 		if(BasicUtil.isNotEmpty(keyword)) {
 			params.put("query", keyword);
@@ -220,39 +220,90 @@ public class HuaweiMapClient extends AbstractMapClient implements MapClient {
 		if(BasicUtil.isNotEmpty(category)) {
 			params.put("hwPoiTypes", category);
 		}
-		params.put("pageSize", 20);
+		params.put("pageSize", vol);
 
 		int page = 1;
 		Map<String, Coordinate> maps = new HashMap<>();
 		while (true) {
 			params.put("pageIndex", page++);
 			DataRow row = post(HuaweiMapConfig.DEFAULT_HOST, api, params);
-			if(null != row) {
-				DataSet<DataRow> set = row.getSet("sites");
-				int exists = 0;
-				if(null != set && !set.isEmpty()) {
-					for(DataRow item:set) {
-						Coordinate coordinate = new Coordinate();
-						parse(coordinate,item);
-						if(maps.containsKey(coordinate.getId())) {
-							exists++;
-						}else{
-							coordinates.add(coordinate);
-						}
-						maps.put(coordinate.getId(), coordinate);
-					}
-					//最后一页小于20个
-					if(set.size() < 25) {
-						break;
-					}
-					//有10个以上重复的中断(算成最后一页)
-					if(exists > 10) {
-						break;
-					}
-				}else{
-					break;
+			if (null == row) {
+				break;
+			}
+			DataSet<DataRow> set = row.getSet("sites");
+			int exists = 0;
+			if (null == set || set.isEmpty()) {
+				break;
+			}
+			for (DataRow item : set) {
+				Coordinate coordinate = new Coordinate();
+				parse(coordinate, item);
+				if (maps.containsKey(coordinate.getId())) {
+					exists++;
+				} else {
+					coordinates.add(coordinate);
 				}
-			}else{
+				maps.put(coordinate.getId(), coordinate);
+			}
+			if (set.size() < vol) {
+				break;
+			}
+			if (exists > vol/2) {
+				break;
+			}
+		}
+		return coordinates;
+	}
+	/**
+	 * 行政区内 POI
+	 * @param district 行政区 一般支持到区县级
+	 * @param category 类别
+	 * @param keyword 关键词
+	 * @return List
+	 */
+	@Override
+	public List<Coordinate> poi(String district, String category, String keyword) {
+		List<Coordinate> coordinates = new ArrayList<>();
+		String api = "/mapApi/v1/siteService/nearbySearch";
+		int vol = 20;
+		Map<String, Object> params = new HashMap<>();
+		if(BasicUtil.isNotEmpty(keyword)) {
+			params.put("query", keyword);
+		}
+		params.put("cityId", district);
+
+		if(BasicUtil.isNotEmpty(category)) {
+			params.put("hwPoiTypes", category);
+		}
+		params.put("pageSize", vol);
+
+		int page = 1;
+		Map<String, Coordinate> maps = new HashMap<>();
+		while (true) {
+			params.put("pageIndex", page++);
+			DataRow row = post(HuaweiMapConfig.DEFAULT_HOST, api, params);
+			if (null == row) {
+				break;
+			}
+			DataSet<DataRow> set = row.getSet("sites");
+			int exists = 0;
+			if (null == set || set.isEmpty()) {
+				break;
+			}
+			for (DataRow item : set) {
+				Coordinate coordinate = new Coordinate();
+				parse(coordinate, item);
+				if (maps.containsKey(coordinate.getId())) {
+					exists++;
+				} else {
+					coordinates.add(coordinate);
+				}
+				maps.put(coordinate.getId(), coordinate);
+			}
+			if (set.size() < vol) {
+				break;
+			}
+			if (exists > vol/2) {
 				break;
 			}
 		}
@@ -273,7 +324,9 @@ public class HuaweiMapClient extends AbstractMapClient implements MapClient {
 		Map<String, String> headers = new HashMap<>();
 		headers.put("Content-Type", "application/json");
 		headers.put("Accept", "application/json");
-		HttpResponse response = HttpUtil.post(headers, host + api + "?key="+config.SECRET,"UTF-8", entity);
+		headers.put("Authorization", "Bearer " + config.SECRET);
+
+		HttpResponse response = HttpUtil.post(headers, host + api,"UTF-8", entity);
 		int status = response.getStatus();
 		String txt = response.getText();
 		row = DataRow.parseJson(txt);
@@ -283,7 +336,7 @@ public class HuaweiMapClient extends AbstractMapClient implements MapClient {
 			File file = new File(dir, System.currentTimeMillis()+"_"+BasicUtil.getRandomString(8)+".txt");
 			FileUtil.write(body+"\r\n"+txt, file);
 		}
-		if (!"0".equalsIgnoreCase(code)) {
+		if (!"0".equals(code) && !"010004".equals(code)) {
 			// [逆地理编码][执行失败][code:10044][info:USER_DAILY_QUERY_OVER_LIMIT]
 			log.warn("[{}][执行失败][code:{}][info:{}]", api, row.getString("INFOCODE"), row.getString("INFO"));
 			log.warn("[{}}][response:{}]", txt);

@@ -124,9 +124,32 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
         params.put("location",coordinate.getLat()+","+coordinate.getLng());
         params.put("extensions_town","true");
         params.put("output","json");
+        Map<String, Object> ps = coordinate.getParams();
+        params.put("extensions_poi",1);
+        params.put("entire_poi",1);
+        if(ps.containsKey("poi_types")){
+            params.put("poi_types", ps.get("poi_types"));
+        }
+        if(ps.containsKey("radius")){
+            params.put("radius", ps.get("radius"));
+        }
+        if(ps.containsKey("entire_poi")){
+            params.put("entire_poi", ps.get("entire_poi"));
+        }
+        if(ps.containsKey("coordtype")){
+            params.put("coordtype", ps.get("coordtype"));
+        }
+        if(ps.containsKey("ret_coordtype")){
+            params.put("ret_coordtype", ps.get("ret_coordtype"));
+        }
+
+        if(ps.containsKey("sort_strategy")){
+            params.put("sort_strategy", ps.get("sort_strategy"));
+        }
 
         DataRow row = api(api, params);
         if(null != row) {
+            row = row.getRow("result");
             parse(coordinate, row);
             //解析附近poi
             DataSet<DataRow> pois = row.getSet("pois");
@@ -158,38 +181,39 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
     }
     /**
      *
-     * @param city 城市 或 区县
+     * @param district 行政区 一般支持到区县级
      * @param category 类别(中文)
      * @param keyword 关键定
      * @return List
      */
-    public List<Coordinate> poi(String city, String category, String keyword) {
+    public List<Coordinate> poi(String district, String category, String keyword) {
         List<Coordinate> coordinates = new ArrayList<>();
         String api = "/place/v3/region";
 
-        Map<String, Object> params = new HashMap<>();
-        if(BasicUtil.isNotEmpty(keyword)) {
-            params.put("query", keyword);
-        }
-        if(BasicUtil.isNotEmpty(category)) {
-            params.put("type", category);
-        }
-        params.put("page_size", 20);
-        params.put("region", city);
-        params.put("extensions", "all");
-        params.put("scope", 2);//详细POI
 
         int page = 0; //从0开始
+        int vol = 20;
         Map<String, Coordinate> maps = new HashMap<>();
         int pages = 0;
         while (pages == 0 || page <= pages) {
+            Map<String, Object> params = new HashMap<>();
+            if(BasicUtil.isNotEmpty(keyword)) {
+                params.put("query", keyword);
+            }
+            if(BasicUtil.isNotEmpty(category)) {
+                params.put("type", category);
+            }
+            params.put("page_size", vol);
+            params.put("region", district);
+            params.put("extensions", "all");
+            params.put("scope", 2);//详细POI
             params.put("page_num", page++);
             DataRow row = api(api, params);
             if(null == row) {
                 break;
             }
             int total = row.getInt("total");
-            pages = (total-1)/20+1;
+            pages = (total-1)/vol+1;
             DataSet<DataRow> set = row.getSet("results");
             if(null == set || set.isEmpty()) {
                 break;
@@ -226,10 +250,10 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
         coordinate.setId(row.getString("uid"));
         coordinate.setTitle(row.getString("name"));
 
-        DataRow point = row.getRow("location");
-        if(null != point) {
-            coordinate.setLng(point.getDouble("lng"));
-            coordinate.setLat(point.getDouble("lat"));
+        DataRow location = row.getRow("location");
+        if(null != location) {
+            coordinate.setLng(location.getDouble("lng"));
+            coordinate.setLat(location.getDouble("lat"));
         }
         String address = row.getString("address");
         if(BasicUtil.isEmpty(address)) {
@@ -238,18 +262,28 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
         coordinate.setAddress(address);
         coordinate.setTel(row.getString("telephone"));
         DataRow adr = row.getRow("result","addressComponent");
+        if(null == adr) {
+            adr = row.getRow("addressComponent");
+        }
         if(null == adr){
             adr = row;
         }
+        String town_code = adr.getString("town_code");
+        coordinate.setTownCode(town_code);
         String adcode = adr.getString("adcode");
-        String provinceCode = adcode.substring(0,2);
-        String cityCode = adcode.substring(0,4);
-        coordinate.setProvinceCode(provinceCode);
+        if(null == adcode && null != town_code) {
+            adcode = town_code.substring(0, 6);
+        }
+        if (null != adcode) {
+            String provinceCode = adcode.substring(0,2);
+            String cityCode = adcode.substring(0,4);
+            coordinate.setProvinceCode(provinceCode);
+            coordinate.setCityCode(cityCode);
+        }
         coordinate.setProvinceName(adr.getString("province"));
-        coordinate.setCityCode(cityCode);
         coordinate.setCityName(adr.getString("city"));
-        coordinate.setCountyName(adr.getString("district"));
-        coordinate.setCountyCode(adr.getString("adcode"));
+        coordinate.setCountyName(adr.getString("area"));
+        coordinate.setCountyCode(adcode);
         coordinate.setTownCode(adr.getString("town_code"));
         coordinate.setTownName(adr.getString("town"));
 
@@ -258,6 +292,10 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
         String number = adr.getString("street_number");
         if(null != number && null != street) {
             number = number.replace(street,"");
+        }
+        DataRow detail_info = row.getRow("detail_info");
+        if(null != detail_info) {
+            coordinate.setPoiCategoryName(detail_info.getString("classified_poi_tag"));
         }
         coordinate.setStreet(street);
         coordinate.setStreetNumber(number);
@@ -308,11 +346,14 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
     }
     public void sign(String api, Map<String, Object> params) {
         params.put("ak", config.AK);
+        params.remove("sn");
         try {
             for (String key : params.keySet()) {
-                String value = (String)params.get(key);
-                value = URLEncoder.encode(value, "UTF-8");
-                params.put(key, value);
+                Object value = params.get(key);
+                if(value instanceof String) {
+                    value = URLEncoder.encode(value.toString(), "UTF-8");
+                    params.put(key, value);
+                }
             }
             String str = api + "?" + BeanUtil.map2string(params) + config.SK;
             str = URLEncoder.encode(str, "UTF-8");
