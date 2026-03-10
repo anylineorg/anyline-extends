@@ -28,6 +28,7 @@ import java.util.Hashtable;
 public class TDMapConfig extends AnylineConfig{
 	private static Hashtable<String,AnylineConfig> instances = new Hashtable<>();
 	public static String CACHE_DIR 				= null;
+	public static boolean READ_CACHE 			= false;
 	public static String DEFAULT_YUNTU_HOST		= "http://api.tianditu.gov.cn";
 	public static String DEFAULT_HOST			= "http://api.tianditu.gov.cn";
 	public static String DEFAULT_KEY			= "";

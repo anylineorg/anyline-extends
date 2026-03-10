@@ -189,8 +189,6 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
     public List<Coordinate> poi(String district, String category, String keyword) {
         List<Coordinate> coordinates = new ArrayList<>();
         String api = "/place/v3/region";
-
-
         int page = 0; //从0开始
         int vol = 20;
         Map<String, Coordinate> maps = new HashMap<>();
@@ -220,11 +218,81 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
             }
             for(DataRow item:set) {
                 Coordinate coordinate = new Coordinate();
+                if(BasicUtil.isEmpty(coordinate.getId())){
+                    //返回了各地区统计数量
+                    continue;
+                }
                 parse(coordinate, item);
                 if(!maps.containsKey(coordinate.getId())) {
                     coordinates.add(coordinate);
                 }
                 maps.put(coordinate.getId(), coordinate);
+            }
+            if(coordinates.isEmpty()){
+                break;
+            }
+        }
+        log.warn("[查询结果:{}]", coordinates.size());
+        return coordinates;
+    }
+
+
+    /**
+     * 附近poi
+     * @param lng 经度
+     * @param lat 经度
+     * @param radius 半径
+     * @param category 类别
+     * @param keyword 关键词
+     * @return List
+     */
+    @Override
+    public List<Coordinate> poi(Double lng, Double lat, int radius, String category, String keyword) {
+        List<Coordinate> coordinates = new ArrayList<>();
+        String api = "/place/v3/around";
+        Map<String, Object> params = new HashMap<>();
+
+        int page = 0; //从0开始
+        int vol = 20;
+        Map<String, Coordinate> maps = new HashMap<>();
+        int pages = 0;
+        while (pages == 0 || page <= pages) {
+            if(BasicUtil.isNotEmpty(keyword)) {
+                params.put("query", keyword);
+            }
+            params.put("location", lat + "," + lng);
+            params.put("radius", radius);
+            //filter=category= 241000,241100
+            if(BasicUtil.isNotEmpty(category)) {
+                params.put("type", category);
+            }
+            params.put("extensions_adcode", true);
+
+            params.put("page_size", vol);
+            DataRow row = api(api, params);
+            if(null == row) {
+                break;
+            }
+            int total = row.getInt("total");
+            pages = (total-1)/vol+1;
+            DataSet<DataRow> set = row.getSet("results");
+            if(null == set || set.isEmpty()) {
+                break;
+            }
+            for(DataRow item:set) {
+                Coordinate coordinate = new Coordinate();
+                parse(coordinate, item);
+                if(BasicUtil.isEmpty(coordinate.getId())){
+                    //返回了各地区统计数量
+                    continue;
+                }
+                if(!maps.containsKey(coordinate.getId())) {
+                    coordinates.add(coordinate);
+                }
+                maps.put(coordinate.getId(), coordinate);
+            }
+            if(coordinates.isEmpty()){
+                break;
             }
         }
         log.warn("[查询结果:{}]", coordinates.size());
@@ -308,24 +376,37 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
         if(limit()) {
             return null;
         }
+        File file = null;
+        String txt = null;
         DataRow row = null;
-        sign(api, params);
-        HttpResponse response = HttpUtil.get(HOST + api,"UTF-8", params);
-        int status = response.getStatus();
-        if(status == 200) {
-            String txt = response.getText();
-            if(null != BaiduMapConfig.CACHE_DIR) {
-                File dir = new File(BaiduMapConfig.CACHE_DIR, config.AK+"/"+api.replace("/","_")+"/"+ DateUtil.format("yyyyMMddHH"));
-                File file = new File(dir, System.currentTimeMillis()+"_"+BasicUtil.getRandomString(8)+".txt");
-                FileUtil.write(BeanUtil.map2string(params) + "\r\n" + txt, file);
+        String json = BeanUtil.map2json(params);
+        if(null != BaiduMapConfig.CACHE_DIR){
+            String md5 = MD5Util.crypto(api + json);
+            File dir = new File(BaiduMapConfig.CACHE_DIR, config.AK+"/"+api.replace("/","_")+"/"+ DateUtil.format("yyyyMMddHH"));
+            file = new File(dir, md5+".txt");
+            if(file.exists() && BaiduMapConfig.READ_CACHE) {
+                txt = FileUtil.read(file, "UTF-8").toString().replace(json, "").trim();
             }
+        }
+        if(BasicUtil.isEmpty(txt)){
+            sign(api, params);
+            HttpResponse response = HttpUtil.get(HOST + api,"UTF-8", params);
+            int status = response.getStatus();
+            if(status == 200){
+                txt = response.getText();
+                if(null != BaiduMapConfig.CACHE_DIR) {
+                    FileUtil.write(json + "\r\n" + txt, file);
+                }
+            }
+        }
+        if(BasicUtil.isNotEmpty(txt)) {
             row = DataRow.parseJson(txt);
-            if(null != row) {
-                status = row.getInt("status",-1);
-                if(status != 0) {
-                    log.warn("[{}][执行失败][status:{}][info:{}]", api , status, row.getString("message"));
+            if (null != row) {
+                int status = row.getInt("status", -1);
+                if (status != 0) {
+                    log.warn("[{}][执行失败][status:{}][info:{}]", api, status, row.getString("message"));
                     log.warn("[{}][response:{}]", api, txt);
-                    if (302 ==status) {
+                    if (302 == status) {
                         last_limit = DateUtil.format("yyyy-MM-dd");
                         throw new AnylineException("API_OVER_LIMIT", "访问已超出日访问量");
                     } else if (401 == status || 402 == status) {

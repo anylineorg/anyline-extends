@@ -32,6 +32,7 @@ import org.anyline.util.BasicUtil;
 import org.anyline.util.BeanUtil;
 import org.anyline.util.DateUtil;
 import org.anyline.util.FileUtil;
+import org.anyline.util.encrypt.MD5Util;
 import org.apache.http.entity.StringEntity;
 
 import java.io.File;
@@ -314,46 +315,59 @@ public class HuaweiMapClient extends AbstractMapClient implements MapClient {
 			return null;
 		}
 		DataRow row = null;
-		String body = BeanUtil.map2json(params);
-		StringEntity entity = null;
-		try{
-			entity = new StringEntity(body);
-		}catch (Exception e) {
-			e.printStackTrace();
-		}
-		Map<String, String> headers = new HashMap<>();
-		headers.put("Content-Type", "application/json");
-		headers.put("Accept", "application/json");
-		headers.put("Authorization", "Bearer " + config.SECRET);
-
-		HttpResponse response = HttpUtil.post(headers, host + api,"UTF-8", entity);
-		int status = response.getStatus();
-		String txt = response.getText();
-		row = DataRow.parseJson(txt);
-		String code = row.getString("returnCode");
+		File file = null;
+		String txt = null;
+		String json = BeanUtil.map2json(params);
+		int status = 0;
 		if(null != HuaweiMapConfig.CACHE_DIR) {
 			File dir = new File(HuaweiMapConfig.CACHE_DIR, config.SECRET+"/"+api.replace("/","_")+"/"+DateUtil.format("yyyyMMddHH"));
-			File file = new File(dir, System.currentTimeMillis()+"_"+BasicUtil.getRandomString(8)+".txt");
-			FileUtil.write(body+"\r\n"+txt, file);
+			String md5 = MD5Util.crypto(api + json);
+			file = new File(dir, md5+".txt");
+			if(file.exists() && HuaweiMapConfig.READ_CACHE) {
+				txt = FileUtil.read(file, "utf-8").toString().replace(json, "").trim();
+			}
 		}
-		if (!"0".equals(code) && !"010004".equals(code)) {
-			// [逆地理编码][执行失败][code:10044][info:USER_DAILY_QUERY_OVER_LIMIT]
-			log.warn("[{}][执行失败][code:{}][info:{}]", api, row.getString("INFOCODE"), row.getString("INFO"));
-			log.warn("[{}}][response:{}]", txt);
-			String info_code = row.getString("INFOCODE");
-			if ("010024".equals(info_code)) {
-				last_limit = DateUtil.format("yyyy-MM-dd");
-				throw new AnylineException("API_OVER_LIMIT", "访问已超出日访问量(或接口欠费)");
-			} else if ("010037".equals(info_code)) {
-				log.warn("并发量已达到上限,sleep 100 ...");
-				try {
-					Thread.sleep(100);
-				} catch (Exception e) {
-					e.printStackTrace();
+		if(BasicUtil.isEmpty(txt)){
+			StringEntity entity = null;
+			try{
+				entity = new StringEntity(json);
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+			Map<String, String> headers = new HashMap<>();
+			headers.put("Content-Type", "application/json");
+			headers.put("Accept", "application/json");
+			headers.put("Authorization", "Bearer " + config.SECRET);
+
+			HttpResponse response = HttpUtil.post(headers, host + api,"UTF-8", entity);
+			status = response.getStatus();
+			txt = response.getText();
+		}
+		if(BasicUtil.isNotEmpty(txt)){
+			row = DataRow.parseJson(txt);
+			String code = row.getString("returnCode");
+			if(null != HuaweiMapConfig.CACHE_DIR) {
+				FileUtil.write(json+"\r\n"+txt, file);
+			}
+			if (!"0".equals(code) && !"010004".equals(code)) {
+				// [逆地理编码][执行失败][code:10044][info:USER_DAILY_QUERY_OVER_LIMIT]
+				log.warn("[{}][执行失败][code:{}][info:{}]", api, row.getString("INFOCODE"), row.getString("INFO"));
+				log.warn("[{}}][response:{}]", txt);
+				String info_code = row.getString("INFOCODE");
+				if ("010024".equals(info_code)) {
+					last_limit = DateUtil.format("yyyy-MM-dd");
+					throw new AnylineException("API_OVER_LIMIT", "访问已超出日访问量(或接口欠费)");
+				} else if ("010037".equals(info_code)) {
+					log.warn("并发量已达到上限,sleep 100 ...");
+					try {
+						Thread.sleep(100);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					return post(host, api, params);
+				} else {
+					throw new AnylineException(status, row.getString("returnDesc"));
 				}
-				return post(host, api, params);
-			} else {
-				throw new AnylineException(status, row.getString("returnDesc"));
 			}
 		}
 		return row;

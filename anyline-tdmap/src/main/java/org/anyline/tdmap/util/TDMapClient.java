@@ -238,39 +238,55 @@ public class TDMapClient extends AbstractMapClient implements MapClient {
 			return null;
 		}
 		DataRow row = null;
-		String query = null;
-		try {
-			query = URLEncoder.encode(BeanUtil.map2json(params), "UTF-8");
-		} catch (Exception ignore) {
+		String json = BeanUtil.map2json(params);
+		File file = null;
+		String txt = null;
+		int status = 200;
+
+		if(null != TDMapConfig.CACHE_DIR) {
+			File dir = new File(TDMapConfig.CACHE_DIR, config.KEY + "/" + api.replace("/","_") + "/" + params.get("queryType") + "/" + DateUtil.format("yyyyMMddHH"));
+			String md5 = MD5Util.crypto(api+json);
+			file = new File(dir, md5 + ".txt");
+			if(file.exists() && TDMapConfig.READ_CACHE){
+				txt = FileUtil.read(file, "UTF-8").toString().replace(json, "").trim();
+			}
 		}
-		String url = host + api + "?postStr="+ query+"&type=query&tk="+config.KEY;
-		HttpResponse response = HttpUtil.get(url);
-		int status = response.getStatus();
-		if(status == 200) {
-			String txt = response.getText();
-			if(null != TDMapConfig.CACHE_DIR) {
-				File dir = new File(TDMapConfig.CACHE_DIR, config.KEY + "/" + api.replace("/","_") + "/" + params.get("queryType") + "/" + DateUtil.format("yyyyMMddHH"));
-				File file = new File(dir, System.currentTimeMillis() + "_" + BasicUtil.getRandomString(8) + ".txt");
-				FileUtil.write(BeanUtil.map2json(params) + "\r\n" + txt, file);
+		if(BasicUtil.isEmpty(txt)){
+			String query = null;
+			try {
+				query = URLEncoder.encode(BeanUtil.map2json(params), "UTF-8");
+			} catch (Exception ignore) {
 			}
-			row = DataRow.parseJson(txt);
-			if(null == row) {
-				throw new AnylineException(status);
-			}
-		} else {
-			//{"count":0,"resultType":1,"status":{"cndesc":"specify 不正确，请重新检查","infocode":2001}}
-			String txt = response.getText();
-			log.warn("[执行失败][msg:{}]", txt);
-			row = DataRow.parseJson(txt);
-			if(null != row) {
-				DataRow status_info = row.getRow("STATUS");
-				String infocode = "0";
-				String msg = null;
-				if(null != status_info) {
-					infocode = status_info.getString("infocode");
-					msg = status_info.getString("cndesc");
+			String url = host + api + "?postStr="+ query+"&type=query&tk="+config.KEY;
+			HttpResponse response = HttpUtil.get(url);
+			status = response.getStatus();
+			txt = response.getText();
+			if(status == 200) {
+				if(null != TDMapConfig.CACHE_DIR) {
+					FileUtil.write(json + "\r\n" + txt, file);
 				}
-				throw new AnylineException(status, infocode, msg);
+			}
+		}
+	 	if(BasicUtil.isNotEmpty(txt)){
+			if(status == 200) {
+				row = DataRow.parseJson(txt);
+				if(null == row) {
+					throw new AnylineException(status);
+				}
+			} else {
+				//{"count":0,"resultType":1,"status":{"cndesc":"specify 不正确，请重新检查","infocode":2001}}
+				log.warn("[执行失败][msg:{}]", txt);
+				row = DataRow.parseJson(txt);
+				if(null != row) {
+					DataRow status_info = row.getRow("STATUS");
+					String infocode = "0";
+					String msg = null;
+					if(null != status_info) {
+						infocode = status_info.getString("infocode");
+						msg = status_info.getString("cndesc");
+					}
+					throw new AnylineException(status, infocode, msg);
+				}
 			}
 		}
 		return row;

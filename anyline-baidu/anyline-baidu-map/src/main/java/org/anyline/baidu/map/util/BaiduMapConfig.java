@@ -27,6 +27,7 @@ import java.util.Hashtable;
 public class BaiduMapConfig extends AnylineConfig {
     public static String CONFIG_NAME = "anyline-baidu-map.xml";
     public static String CACHE_DIR 				= null;
+    public static boolean READ_CACHE 			= false;
     private static Hashtable<String,AnylineConfig> instances = new Hashtable<>();
 
     public static String DEFAULT_AK = ""				;

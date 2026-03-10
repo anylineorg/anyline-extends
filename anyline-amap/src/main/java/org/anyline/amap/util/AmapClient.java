@@ -1135,26 +1135,43 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 			return null;
 		}
 		DataRow row = null;
-		sign(params);
-		/*try {
-			for (String key : params.keySet()) {
-				Object value = params.get(key);
-				if(value instanceof String) {
-					params.put(key, URLEncoder.encode(value.toString(), "UTF-8"));
+		File file = null;
+		String txt = null;
+		int status = 0;
+		String json = BeanUtil.map2json(params);
+		if(null != AmapConfig.CACHE_DIR) {
+			File dir = new File(AmapConfig.CACHE_DIR, config.KEY+"/"+api.replace("/","_")+"/"+DateUtil.format("yyyyMMddHH"));
+			String md5 = MD5Util.crypto(api + json);
+			file = new File(dir, md5+".txt");
+			if(file.exists() && AmapConfig.READ_CACHE) {
+				txt = FileUtil.read(file, "UTF-8").toString().replace(json, "").trim();
+			}
+		}
+		if(BasicUtil.isEmpty(txt)){
+			sign(params);
+			/*try {
+				for (String key : params.keySet()) {
+					Object value = params.get(key);
+					if(value instanceof String) {
+						params.put(key, URLEncoder.encode(value.toString(), "UTF-8"));
+					}
 				}
+			}catch (Exception e) {
+				e.printStackTrace();
+			}*/
+			HttpResponse response = HttpUtil.get(host + api,"UTF-8", params);
+			status = response.getStatus();
+			if(status == 200) {
+				txt = response.getText();
+				if(null != AmapConfig.CACHE_DIR) {
+					FileUtil.write(json + "\r\n" + txt, file);
+				}
+
+			}else{
+				throw new AnylineException(status, "api执行异常");
 			}
-		}catch (Exception e) {
-			e.printStackTrace();
-		}*/
-		HttpResponse response = HttpUtil.get(host + api,"UTF-8", params);
-		int status = response.getStatus();
-		if(status == 200) {
-			String txt = response.getText();
-			if(null != AmapConfig.CACHE_DIR) {
-				File dir = new File(AmapConfig.CACHE_DIR, config.KEY+"/"+api.replace("/","_")+"/"+DateUtil.format("yyyyMMddHH"));
-				File file = new File(dir, System.currentTimeMillis()+"_"+BasicUtil.getRandomString(8)+".txt");
-				FileUtil.write(BeanUtil.map2json(params) + "\r\n" + txt, file);
-			}
+		}
+		if(BasicUtil.isNotEmpty(txt)){
 			row = DataRow.parseJson(txt);
 			if(null == row) {
 				throw new AnylineException(status, row.getString("INFO"));
@@ -1180,8 +1197,6 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 					throw new AnylineException(status, row.getString("INFO"));
 				}
 			}
-		}else{
-			throw new AnylineException(status, "api执行异常");
 		}
 		return row;
 	}

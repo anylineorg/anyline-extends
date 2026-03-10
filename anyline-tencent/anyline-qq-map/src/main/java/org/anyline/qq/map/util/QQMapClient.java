@@ -515,21 +515,34 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
             return null;
         }
         DataRow row = null;
-        sign(api, params);
-        HttpResponse response = HttpUtil.get(QQMapConfig.HOST + api,"UTF-8", params);
-        int status = response.getStatus();
-        if(status == 200) {
-            String txt = response.getText();
-            if(null != QQMapConfig.CACHE_DIR) {
-                File dir = new File(QQMapConfig.CACHE_DIR, config.KEY+"/"+api.replace("/","_")+"/"+ DateUtil.format("yyyyMMddHH"));
-                File file = new File(dir, System.currentTimeMillis()+"_"+BasicUtil.getRandomString(8)+".txt");
-                FileUtil.write(BeanUtil.map2string(params) + "\r\n" + txt, file);
+        File file = null;
+        String json = BeanUtil.map2json(params);
+        String txt = null;
+        if(null != QQMapConfig.CACHE_DIR) {
+            File dir = new File(QQMapConfig.CACHE_DIR, config.KEY+"/"+api.replace("/","_")+"/"+ DateUtil.format("yyyyMMddHH"));
+            String md5 = MD5Util.crypto(api + json);
+            file = new File(dir, md5 + ".txt");
+            if(file.exists() && QQMapConfig.READ_CACHE) {
+                txt = FileUtil.read(file, "UTF-8").toString().replace(json, "").trim();
             }
+        }
+        if(BasicUtil.isEmpty(txt)){
+            sign(api, params);
+            HttpResponse response = HttpUtil.get(QQMapConfig.HOST + api,"UTF-8", params);
+            int status = response.getStatus();
+            if(status == 200){
+                txt = response.getText();
+                if(null != QQMapConfig.CACHE_DIR) {
+                    FileUtil.write(json + "\r\n" + txt, file);
+                }
+            }
+        }
+        if(BasicUtil.isNotEmpty(txt)) {
             row = DataRow.parseJson(txt);
-            if(null != row) {
-                status = row.getInt("status",-1);
-                if(status != 0) {
-                    log.warn("[{}][执行失败][status:{}][info:{}]", api , status, row.getString("message"));
+            if (null != row) {
+                int status = row.getInt("status", -1);
+                if (status != 0) {
+                    log.warn("[{}][执行失败][status:{}][info:{}]", api, status, row.getString("message"));
                     log.warn("[{}][response:{}]", api, txt);
                     if (status == 121) {
                         last_limit = DateUtil.format("yyyy-MM-dd");
