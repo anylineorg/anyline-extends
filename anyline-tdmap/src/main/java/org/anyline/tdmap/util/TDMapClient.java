@@ -170,8 +170,8 @@ public class TDMapClient extends AbstractMapClient implements MapClient {
 						Coordinate coordinate = poi(item);
 						if(!maps.containsKey(coordinate.getId())) {
 							coordinates.add(coordinate);
+							maps.put(coordinate.getId(), coordinate);
 						}
-						maps.put(coordinate.getId(), coordinate);
 					}
 				}
 			}

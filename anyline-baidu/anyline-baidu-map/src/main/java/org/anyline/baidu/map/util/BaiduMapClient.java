@@ -225,8 +225,8 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
                 parse(coordinate, item);
                 if(!maps.containsKey(coordinate.getId())) {
                     coordinates.add(coordinate);
+                    maps.put(coordinate.getId(), coordinate);
                 }
-                maps.put(coordinate.getId(), coordinate);
             }
             if(coordinates.isEmpty()){
                 break;
@@ -269,6 +269,7 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
             params.put("extensions_adcode", true);
 
             params.put("page_size", vol);
+            params.put("page_num", page++);
             DataRow row = api(api, params);
             if(null == row) {
                 break;

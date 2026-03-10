@@ -243,8 +243,8 @@ public class HuaweiMapClient extends AbstractMapClient implements MapClient {
 					exists++;
 				} else {
 					coordinates.add(coordinate);
+					maps.put(coordinate.getId(), coordinate);
 				}
-				maps.put(coordinate.getId(), coordinate);
 			}
 			if (set.size() < vol) {
 				break;

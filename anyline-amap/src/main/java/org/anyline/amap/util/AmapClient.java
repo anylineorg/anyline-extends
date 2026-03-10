@@ -1033,8 +1033,8 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 					exists++;
 				}else{
 					coordinates.add(coordinate);
+					maps.put(coordinate.getId(), coordinate);
 				}
-				maps.put(coordinate.getId(), coordinate);
 			}
 			//最后一页小于20个
 			if(set.size() < vol) {
