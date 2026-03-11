@@ -343,7 +343,7 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
         if(null == adcode && null != town_code) {
             adcode = town_code.substring(0, 6);
         }
-        if (null != adcode) {
+        if (null != adcode && adcode.length() > 4) {
             String provinceCode = adcode.substring(0,2);
             String cityCode = adcode.substring(0,4);
             coordinate.setProvinceCode(provinceCode);
