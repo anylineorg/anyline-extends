@@ -1118,7 +1118,14 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 		coordinate.setAddress(row.getString("address"));
 		coordinate.setTitle(row.getString("name"));
 		coordinate.setId(row.getString("id"));
-		coordinate.setTel(row.getString("tel"));
+		Object tel = row.get("tel");
+		if(tel instanceof Collection) {
+			if(!((Collection)tel).isEmpty()) {
+				coordinate.setTel(tel.toString());
+			}
+		}else if(tel instanceof String) {
+			coordinate.setTel((String) tel);
+		}
 		String adcode = row.getString("adcode");
 		if(BasicUtil.isNotEmpty(adcode)) {
 			String provinceCode = adcode.substring(0, 2);
@@ -1147,7 +1154,9 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 				txt = FileUtil.read(file, "UTF-8").toString().replace(json, "").trim();
 			}
 		}
+		boolean net = false;
 		if(BasicUtil.isEmpty(txt)){
+			net = true;
 			sign(params);
 			/*try {
 				for (String key : params.keySet()) {
@@ -1163,10 +1172,6 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 			status = response.getStatus();
 			if(status == 200) {
 				txt = response.getText();
-				if(null != AmapConfig.CACHE_DIR) {
-					FileUtil.write(json + "\r\n" + txt, file);
-				}
-
 			}else{
 				throw new AnylineException(status, "api执行异常");
 			}
@@ -1195,6 +1200,13 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 					return get(host, api, params);
 				} else {
 					throw new AnylineException(status, row.getString("INFO"));
+				}
+			}else{
+				//访问成功
+				if(net){
+					if(null != AmapConfig.CACHE_DIR && !txt.contains("访问量")) {
+						FileUtil.write(json + "\r\n" + txt, file);
+					}
 				}
 			}
 		}

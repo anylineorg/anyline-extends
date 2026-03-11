@@ -22,6 +22,7 @@ import org.anyline.client.map.MapClient;
 import org.anyline.entity.Coordinate;
 import org.anyline.entity.DataRow;
 import org.anyline.entity.DataSet;
+import org.anyline.entity.SRS;
 import org.anyline.entity.geometry.Point;
 import org.anyline.exception.AnylineException;
 import org.anyline.log.Log;
@@ -127,6 +128,54 @@ public class TDMapClient extends AbstractMapClient implements MapClient {
 		}
 		log.warn("[查询结果:{}]", coordinates.size());
 		return coordinates;
+	}
+
+
+	/**
+	 * 逆地理编码 按坐标查地址
+	 * "country" :"中国",
+	 * "province" :"山东省",
+	 * "city" :"青岛市",
+	 * "citycode" :"0532",
+	 * "district" :"市南区",
+	 * "adcode" :"370215",
+	 * "township" :"**街道",
+	 * "towncode" :"370215010000",
+	 *
+	 * @param coordinate  坐标
+	 * @return Coordinate
+	 */
+	@Override
+	public Coordinate regeo(Coordinate coordinate)  {
+		// http://api.tianditu.gov.cn/geocoder?postStr={'lon':116.37304,'lat':39.92594,'ver':1}&type=geocode&tk=您的密钥
+		SRS _type = coordinate.getSrs();
+		Double _lng = coordinate.getLng();
+		Double _lat = coordinate.getLat();
+
+		coordinate.convert(SRS.GCJ02LL);
+		coordinate.setSuccess(false);
+		DataRow row = null;
+		String api = "/geocoder";
+		Map<String, Object> params = new HashMap<>();
+		params.put("lon", _lng);
+		params.put("lat", _lat);
+		params.put("ver", 1);
+		row = get(TDMapConfig.DEFAULT_HOST, api, params);
+
+		row = row.getRow("result");
+		if (null != row) {
+			coordinate.setAddress(row.getString("formatted_address"));
+			DataRow adr = row.getRow("addressComponent");
+			if (null != adr) {
+				coordinate.setTitle(adr.getString("poi"));
+			}
+		}
+		// 换回原坐标系
+		coordinate.setLng(_lng);
+		coordinate.setLat(_lat);
+		coordinate.setSrs(_type);
+		coordinate.setSuccess(true);
+		return coordinate;
 	}
 
 	/**

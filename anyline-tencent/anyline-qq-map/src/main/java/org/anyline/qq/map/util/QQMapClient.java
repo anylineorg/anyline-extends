@@ -196,6 +196,8 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
 
         Map<String, Object> params = new HashMap<>();
         params.put("location", _lat +"," + _lng);        // 这里是纬度在前
+        params.put("get_poi", 1);
+        params.put("poi_options", "address_format=short;radius=5000;policy=1;orderby=_distance;added_fields=tel,category_code");
         Map<String, Object> ps = coordinate.getParams();
         if(null != ps) {
             if(ps.containsKey("radius")) {
@@ -526,15 +528,14 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
                 txt = FileUtil.read(file, "UTF-8").toString().replace(json, "").trim();
             }
         }
-        if(BasicUtil.isEmpty(txt)){
+        boolean net = false;
+        if(BasicUtil.isEmpty(txt) || txt.contains("调用量")){
             sign(api, params);
             HttpResponse response = HttpUtil.get(QQMapConfig.HOST + api,"UTF-8", params);
             int status = response.getStatus();
             if(status == 200){
+                net = true;
                 txt = response.getText();
-                if(null != QQMapConfig.CACHE_DIR) {
-                    FileUtil.write(json + "\r\n" + txt, file);
-                }
             }
         }
         if(BasicUtil.isNotEmpty(txt)) {
@@ -557,6 +558,12 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
                         api(api, params);
                     } else {
                         throw new AnylineException(status, row.getString("message"));
+                    }
+                }else{
+                    if(net){
+                        if(null != QQMapConfig.CACHE_DIR && null != txt && !txt.contains("调用量")) {
+                            FileUtil.write(json + "\r\n" + txt, file);
+                        }
                     }
                 }
             }

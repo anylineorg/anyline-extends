@@ -113,7 +113,12 @@ public class HuaweiMapClient extends AbstractMapClient implements MapClient {
 			//解析附近poi
 			DataSet<DataRow> pois = row.getSet("sites");
 			if(!pois.isEmpty()) {
-				parse(coordinate, pois.getRow(0));
+				//返回多个poi 范围从小到大 如 POI > 区 > 市
+				List<Coordinate> list = new ArrayList<>();
+				Coordinate poi = new Coordinate();
+				list.add(poi);
+				parse(poi, pois.getRow(0));
+				coordinate.setPois(list);
 			}
 		}
 		// 换回原坐标系

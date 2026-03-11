@@ -218,11 +218,11 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
             }
             for(DataRow item:set) {
                 Coordinate coordinate = new Coordinate();
+                parse(coordinate, item);
                 if(BasicUtil.isEmpty(coordinate.getId())){
                     //返回了各地区统计数量
                     continue;
                 }
-                parse(coordinate, item);
                 if(!maps.containsKey(coordinate.getId())) {
                     coordinates.add(coordinate);
                     maps.put(coordinate.getId(), coordinate);
