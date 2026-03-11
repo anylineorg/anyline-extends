@@ -24,12 +24,12 @@ import org.anyline.entity.DataRow;
 import org.anyline.entity.DataSet;
 import org.anyline.entity.SRS;
 import org.anyline.exception.AnylineException;
+import org.anyline.log.Log;
+import org.anyline.log.LogProxy;
 import org.anyline.net.HttpResponse;
 import org.anyline.net.HttpUtil;
 import org.anyline.util.*;
 import org.anyline.util.encrypt.MD5Util;
-import org.anyline.log.Log;
-import org.anyline.log.LogProxy;
 
 import java.io.File;
 import java.net.URLEncoder;
@@ -85,6 +85,13 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
         return null;
     }
 
+    /**
+     *
+     * <a href="https://lbsyun.baidu.com/faq/api?title=webapi/guide/webservice-geocoding-base">参考</a>
+     * @param address  地址
+     * @param city  城市
+     * @return 坐标
+     */
     @Override
     public Coordinate geo(String address, String city) {
         String api = "/geocoding/v3/";
@@ -93,15 +100,29 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
         coordinate.setAddress(address);
         Map<String, Object> params = new LinkedHashMap<>();
         params.put("address", address);
+        if(BasicUtil.isNotEmpty(city)) {
+            params.put("city", city);
+        }
+        params.put("extension_poi_infos", true);
+        Map<String, Object> ps = coordinate.getParams();
+        if(null != ps){
+            //返回的坐标类型，可选参数，添加后返回国测局经纬度坐标或百度米制坐标 坐标系说明
+            if(ps.containsKey("ret_coordtype")){
+                params.put("ret_coordtype", ps.get("ret_coordtype"));
+            }
+            //是否触发解析到最小地址结构功能
+            if (ps.containsKey("extension_analys_level")){
+                params.put("extension_analys_level", ps.get("extension_analys_level"));
+            }
+            //是否返回经纬度所在的地址信息
+            if (ps.containsKey("extension_poi_infos")){
+                params.put("extension_poi_infos", ps.get("extension_poi_infos"));
+            }
+        }
         params.put("output", "json");
         DataRow row = api(api, params);
         if(null != row) {
-            DataRow location = row.getRow("result","location");
-            if(null != location) {
-                coordinate.setLng(location.getString("lng"));
-                coordinate.setLat(location.getString("lat"));
-                coordinate.setSuccess(true);
-            }
+            parse(coordinate, row);
         }
         coordinate.correct();
         return coordinate;
@@ -235,7 +256,6 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
         log.warn("[查询结果:{}]", coordinates.size());
         return coordinates;
     }
-
 
     /**
      * 附近poi
