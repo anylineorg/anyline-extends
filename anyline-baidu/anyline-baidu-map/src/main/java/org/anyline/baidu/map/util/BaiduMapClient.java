@@ -105,10 +105,11 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
         }
         params.put("extension_poi_infos", true);
         Map<String, Object> ps = coordinate.getParams();
+        SRS output_srs = null;
         if(null != ps){
             //返回的坐标类型，可选参数，添加后返回国测局经纬度坐标或百度米制坐标 坐标系说明
             if(ps.containsKey("ret_coordtype")){
-                params.put("ret_coordtype", ps.get("ret_coordtype"));
+                output_srs = SRS.valueOf(ps.get("ret_coordtype").toString().toUpperCase());
             }
             //是否触发解析到最小地址结构功能
             if (ps.containsKey("extension_analys_level")){
@@ -119,11 +120,20 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
                 params.put("extension_poi_infos", ps.get("extension_poi_infos"));
             }
         }
+
+        if(null != output_srs){
+            output_srs = BaiduMapConfig.DEFAULT_OUTPUT_SRS;
+        }
+        if(null != output_srs){
+            params.put("ret_coordtype", output_srs.name().toLowerCase());
+        }
+
         params.put("output", "json");
         DataRow row = api(api, params);
         if(null != row) {
             parse(coordinate, row);
         }
+        coordinate.setSrs(output_srs);
         coordinate.correct();
         return coordinate;
     }
@@ -131,47 +141,63 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
     public Coordinate regeo(Coordinate coordinate) {
         String api = "/reverse_geocoding/v3/";
 
-        SRS _type = coordinate.getSrs();
+        SRS input_srs = null;
+        SRS output_srs = null; //输出
         Double _lng = coordinate.getLng();
         Double _lat = coordinate.getLat();
-        coordinate.convert(SRS.BD09LL);
+        //coordinate.convert(SRS.BD09LL);
         coordinate.setSuccess(false);
 
-        // 换回原坐标系
-        coordinate.setLng(_lng);
-        coordinate.setLat(_lat);
-        coordinate.setSrs(_type);
         Map<String, Object> params = new LinkedHashMap<>();
-        params.put("location",coordinate.getLat()+","+coordinate.getLng());
+        params.put("location", coordinate.getLat()+","+coordinate.getLng());
         params.put("extensions_town","true");
         params.put("output","json");
         Map<String, Object> ps = coordinate.getParams();
         params.put("extensions_poi",1);
         params.put("entire_poi",1);
-        if(ps.containsKey("poi_types")){
-            params.put("poi_types", ps.get("poi_types"));
-        }
-        if(ps.containsKey("radius")){
-            params.put("radius", ps.get("radius"));
-        }
-        if(ps.containsKey("entire_poi")){
-            params.put("entire_poi", ps.get("entire_poi"));
-        }
-        if(ps.containsKey("coordtype")){
-            params.put("coordtype", ps.get("coordtype"));
-        }
-        if(ps.containsKey("ret_coordtype")){
-            params.put("ret_coordtype", ps.get("ret_coordtype"));
-        }
+        if(null != ps){
+            if(ps.containsKey("poi_types")){
+                params.put("poi_types", ps.get("poi_types"));
+            }
+            if(ps.containsKey("radius")){
+                params.put("radius", ps.get("radius"));
+            }
+            if(ps.containsKey("entire_poi")){
+                params.put("entire_poi", ps.get("entire_poi"));
+            }
+            if(ps.containsKey("coordtype")){
+                input_srs = SRS.valueOf(ps.get("coordtype").toString().toUpperCase());
+            }
 
-        if(ps.containsKey("sort_strategy")){
-            params.put("sort_strategy", ps.get("sort_strategy"));
+            if(ps.containsKey("ret_coordtype")){
+                output_srs = SRS.valueOf(ps.get("ret_coordtype").toString().toUpperCase());
+            }
+
+            if(ps.containsKey("sort_strategy")){
+                params.put("sort_strategy", ps.get("sort_strategy"));
+            }
+        }
+        if(null == input_srs) {
+            input_srs = coordinate.getSrs();
+        }
+        if(null == input_srs) {
+            input_srs = BaiduMapConfig.DEFAULT_INPUT_SRS;
+        }
+        if(null == output_srs) {
+            output_srs = BaiduMapConfig.DEFAULT_OUTPUT_SRS;
+        }
+        if(null != input_srs) {
+            params.put("coordtype", input_srs.name().toLowerCase());
+        }
+        if(null != output_srs) {
+            params.put("ret_coordtype", output_srs.name().toLowerCase());
         }
 
         DataRow row = api(api, params);
         if(null != row) {
             row = row.getRow("result");
             parse(coordinate, row);
+            coordinate.setSrs(output_srs);
             //解析附近poi
             DataSet<DataRow> pois = row.getSet("pois");
             List<Coordinate> poi_coordinates = new ArrayList<>();
@@ -188,15 +214,11 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
                 poi_coordinate.setTownName(coordinate.getTownName());
                 poi_coordinate.setVillageCode(coordinate.getVillageCode());
                 poi_coordinate.setVillageName(coordinate.getVillageName());
-
+                poi_coordinate.setSrs(output_srs);
                 poi_coordinates.add(poi_coordinate);
             }
             coordinate.setPois(poi_coordinates);
         }
-        // 换回原坐标系
-        coordinate.setLng(_lng);
-        coordinate.setLat(_lat);
-        coordinate.setSrs(_type);
         coordinate.correct();
         return coordinate;
     }
@@ -222,6 +244,14 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
             if(BasicUtil.isNotEmpty(category)) {
                 params.put("type", category);
             }
+            SRS input_srs = BaiduMapConfig.DEFAULT_INPUT_SRS;
+            SRS output_srs = BaiduMapConfig.DEFAULT_OUTPUT_SRS;
+            if(null != input_srs) {
+                params.put("coord_type", input_srs.name().toLowerCase());
+            }
+            if(null != output_srs) {
+                params.put("ret_coordtype", output_srs.name().toLowerCase());
+            }
             params.put("page_size", vol);
             params.put("region", district);
             params.put("extensions", "all");
@@ -240,6 +270,7 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
             for(DataRow item:set) {
                 Coordinate coordinate = new Coordinate();
                 parse(coordinate, item);
+                coordinate.setSrs(output_srs);
                 if(BasicUtil.isEmpty(coordinate.getId())){
                     //返回了各地区统计数量
                     continue;
@@ -280,6 +311,17 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
             if(BasicUtil.isNotEmpty(keyword)) {
                 params.put("query", keyword);
             }
+
+            SRS input_srs = BaiduMapConfig.DEFAULT_INPUT_SRS;
+            SRS output_srs = BaiduMapConfig.DEFAULT_OUTPUT_SRS;
+
+            if(null != input_srs) {
+                params.put("coord_type", input_srs.name().toLowerCase());
+            }
+            if(null != output_srs) {
+                params.put("ret_coordtype", output_srs.name().toLowerCase());
+            }
+
             params.put("location", lat + "," + lng);
             params.put("radius", radius);
             //filter=category= 241000,241100
@@ -287,7 +329,6 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
                 params.put("type", category);
             }
             params.put("extensions_adcode", true);
-
             params.put("page_size", vol);
             params.put("page_num", page++);
             DataRow row = api(api, params);
@@ -303,6 +344,7 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
             for(DataRow item:set) {
                 Coordinate coordinate = new Coordinate();
                 parse(coordinate, item);
+                coordinate.setSrs(output_srs);
                 if(BasicUtil.isEmpty(coordinate.getId())){
                     //返回了各地区统计数量
                     continue;

@@ -380,7 +380,7 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
         if(BasicUtil.isNotEmpty(keyword)) {
             params.put("keyword", keyword);
         }
-        String boundary = "nearby("+lng+","+lat+","+radius+",1)";
+        String boundary = "nearby("+lat+","+lng+","+radius+",1)";
         params.put("boundary", boundary);
         //filter=category= 241000,241100
         if(BasicUtil.isNotEmpty(category)) {

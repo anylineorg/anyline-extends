@@ -18,6 +18,7 @@
 package org.anyline.baidu.map.util;
 
 import org.anyline.entity.DataRow;
+import org.anyline.entity.SRS;
 import org.anyline.util.AnylineConfig;
 import org.anyline.util.BasicUtil;
 import org.anyline.util.ConfigTable;
@@ -28,6 +29,8 @@ public class BaiduMapConfig extends AnylineConfig {
     public static String CONFIG_NAME = "anyline-baidu-map.xml";
     public static String CACHE_DIR 				= null;
     public static boolean READ_CACHE 			= false;
+    public static SRS DEFAULT_INPUT_SRS 	    = null;
+    public static SRS DEFAULT_OUTPUT_SRS 	    = null;
     private static Hashtable<String,AnylineConfig> instances = new Hashtable<>();
 
     public static String DEFAULT_AK = ""				;
