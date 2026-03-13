@@ -131,6 +131,7 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
         params.put("output", "json");
         DataRow row = api(api, params);
         if(null != row) {
+            row = row.getRow("result");
             parse(coordinate, row);
         }
         coordinate.setSrs(output_srs);

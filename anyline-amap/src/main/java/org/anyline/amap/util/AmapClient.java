@@ -847,7 +847,10 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 			coordinate.setCityName(result.getString("city"));
 			coordinate.setCountyCode(ad_code);
 			coordinate.setCountyName(result.getString("district"));
-			coordinate.setTownCode(result.getString("towncode"));
+			Object townCode = result.get("towncode");
+			if(townCode instanceof String) {
+				coordinate.setTownCode((String) townCode);
+			}
 			coordinate.setTownName(result.getString("township"));
 			DataRow st = result.getRow("streetNumber");
 			if (null != st) {
