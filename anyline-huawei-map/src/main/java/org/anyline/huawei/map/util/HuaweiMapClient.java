@@ -108,7 +108,7 @@ public class HuaweiMapClient extends AbstractMapClient implements MapClient {
 		params.put("location", location);
 		params.put("radius", 50);
 
-		row = post(HuaweiMapConfig.DEFAULT_HOST, api, params);
+		row = post(HuaweiMapConfig.DEFAULT_HOST, api, METHOD.RE_GEO, params);
 		if (null != row) {
 			//解析附近poi
 			DataSet<DataRow> pois = row.getSet("sites");
@@ -179,7 +179,7 @@ public class HuaweiMapClient extends AbstractMapClient implements MapClient {
 		String api = "/mapApi/v1/siteService/geocode";
 		Map<String, Object> params = new HashMap<>();
 		params.put("address", address);
-		DataRow row = post(HuaweiMapConfig.DEFAULT_HOST, api, params);
+		DataRow row = post(HuaweiMapConfig.DEFAULT_HOST, api, METHOD.GEO, params);
 		coordinate.setMetadata(row);
 		DataSet<DataRow> set = null;
 		if(row.containsKey("sites")) {
@@ -232,7 +232,7 @@ public class HuaweiMapClient extends AbstractMapClient implements MapClient {
 		Map<String, Coordinate> maps = new HashMap<>();
 		while (true) {
 			params.put("pageIndex", page++);
-			DataRow row = post(HuaweiMapConfig.DEFAULT_HOST, api, params);
+			DataRow row = post(HuaweiMapConfig.DEFAULT_HOST, api, METHOD.SEARCH, params);
 			if (null == row) {
 				break;
 			}
@@ -287,7 +287,7 @@ public class HuaweiMapClient extends AbstractMapClient implements MapClient {
 		Map<String, Coordinate> maps = new HashMap<>();
 		while (true) {
 			params.put("pageIndex", page++);
-			DataRow row = post(HuaweiMapConfig.DEFAULT_HOST, api, params);
+			DataRow row = post(HuaweiMapConfig.DEFAULT_HOST, api, METHOD.SEARCH, params);
 			if (null == row) {
 				break;
 			}
@@ -315,8 +315,8 @@ public class HuaweiMapClient extends AbstractMapClient implements MapClient {
 		}
 		return coordinates;
 	}
-	public DataRow post(String host, String api, Map<String, Object> params) {
-		if(limit()) {
+	public DataRow post(String host, String api, METHOD method, Map<String, Object> params) {
+		if(limit(method)) {
 			return null;
 		}
 		DataRow row = null;
@@ -360,7 +360,7 @@ public class HuaweiMapClient extends AbstractMapClient implements MapClient {
 				log.warn("[{}}][response:{}]", txt);
 				String info_code = row.getString("INFOCODE");
 				if ("010024".equals(info_code)) {
-					last_limit = DateUtil.format("yyyy-MM-dd");
+					limit(method, DateUtil.format("yyyy-MM-dd"));
 					throw new AnylineException("API_OVER_LIMIT", "访问已超出日访问量(或接口欠费)");
 				} else if ("010037".equals(info_code)) {
 					log.warn("并发量已达到上限,sleep 100 ...");
@@ -369,7 +369,7 @@ public class HuaweiMapClient extends AbstractMapClient implements MapClient {
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-					return post(host, api, params);
+					return post(host, api, method, params);
 				} else {
 					throw new AnylineException(status, row.getString("returnDesc"));
 				}

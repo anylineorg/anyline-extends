@@ -112,7 +112,7 @@ public class TDMapClient extends AbstractMapClient implements MapClient {
 		for (int start:starts) {
 			params.put("count", count);
 			params.put("start", start);
-			DataRow row = get(TDMapConfig.DEFAULT_HOST, api, params);
+			DataRow row = get(TDMapConfig.DEFAULT_HOST, api, METHOD.SEARCH, params);
 			if(null != row) {
 				DataSet<DataRow> set = row.getSet("pois");
 				if(null != set) {
@@ -160,7 +160,7 @@ public class TDMapClient extends AbstractMapClient implements MapClient {
 		params.put("lon", _lng);
 		params.put("lat", _lat);
 		params.put("ver", 1);
-		row = get(TDMapConfig.DEFAULT_HOST, api, params);
+		row = get(TDMapConfig.DEFAULT_HOST, api, METHOD.RE_GEO, params);
 
 		row = row.getRow("result");
 		if (null != row) {
@@ -211,7 +211,7 @@ public class TDMapClient extends AbstractMapClient implements MapClient {
 		for (int start:starts) {
 			params.put("count", count);
 			params.put("start", start);
-			DataRow row = get(TDMapConfig.DEFAULT_HOST, api, params);
+			DataRow row = get(TDMapConfig.DEFAULT_HOST, api, METHOD.SEARCH, params);
 			if(null != row) {
 				DataSet<DataRow> set = row.getSet("pois");
 				if(null != set) {
@@ -282,8 +282,8 @@ public class TDMapClient extends AbstractMapClient implements MapClient {
 		coordinate.setMetadata(row);
 		return coordinate;
 	}
-	public DataRow get(String host, String api, Map<String, Object> params) {
-		if(limit()) {
+	public DataRow get(String host, String api, METHOD method, Map<String, Object> params) {
+		if(limit(method)) {
 			return null;
 		}
 		DataRow row = null;

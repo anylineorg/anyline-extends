@@ -86,7 +86,7 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
         Map<String, Object> params = new HashMap<>();
         params.put("ip", ip);
         params.put("key", config.KEY);
-        DataRow row = api(api, params);
+        DataRow row = api(api, METHOD.IP, params);
         if(null != row) {
             coordinate = new Coordinate();
             coordinate.setMetadata(row);
@@ -135,7 +135,7 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
         String api = "/ws/geocoder/v1";
         Map<String, Object> params = new HashMap<>();
         params.put("address", address);
-        DataRow row = api(api, params);
+        DataRow row = api(api, METHOD.GEO, params);
         if(null != row) {
             DataRow result = row.getRow("result");
             DataRow location = row.getRow("result","location");
@@ -210,7 +210,7 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
                 params.put("poi_options", ps.get("poi_options"));
             }
         }
-        DataRow row = api(api, params);
+        DataRow row = api(api, METHOD.RE_GEO, params);
         if(null != row) {
             DataRow result = row.getRow("result");
             if(null != result) {
@@ -329,7 +329,7 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
         Map<String, Coordinate> maps = new HashMap<>();
         while (true) {
             params.put("page_index", page++);
-            DataRow row = api(api, params);
+            DataRow row = api(api, METHOD.SEARCH, params);
             if(null == row) {
                 break;
             }
@@ -393,7 +393,7 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
         Map<String, Coordinate> maps = new HashMap<>();
         while (true) {
             params.put("page_index", page++);
-            DataRow row = api(api, params);
+            DataRow row = api(api, METHOD.SEARCH, params);
             if(null == row) {
                 break;
             }
@@ -466,7 +466,7 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
         }
         params.put("get_polygon", 2);
         params.put("max_offset", 100);
-        DataRow row = api(api, params);
+        DataRow row = api(api, METHOD.OUTLINE, params);
         List list = row.getList("result");
         if(null != list && !list.isEmpty()) {
             Object obj = list.get(0);
@@ -512,8 +512,8 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
         params.put("sig", sign);
         return sign;
     }
-    private DataRow api(String api, Map<String, Object> params) {
-        if(limit()) {
+    private DataRow api(String api, METHOD method, Map<String, Object> params) {
+        if(limit(method)) {
             return null;
         }
         DataRow row = null;
@@ -546,7 +546,7 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
                     log.warn("[{}][执行失败][status:{}][info:{}]", api, status, row.getString("message"));
                     log.warn("[{}][response:{}]", api, txt);
                     if (status == 121) {
-                        last_limit = DateUtil.format("yyyy-MM-dd");
+                        limit(method, DateUtil.format("yyyy-MM-dd"));
                         throw new AnylineException("API_OVER_LIMIT", "访问已超出日访问量");
                     } else if (status == 120) {
                         try {
@@ -555,7 +555,7 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                        api(api, params);
+                        api(api, method, params);
                     } else {
                         throw new AnylineException(status, row.getString("message"));
                     }

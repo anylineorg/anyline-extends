@@ -129,7 +129,7 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
         }
 
         params.put("output", "json");
-        DataRow row = api(api, params);
+        DataRow row = api(api, METHOD.GEO, params);
         if(null != row) {
             row = row.getRow("result");
             parse(coordinate, row);
@@ -194,7 +194,7 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
             params.put("ret_coordtype", output_srs.name().toLowerCase());
         }
 
-        DataRow row = api(api, params);
+        DataRow row = api(api, METHOD.RE_GEO, params);
         if(null != row) {
             row = row.getRow("result");
             parse(coordinate, row);
@@ -258,7 +258,7 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
             params.put("extensions", "all");
             params.put("scope", 2);//详细POI
             params.put("page_num", page++);
-            DataRow row = api(api, params);
+            DataRow row = api(api, METHOD.SEARCH, params);
             if(null == row) {
                 break;
             }
@@ -332,7 +332,7 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
             params.put("extensions_adcode", true);
             params.put("page_size", vol);
             params.put("page_num", page++);
-            DataRow row = api(api, params);
+            DataRow row = api(api, METHOD.SEARCH, params);
             if(null == row) {
                 break;
             }
@@ -436,8 +436,8 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
         return coordinate;
     }
 
-    private DataRow api(String api, Map<String, Object> params) {
-        if(limit()) {
+    private DataRow api(String api, METHOD  method, Map<String, Object> params) {
+        if(limit(method)) {
             return null;
         }
         File file = null;
@@ -471,13 +471,13 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
                     log.warn("[{}][执行失败][status:{}][info:{}]", api, status, row.getString("message"));
                     log.warn("[{}][response:{}]", api, txt);
                     if (302 == status) {
-                        last_limit = DateUtil.format("yyyy-MM-dd");
+                        limit(method, DateUtil.format("yyyy-MM-dd"));
                         throw new AnylineException("API_OVER_LIMIT", "访问已超出日访问量");
                     } else if (401 == status || 402 == status) {
                         try {
                             log.warn("并发量已达到上限,sleep 100 ...");
                             Thread.sleep(100);
-                            api(api, params);
+                            api(api, method, params);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

@@ -782,7 +782,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 			}
 		}
 
-		row = get(AmapConfig.DEFAULT_HOST, api, params);
+		row = get(AmapConfig.DEFAULT_HOST, api, METHOD.RE_GEO, params);
 		row = row.getRow("regeocode");
 		if (null != row) {
 			coordinate.setAddress(row.getString("formatted_address"));
@@ -896,7 +896,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 		if(BasicUtil.isNotEmpty(city)) {
 			params.put("city", city);
 		}
-		DataRow row = get(AmapConfig.DEFAULT_HOST, api, params);
+		DataRow row = get(AmapConfig.DEFAULT_HOST, api, METHOD.GEO, params);
 		coordinate.setMetadata(row);
 		DataSet<DataRow> set = null;
 		if(row.containsKey("geocodes")) {
@@ -1021,7 +1021,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 		Map<String, Coordinate> maps = new HashMap<>();
 		while (true) {
 			params.put("page", page++);
-			DataRow row = get(AmapConfig.DEFAULT_HOST, api, params);
+			DataRow row = get(AmapConfig.DEFAULT_HOST, api, METHOD.SEARCH, params);
 			if(null == row) {
 				break;
 			}
@@ -1083,7 +1083,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 		Map<String, Coordinate> maps = new HashMap<>();
 		while (true) {
 			params.put("page", page++);
-			DataRow row = get(AmapConfig.DEFAULT_HOST, api, params);
+			DataRow row = get(AmapConfig.DEFAULT_HOST, api, METHOD.SEARCH, params);
 			if(null == row) {
 				break;
 			}
@@ -1140,8 +1140,8 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 		coordinate.setMetadata(row);
 		return coordinate;
 	}
-	public DataRow get(String host, String api, Map<String, Object> params) {
-		if(limit()) {
+	public DataRow get(String host, String api, METHOD method, Map<String, Object> params) {
+		if(limit(method)) {
 			return null;
 		}
 		DataRow row = null;
@@ -1191,7 +1191,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 				log.warn("[{}}][response:{}]", txt);
 				String info_code = row.getString("INFOCODE");
 				if ("10044".equals(info_code)) {
-					last_limit = DateUtil.format("yyyy-MM-dd");
+					limit(method, DateUtil.format("yyyy-MM-dd"));
 					throw new AnylineException("API_OVER_LIMIT", "访问已超出日访问量");
 				} else if ("10019".equals(info_code) || "10020".equals(info_code) || "10021".equals(info_code)) {
 					log.warn("并发量已达到上限,sleep 100 ...");
@@ -1200,7 +1200,7 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-					return get(host, api, params);
+					return get(host, api, method, params);
 				} else {
 					throw new AnylineException(status, row.getString("INFO"));
 				}
