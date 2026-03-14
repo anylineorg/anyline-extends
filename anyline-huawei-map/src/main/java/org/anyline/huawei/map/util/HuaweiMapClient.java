@@ -156,10 +156,22 @@ public class HuaweiMapClient extends AbstractMapClient implements MapClient {
 		}
 		DataRow adr = result.getRow("address");
 		if(null != adr) {
-			coordinate.setProvinceName(adr.getString("adminArea"));
-			coordinate.setCityName(adr.getString("subAdminArea"));
-			coordinate.setCountyName(adr.getString("tertiaryAdminArea"));
-			coordinate.setTownName(adr.getString("subLocality"));
+			Object province = adr.get("adminArea");
+			if(province instanceof String) {
+				coordinate.setProvinceName((String) province);
+			}
+			Object city = adr.get("subAdminArea");
+			if(city instanceof String) {
+				coordinate.setCityName((String) city);
+			}
+			Object county = adr.get("tertiaryAdminArea");
+			if(county instanceof String) {
+				coordinate.setCountyName((String) county);
+			}
+			Object town = adr.get("subLocality");
+			if(town instanceof String) {
+				coordinate.setTownName((String) town);
+			}
 		}
 		coordinate.correct();
 	}

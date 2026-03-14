@@ -268,17 +268,17 @@ public class QQMapClient extends AbstractMapClient implements MapClient {
                 coordinate.setCityCode(cityCode);
                 coordinate.setCountyCode(adcode);
             }
-            String provinceName = ad_info.getString("province");
-            if(BasicUtil.isNotEmpty(provinceName)) {
-                coordinate.setProvinceName(provinceName);
+            Object provinceName = ad_info.get("province");
+            if(provinceName instanceof String && BasicUtil.isNotEmpty(provinceName)) {
+                coordinate.setProvinceName((String)provinceName);
             }
-            String cityName = ad_info.getString("city");
-            if(BasicUtil.isNotEmpty(cityName)) {
-                coordinate.setCityName(cityName);
+            Object cityName = ad_info.get("city");
+            if(cityName instanceof String && BasicUtil.isNotEmpty(cityName)) {
+                coordinate.setCityName((String) cityName);
             }
-            String districtName = ad_info.getString("district");
-            if(BasicUtil.isNotEmpty(districtName)) {
-                coordinate.setCountyName(districtName);
+            Object districtName = ad_info.get("district");
+            if(districtName instanceof String && BasicUtil.isNotEmpty(districtName)) {
+                coordinate.setCountyName((String) districtName);
             }
         }
         //相对参考

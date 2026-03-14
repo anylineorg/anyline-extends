@@ -412,24 +412,41 @@ public class BaiduMapClient extends AbstractMapClient implements MapClient {
             coordinate.setProvinceCode(provinceCode);
             coordinate.setCityCode(cityCode);
         }
-        coordinate.setProvinceName(adr.getString("province"));
-        coordinate.setCityName(adr.getString("city"));
-        coordinate.setCountyName(adr.getString("area"));
+        Object provinceName = adr.get("province");
+        if(provinceName instanceof String) {
+            coordinate.setProvinceName((String) provinceName);
+        }
+        Object cityName = adr.get("city");
+        if(cityName instanceof String) {
+            coordinate.setCityName((String) cityName);
+        }
+        Object countyName = adr.get("area");
+        if(countyName instanceof String) {
+            coordinate.setCountyName((String) countyName);
+        }
         coordinate.setCountyCode(adcode);
-        coordinate.setTownCode(adr.getString("town_code"));
-        coordinate.setTownName(adr.getString("town"));
+        Object townName = adr.get("town");
+        if(townName instanceof String) {
+            coordinate.setTownName((String) townName);
+        }
+        Object townCode = adr.get("town_code");
+        if(townCode instanceof String) {
+            coordinate.setTownCode((String) townCode);
+        }
 
-        String street = adr.getString("street");
-        coordinate.setStreet(street);
+        Object streetName = adr.get("street");
+        if(streetName instanceof String) {
+            coordinate.setStreet((String) streetName);
+        }
+        coordinate.setStreet((String) streetName);
         String number = adr.getString("street_number");
-        if(null != number && null != street) {
-            number = number.replace(street,"");
+        if(null != number && null != streetName) {
+            number = number.replace(streetName.toString(),"");
         }
         DataRow detail_info = row.getRow("detail_info");
         if(null != detail_info) {
             coordinate.setPoiCategoryName(detail_info.getString("classified_poi_tag"));
         }
-        coordinate.setStreet(street);
         coordinate.setStreetNumber(number);
         coordinate.setSuccess(true);
         coordinate.setMetadata(row);

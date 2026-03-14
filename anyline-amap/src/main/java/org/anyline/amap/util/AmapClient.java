@@ -842,16 +842,28 @@ public class AmapClient extends AbstractMapClient implements MapClient {
 			String provinceCode = ad_code.substring(0, 2);
 			String cityCode = ad_code.substring(0, 4);
 			coordinate.setProvinceCode(provinceCode);
-			coordinate.setProvinceName(result.getString("province"));
+			Object provinceName = result.get("province");
+			if(provinceName instanceof String) {
+				coordinate.setProvinceName((String) provinceName);
+			}
 			coordinate.setCityCode(cityCode);
-			coordinate.setCityName(result.getString("city"));
+			Object cityName = result.get("city");
+			if(cityName instanceof String) {
+				coordinate.setCityName((String) cityName);
+			}
 			coordinate.setCountyCode(ad_code);
-			coordinate.setCountyName(result.getString("district"));
+			Object countyName = result.get("district");
+			if(countyName instanceof String) {
+				coordinate.setCountyName((String) countyName);
+			}
 			Object townCode = result.get("towncode");
 			if(townCode instanceof String) {
 				coordinate.setTownCode((String) townCode);
 			}
-			coordinate.setTownName(result.getString("township"));
+			Object townName = result.get("township");
+			if(townName instanceof String) {
+				coordinate.setTownName((String) townName);
+			}
 			DataRow st = result.getRow("streetNumber");
 			if (null != st) {
 				String street = st.getString("street");

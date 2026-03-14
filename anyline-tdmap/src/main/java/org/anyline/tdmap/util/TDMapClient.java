@@ -275,10 +275,18 @@ public class TDMapClient extends AbstractMapClient implements MapClient {
 			}
 		}
 		coordinate.setCountyCode(county);
-
-		coordinate.setProvinceName(row.getString("province"));
-		coordinate.setCityName(row.getString("city"));
-		coordinate.setCountyName(row.getString("county"));
+		Object provinceName = row.get("province");
+		if(provinceName instanceof String) {
+			coordinate.setProvinceName((String) provinceName);
+		}
+		Object cityName = row.get("city");
+		if(cityName instanceof String) {
+			coordinate.setCityName((String) cityName);
+		}
+		Object countyName = row.get("county");
+		if(countyName instanceof String) {
+			coordinate.setCountyName((String) countyName);
+		}
 		coordinate.setMetadata(row);
 		return coordinate;
 	}
